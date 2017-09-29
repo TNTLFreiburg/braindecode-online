@@ -101,6 +101,91 @@ import gevent.select
 from scipy import interpolate
 from glob import glob
 
+from bdonline.experiment import OnlineExperiment
+from bdonline.buffer import DataMarkerBuffer
+
+
+class PredictionSender(object):
+    def __init__(self, socket):
+        self.socket = socket
+
+    def send_prediction(self, i_sample, prediction):
+        log.info("Prediction for sample {:d}:\n{:s}".format(
+            i_sample, str(prediction)))
+        # +1 to convert 0-based to 1-based indexing
+        self.socket.sendall("{:d}\n".format(i_sample + 1).encode('utf-8'))
+        n_preds = len(prediction) # e.g. number of classes
+        # format all preds as floats with spaces inbetween
+        format_str = " ".join(["{:f}"] * n_preds) + "\n"
+        pred_str = format_str.format(*prediction)
+        self.socket.sendall(pred_str.encode('utf-8'))
+
+
+class DataReceiver(object):
+    def __init__(self, socket, n_chans, n_samples_per_block, n_bytes_per_block):
+        self.socket = socket
+        self.n_chans = n_chans
+        self.n_samples_per_block = n_samples_per_block
+        self.n_bytes_per_block = n_bytes_per_block
+
+    def wait_for_data(self):
+        array = read_until_bytes_received_or_enter_pressed(
+            self.socket, self.n_bytes_per_block)
+        if array is None:
+            return None
+        else:
+            array = np.fromstring(array, dtype=np.float32)
+            array = array.reshape(self.n_chans, self.n_samples_per_block,
+                                  order='F')
+            data = array[:-1].T
+            markers = array[-1]
+            return data, markers
+
+
+def read_until_bytes_received(socket, n_bytes):
+    array_parts = []
+    n_remaining = n_bytes
+    while n_remaining > 0:
+        chunk = socket.recv(n_remaining)
+        array_parts.append(chunk)
+        n_remaining -= len(chunk)
+    array = b"".join(array_parts)
+    return array
+
+def read_until_bytes_received_or_enter_pressed(socket, n_bytes):
+    '''
+    Read bytes from socket until reaching given number of bytes, cancel
+    if enter was pressed.
+
+    Parameters
+    ----------
+    socket:
+        Socket to read from.
+    n_bytes: int
+        Number of bytes to read.
+    '''
+    enter_pressed = False
+    # http://dabeaz.blogspot.de/2010/01/few-useful-bytearray-tricks.html
+    array_parts = []
+    n_remaining = n_bytes
+    while n_remaining > 0:
+        chunk = socket.recv(n_remaining)
+        array_parts.append(chunk)
+        n_remaining -= len(chunk)
+        # check if enter is pressed
+        i, o, e = gevent.select.select([sys.stdin], [], [], 0.0001)
+        for s in i:
+            if s == sys.stdin:
+                _ = sys.stdin.readline()
+                enter_pressed = True
+    array = b"".join(array_parts)
+    if enter_pressed:
+        return None
+    else:
+        assert len(array) == n_bytes
+        return array
+
+
 class PredictionServer(gevent.server.StreamServer):
     def __init__(self, listener, online_experiment, ui_hostname, ui_port,
         plot_sensors, use_ui_server, save_data,
@@ -119,81 +204,40 @@ class PredictionServer(gevent.server.StreamServer):
 
     def handle(self, in_socket, address):
         log.info('New connection from {:s}!'.format(str(address)))
-      
         # Connect to UI Server
         if self.use_ui_server:
             gevent.sleep(1) # hack to wait until ui server open
-            ui_socket = self.connect_to_ui_server()
+            prediction_sender = self.connect_to_prediction_receiver()
             log.info("Connected to UI Server")
         else:
-            ui_socket=None
+            prediction_sender=None
 
         # Receive Header
-        chan_names, n_rows, n_cols = self.receive_header(in_socket)
-        n_numbers = n_rows * n_cols
-        n_bytes = n_numbers * 4 # float32
+        chan_names, n_chans, n_samples_per_block = self.receive_header(in_socket)
+        n_numbers = n_chans * n_samples_per_block
+        n_bytes_per_block = n_numbers * 4 # float32
+        data_receiver = DataReceiver(in_socket,  n_chans, n_samples_per_block,
+                                     n_bytes_per_block)
         log.info("Numbers in total:  {:d}".format(n_numbers))
         
         log.info("Before checking plot")
         # Possibly plot
         if self.plot_sensors:
-            self.plot_sensors_until_enter_press(chan_names, in_socket, n_bytes,
-            n_rows, n_cols)
+            self.plot_sensors_until_enter_press(chan_names, in_socket,
+                                                n_bytes_per_block,
+            n_chans, n_samples_per_block)
         log.info("After checking plot")
-        self.make_predictions_and_save_params(chan_names, n_rows, n_cols,
-            n_bytes, in_socket, ui_socket)
+        self.make_predictions_and_save_params(chan_names, n_chans,
+                                              n_samples_per_block,
+            n_bytes_per_block, data_receiver, prediction_sender)
         self.stop()
 
-    def connect_to_ui_server(self):
+    def connect_to_prediction_receiver(self):
         ui_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         print("UI server connected at:", self.ui_hostname, self.ui_port)
         ui_socket.connect((self.ui_hostname, self.ui_port))
-        return ui_socket
-        
-    
-    def read_until_bytes_received(self, socket, n_bytes):
-        array_parts = []
-        n_remaining = n_bytes
-        while n_remaining > 0:
-            chunk = socket.recv(n_remaining)
-            array_parts.append(chunk)
-            n_remaining -= len(chunk)
-        array = b"".join(array_parts)
-        return array
+        return PredictionSender(ui_socket)
 
-    def read_until_bytes_received_or_enter_pressed(self, socket, n_bytes):
-        '''
-        Read bytes from socket until reaching given number of bytes, cancel
-        if enter was pressed.
-        
-        Parameters
-        ----------
-        socket:
-            Socket to read from.
-        n_bytes: int
-            Number of bytes to read.
-        '''
-        enter_pressed = False
-        #http://dabeaz.blogspot.de/2010/01/few-useful-bytearray-tricks.html
-        array_parts = []
-        n_remaining = n_bytes
-        while n_remaining > 0:
-            chunk = socket.recv(n_remaining)
-            array_parts.append(chunk)
-            n_remaining -= len(chunk)
-            # check if enter is pressed
-            i,o,e = gevent.select.select([sys.stdin],[],[],0.0001)
-            for s in i:
-                if s == sys.stdin:
-                    _ = sys.stdin.readline()
-                    enter_pressed = True
-        array = b"".join(array_parts)
-        if enter_pressed:
-            return None
-        else:
-            assert len(array) == n_bytes
-            return array
-    
     def receive_header(self, in_socket):
         chan_names_line = '' + in_socket.recv(1).decode('utf-8')
         while chan_names_line[-1] != '\n':
@@ -215,17 +259,17 @@ class PredictionServer(gevent.server.StreamServer):
          'F5', 'F3', 'F1', 'Fz', 'F2', 'F4', 'F6', 'FC1', 'FCz',
          'FC2', 'C3', 'C1', 'Cz', 'C2', 'C4', 'CP3', 'CP1', 'CPz',
          'CP2', 'CP4', 'P1', 'Pz', 'P2', 'POz', 'marker'])
-        n_rows = self.read_until_bytes_received(in_socket, 4)
+        n_rows = read_until_bytes_received(in_socket, 4)#n_chans+marker
         n_rows = np.fromstring(n_rows, dtype=np.int32)[0]
         log.info("Number of rows:    {:d}".format(n_rows))
-        n_cols = self.read_until_bytes_received(in_socket, 4)
+        n_cols = read_until_bytes_received(in_socket, 4)#n_samples_per_block
         n_cols = np.fromstring(n_cols, dtype=np.int32)[0]
         log.info("Number of columns: {:d}".format(n_cols))
         assert n_rows == len(chan_names)
         return chan_names, n_rows, n_cols
 
     def plot_sensors_until_enter_press(self, chan_names, in_socket, n_bytes,
-            n_rows, n_cols):
+                                       n_chans, n_samples_per_block):
         log.info("Starting Plot for plot")
         from  braindevel.online.live_plot import LivePlot
         log.info("Import")
@@ -239,7 +283,7 @@ class PredictionServer(gevent.server.StreamServer):
             while len(array) < n_bytes:
                 array += in_socket.recv(n_bytes - len(array))
             array = np.fromstring(array, dtype=np.float32)
-            array = array.reshape(n_rows, n_cols, order='F')
+            array = array.reshape(n_chans, n_samples_per_block, order='F')
             live_plot.accept_samples(array.T)
             # check if enter is pressed
             i,o,e = gevent.select.select([sys.stdin],[],[],0.001)
@@ -251,8 +295,9 @@ class PredictionServer(gevent.server.StreamServer):
         live_plot.close()
         log.info("Plot finished")
 
-    def make_predictions_and_save_params(self, chan_names, n_rows, n_cols, n_bytes,
-        in_socket, ui_socket):
+    def make_predictions_and_save_params(self, chan_names, n_chans,
+                                         n_samples_per_block, n_bytes,
+                                         data_receiver, prediction_sender):
         
 
         # this is to be able to show scores later
@@ -260,18 +305,25 @@ class PredictionServer(gevent.server.StreamServer):
         all_pred_samples = []
         all_sample_blocks = []
 
+        self.online_experiment.set_supplier(data_receiver)
+        # -1 because n_chans includes marker chan
+        self.online_experiment.set_buffer(DataMarkerBuffer(n_chans - 1, 20000))
+        self.online_experiment.set_sender(prediction_sender)
+        self.online_experiment.run()
+        return
+
         from numpy.random import RandomState
         rng = RandomState(39489348)
         dummy_i = 0
         while True:
-            array = self.read_until_bytes_received_or_enter_pressed(in_socket,
+            array = read_until_bytes_received_or_enter_pressed(in_socket,
                 n_bytes)
             if array is None:
                 # enter was pressed! quit! :)
                 break;
             
             array = np.fromstring(array, dtype=np.float32)
-            array = array.reshape(n_rows, n_cols, order='F')
+            array = array.reshape(n_chans, n_samples_per_block, order='F')
             all_sample_blocks.append(array.T)
 
 
@@ -423,10 +475,22 @@ def main(ui_hostname, ui_port, base_name, params_filename, plot_sensors,
     setup_logging()
 
     hostname = ''
-    online_experiment = None
+    from bdonline.datasuppliers import ArraySupplier
+    from bdonline.experiment import OnlineExperiment
+    from bdonline.buffer import DataMarkerBuffer
+    from bdonline.predictors import DummyPredictor
+    from bdonline.processors import StandardizeProcessor
+    from bdonline.trainers import DummyTrainer
+    supplier = None
+    sender = None
+    buffer = None
+    online_exp = OnlineExperiment(
+        supplier=supplier, buffer=buffer,
+        processor=StandardizeProcessor(),
+        predictor=DummyPredictor(), trainer=DummyTrainer(), sender=sender)
     server = PredictionServer(
         (hostname, incoming_port),
-        online_experiment=online_experiment,
+        online_experiment=online_exp,
         ui_hostname=ui_hostname, ui_port=ui_port, plot_sensors=plot_sensors,
         use_ui_server=use_ui_server, save_data=save_data)
     # Compilation takes some time so initialize trainer already

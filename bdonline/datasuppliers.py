@@ -15,7 +15,4 @@ class ArraySupplier(object):
             markers = self.markers[i_start:i_stop]
             self.i_next_sample = i_stop
             return block, markers
-        return None, None
-
-    def will_have_more_data(self):
-        return self.i_next_sample < len(self.data)
+        return None
