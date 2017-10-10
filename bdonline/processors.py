@@ -148,3 +148,6 @@ class StandardizeProcessor(object):
                 self.eps, np.sqrt(self.running_var))
 
 
+class NoProcessor(object):
+    def process(self, samples):
+        return samples

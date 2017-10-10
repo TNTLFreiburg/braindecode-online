@@ -23,13 +23,17 @@ class OnlineExperiment(object):
     def run(self):
         supplier_at_end_of_data = False
         while not supplier_at_end_of_data:
-            data_and_markers = self.supplier.wait_for_data()
-            supplier_at_end_of_data = data_and_markers is None
-            if not supplier_at_end_of_data:
-                self.run_one_iteration(data_and_markers[0],
-                                       data_and_markers[1])
+            supplier_at_end_of_data = self.run_one_iteration()
 
-    def run_one_iteration(self, data, markers):
+    def run_one_iteration(self):
+        data_and_markers = self.supplier.wait_for_data()
+        supplier_at_end_of_data = data_and_markers is None
+        if not supplier_at_end_of_data:
+            self.run_one_iteration_on_data(data_and_markers[0],
+                                           data_and_markers[1])
+        return supplier_at_end_of_data
+
+    def run_one_iteration_on_data(self, data, markers):
         data = self.processor.process(data)
         self.buffer.buffer(data, markers)
         self.storer.store_data_markers(data, markers)
@@ -38,5 +42,5 @@ class OnlineExperiment(object):
                 self.buffer)
             self.storer.store_prediction(i_sample, prediction)
             self.sender.send_prediction(i_sample, prediction)
-        self.trainer.new_data_available(self.buffer)
+        self.trainer.new_data_available(self.buffer, markers)
 

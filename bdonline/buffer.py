@@ -35,7 +35,6 @@ class RingBuffer(np.ndarray):
         if self.shape[1:] != x.shape:
             raise ValueError("Element's shape mismatch. RingBuffer.shape={}. "
                              "xs.shape={}".format(self.shape, x.shape))
-        len_self = len(self)
         self[:-1] = self[1:]
         self[-1] = x
 

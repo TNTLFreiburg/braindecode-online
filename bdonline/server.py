@@ -17,13 +17,15 @@ def parse_command_line_arguments():
         "other arguments from milliseconds to number of samples", required=True)
     required_named.add_argument('--modelfile', action='store',
         help='Basename of the modelfile')
+    parser.add_argument('--inputsamples', action='store',
+        type=int,
+        help='Input samples (!) for the ConvNet.')
     parser.add_argument('--inport', action='store', type=int,
         default=7987, help='Port from which to accept incoming sensor data.')
-    parser.add_argument('--uihost', action='store',
-        default='172.30.0.117', help='Hostname/IP of the UI server (= the '
-        'server that the predictions are being sent to).')
-    parser.add_argument('--uiport', action='store',
-        default=30000, help='Port of the UI server')
+    parser.add_argument('--outhost', action='store',
+        default='172.30.0.117', help='Hostname/IP of the prediction receiver')
+    parser.add_argument('--outport', action='store',
+        default=30000, help='Port of the prediction receiver')
     parser.add_argument('--paramsfile', action='store', 
         help='Use these (possibly adapted) parameters for the model. '
         'Filename should end with model_params.npy. Can also use "newest"'
@@ -32,8 +34,8 @@ def parse_command_line_arguments():
         'originally (offline)-trained parameters.')
     parser.add_argument('--plot', action='store_true',
         help="Show plots of the sensors first.")
-    parser.add_argument('--noui', action='store_true',
-        help="Don't wait for UI server.")
+    parser.add_argument('--noout', action='store_true',
+        help="Don't wait for prediction receiver.")
     parser.add_argument('--noadapt', action='store_true',
         help="Don't adapt model while running online.")
     parser.add_argument('--updatesperbreak', action='store', default=5,
@@ -69,9 +71,6 @@ def parse_command_line_arguments():
         default='agg', help='Matplotlib backend to use for plotting.')
     parser.add_argument('--nooldadamparams', action='store_true',
         help='Do not load old adam params.')
-    parser.add_argument('--inputsamples', action='store', default=None,
-        type=int,
-        help='Input samples (!) for the ConvNet. None means same as when trained in original experiment.')
     parser.add_argument('--nobreaktraining',action='store_true',
         help='Do not use the breaks as training examples for the rest class.')
     args = parser.parse_args()
@@ -187,28 +186,28 @@ def read_until_bytes_received_or_enter_pressed(socket, n_bytes):
 
 
 class PredictionServer(gevent.server.StreamServer):
-    def __init__(self, listener, online_experiment, ui_hostname, ui_port,
-        plot_sensors, use_ui_server, save_data,
+    def __init__(self, listener, online_experiment, out_hostname, out_port,
+        plot_sensors, use_out_server, save_data,
             handle=None, backlog=None, spawn='default', **ssl_args):
         """
         adapt_model only needed to know for saving
         """
         self.online_experiment = online_experiment
-        self.ui_hostname = ui_hostname
-        self.ui_port = ui_port
+        self.out_hostname = out_hostname
+        self.out_port = out_port
         self.plot_sensors = plot_sensors
-        self.use_ui_server = use_ui_server
+        self.use_out_server = use_out_server
         self.save_data = save_data
         super(PredictionServer, self).__init__(listener, handle=handle, spawn=spawn)
 
 
     def handle(self, in_socket, address):
         log.info('New connection from {:s}!'.format(str(address)))
-        # Connect to UI Server
-        if self.use_ui_server:
-            gevent.sleep(1) # hack to wait until ui server open
+        # Connect to out Server
+        if self.use_out_server:
+            gevent.sleep(1) # hack to wait until out server open
             prediction_sender = self.connect_to_prediction_receiver()
-            log.info("Connected to UI Server")
+            log.info("Connected to out Server")
         else:
             prediction_sender=None
 
@@ -233,10 +232,10 @@ class PredictionServer(gevent.server.StreamServer):
         self.stop()
 
     def connect_to_prediction_receiver(self):
-        ui_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        print("UI server connected at:", self.ui_hostname, self.ui_port)
-        ui_socket.connect((self.ui_hostname, self.ui_port))
-        return PredictionSender(ui_socket)
+        out_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        print("Out server connected at:", self.out_hostname, self.out_port)
+        out_socket.connect((self.out_hostname, self.out_port))
+        return PredictionSender(out_socket)
 
     def receive_header(self, in_socket):
         chan_names_line = '' + in_socket.recv(1).decode('utf-8')
@@ -330,14 +329,14 @@ class PredictionServer(gevent.server.StreamServer):
             pred, i_sample = rng.rand(5).tolist(), dummy_i
             log.info("Prediction for sample {:d}:\n{:s}".format(
                 i_sample, str(pred)))
-            if self.use_ui_server:
+            if self.use_out_server:
                 # +1 to convert 0-based to 1-based indexing
-                ui_socket.sendall("{:d}\n".format(i_sample + 1).encode('utf-8'))
+                out_socket.sendall("{:d}\n".format(i_sample + 1).encode('utf-8'))
                 n_preds = len(pred)
                 # format all preds as floats with spaces inbetween
                 format_str = " ".join(["{:f}"] * n_preds) + "\n"
                 pred_str = format_str.format(*pred)
-                ui_socket.sendall(pred_str.encode('utf-8'))
+                out_socket.sendall(pred_str.encode('utf-8'))
             all_preds.append(pred)
             all_pred_samples.append(i_sample)
 
@@ -462,8 +461,8 @@ def setup_logging():
     logging.basicConfig(format='%(asctime)s %(levelname)s : %(message)s',
                         level=logging.DEBUG, stream=sys.stdout)
 
-def main(ui_hostname, ui_port, base_name, params_filename, plot_sensors,
-        use_ui_server, adapt_model, save_data, n_updates_per_break, batch_size,
+def main(out_hostname, out_port, base_name, params_filename, plot_sensors,
+        use_out_server, adapt_model, save_data, n_updates_per_break, batch_size,
         learning_rate, n_min_trials, trial_start_offset, break_start_offset,
         break_stop_offset,
         pred_gap,
@@ -491,8 +490,8 @@ def main(ui_hostname, ui_port, base_name, params_filename, plot_sensors,
     server = PredictionServer(
         (hostname, incoming_port),
         online_experiment=online_exp,
-        ui_hostname=ui_hostname, ui_port=ui_port, plot_sensors=plot_sensors,
-        use_ui_server=use_ui_server, save_data=save_data)
+        out_hostname=out_hostname, out_port=out_port, plot_sensors=plot_sensors,
+        use_out_server=use_out_server, save_data=save_data)
     # Compilation takes some time so initialize trainer already
     # before waiting in connection in server
     log.info("Starting server on port {:d}".format(incoming_port))
@@ -508,13 +507,13 @@ if __name__ == '__main__':
     # factor for converting to samples
     ms_to_samples = args.fs / 1000.0
     # convert all millisecond arguments to number of samples
-    main(ui_hostname=args.uihost,
-        ui_port=args.uiport, 
+    main(out_hostname=args.outhost,
+        out_port=args.outport,
         base_name=args.modelfile,
         params_filename=args.paramsfile,
         plot_sensors=args.plot,
         save_data=not args.nosave,
-        use_ui_server=not args.noui,
+        use_out_server=not args.noout,
         adapt_model=not args.noadapt,
         n_updates_per_break=args.updatesperbreak,
         batch_size=args.batchsize,

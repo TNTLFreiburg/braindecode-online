@@ -1,4 +1,15 @@
 class ArraySupplier(object):
+    """
+    Supplier for given data.
+    
+    Parameters
+    ----------
+    data: 2d-array
+        time x channels
+    markers: 1d-array
+        time
+    block_size: int
+    """
     def __init__(self, data, markers, block_size):
         self.data = data
         self.markers = markers
@@ -8,9 +19,9 @@ class ArraySupplier(object):
         self.block_size = block_size
 
     def wait_for_data(self):
-        if self.i_next_sample < len(self.data):
-            i_stop = min(self.i_next_sample + self.block_size, len(self.data))
-            i_start = i_stop - self.block_size
+        i_stop = self.i_next_sample + self.block_size
+        if  i_stop <= len(self.data):
+            i_start = self.i_next_sample
             block = self.data[i_start:i_stop]
             markers = self.markers[i_start:i_stop]
             self.i_next_sample = i_stop
