@@ -71,7 +71,7 @@ def send_file_data():
     print("Sending data...")
     i_block = 0  # if setting i_block to sth higher, printed results will incorrect
     max_stop_block = 10000
-    stop_block = 800
+    stop_block = 100
     rng = RandomState(3948394)
     assert stop_block < max_stop_block
     while i_block < stop_block:
@@ -82,7 +82,6 @@ def send_file_data():
         i_block += 1
         gevent.sleep(0.03)
     print("Done.")
-    return cnt
 
 
 def create_y_labels(cnt):
@@ -188,7 +187,7 @@ if __name__ == "__main__":
     # wait for enter press to continue
     gevent.signal(signal.SIGQUIT, gevent.kill)
     server = start_remember_predictions_server()
-    cnt = send_file_data()
+    send_file_data()
 
     print("Finished sending data, press enter to continue")
     enter_pressed = False

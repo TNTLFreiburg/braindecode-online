@@ -34,9 +34,10 @@ class OnlineExperiment(object):
         return supplier_at_end_of_data
 
     def run_one_iteration_on_data(self, data, markers):
+        # store directly so you can even test changes of preprocessing later...
+        self.storer.store_data_markers(data, markers)
         data = self.processor.process(data)
         self.buffer.buffer(data, markers)
-        self.storer.store_data_markers(data, markers)
         if self.predictor.enough_data_for_new_prediction(self.buffer):
             i_sample, prediction = self.predictor.make_new_prediction(
                 self.buffer)

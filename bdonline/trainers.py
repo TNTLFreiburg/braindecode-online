@@ -17,7 +17,13 @@ log = logging.getLogger(__name__)
 
 
 class NoTrainer(object):
-    def new_data_available(self, buffer):
+    def new_data_available(self, buffer, marker_block):
+        return
+
+    def set_n_chans(self, n_chans):
+        return
+
+    def add_data_from_today(self, data_processor):
         return
 
 
@@ -38,7 +44,20 @@ class BatchCntTrainer(object):
         self.data_batches = []
         self.y_batches = []
 
-    def add_data_from_today(self, data_processor):
+
+    def set_n_chans(self, n_chans):
+        test_input = np_to_var(
+            np.ones((2, n_chans, self.input_time_length, 1),
+                    dtype=np.float32))
+        if self.cuda:
+            test_input = test_input.cuda()
+        out = self.model(test_input)
+        self.n_preds_per_input = int(out.size()[2])
+        self.n_classes = int(out.size()[1])
+        return
+
+
+    def add_data_from_today(self, factor_new, eps):
         # Check if old data exists, if yes add it
         now = datetime.datetime.now()
         day_string = now.strftime('%Y-%m-%d')
@@ -53,8 +72,9 @@ class BatchCntTrainer(object):
                 samples_markers = np.load(filename)
                 samples = samples_markers[:, :-1]
                 markers = np.int32(samples_markers[:, -1])
-                self.add_training_blocks_from_old_data(samples, markers,
-                                                       data_processor)
+                self.add_training_blocks_from_old_data(
+                    samples, markers, factor_new=factor_new,
+                    eps=eps)
             log.info(
                 "Done loading, now have {:d} trials (including breaks)".format(
                     len(self.data_batches)))

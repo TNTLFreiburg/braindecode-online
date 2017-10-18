@@ -4,6 +4,8 @@ import logging
 
 # Have to do this here in for choosing correct matplotlib backend before
 # it is imported anywhere
+
+
 def parse_command_line_arguments():
     import argparse
     parser = argparse.ArgumentParser(
@@ -46,13 +48,13 @@ def parse_command_line_arguments():
         type=float, help="Learning rate for adaptation updates.")
     parser.add_argument('--mintrials', action='store', default=10, type=int,
         help="Number of trials before starting adaptation updates.")
-    parser.add_argument('--trialstartoffset', action='store', default=500, type=int,
+    parser.add_argument('--trialstartoffsetms', action='store', default=500, type=int,
         help="Time offset for the first sample to use (within a trial, in ms) "
         "for adaptation updates.")
-    parser.add_argument('--breakstartoffset', action='store', default=1000, type=int,
+    parser.add_argument('--breakstartoffsetms', action='store', default=1000, type=int,
         help="Time offset for the first sample to use (within a break(!), in ms) "
         "for adaptation updates.")
-    parser.add_argument('--breakstopoffset', action='store', default=-1000, type=int,
+    parser.add_argument('--breakstopoffsetms', action='store', default=-1000, type=int,
         help="Sample offset for the last sample to use (within a break(!), in ms) "
         "for adaptation updates.")
     parser.add_argument('--predgap', action='store', default=200, type=int,
@@ -73,8 +75,12 @@ def parse_command_line_arguments():
         help='Do not load old adam params.')
     parser.add_argument('--nobreaktraining',action='store_true',
         help='Do not use the breaks as training examples for the rest class.')
+    parser.add_argument('--cpu',action='store_true',
+        help='Use the CPU instead of GPU/Cuda.')
+    parser.add_argument('--nchans', action='store', default=64, type=int,
+        help="Number of EEG channels")
     args = parser.parse_args()
-    assert args.breakstopoffset <= 0, ("Please supply a nonpositive break stop "
+    assert args.breakstopoffsetms <= 0, ("Please supply a nonpositive break stop "
         "offset, you supplied {:d}".format(args.breakstopoffset))
     return args
 
@@ -85,23 +91,36 @@ try:
 except:
     print("Could not use {:s} backend for matplotlib".format(
         matplotlib_backend))
-    
-import gevent.server
+
 import signal
-import numpy as np
-from gevent import socket
 import argparse
-import h5py
 import datetime
 import time
 import os.path
 import sys
-import gevent.select
-from scipy import interpolate
 from glob import glob
+import os
 
+import numpy as np
+import torch as th
+from torch.optim import Adam
+from gevent import socket
+import gevent.select
+import gevent.server
+from scipy import interpolate
+import h5py
+from braindecode.torch_ext.constraints import MaxNormDefaultConstraint
+from braindecode.torch_ext.losses import log_categorical_crossentropy
+
+from bdonline.datasuppliers import ArraySupplier
 from bdonline.experiment import OnlineExperiment
 from bdonline.buffer import DataMarkerBuffer
+from bdonline.predictors import DummyPredictor, ModelPredictor
+from bdonline.processors import StandardizeProcessor
+from bdonline.trainers import NoTrainer
+from bdonline.experiment import OnlineExperiment
+from bdonline.buffer import DataMarkerBuffer
+from bdonline.trainers import BatchCntTrainer
 
 
 class PredictionSender(object):
@@ -151,6 +170,7 @@ def read_until_bytes_received(socket, n_bytes):
     array = b"".join(array_parts)
     return array
 
+
 def read_until_bytes_received_or_enter_pressed(socket, n_bytes):
     '''
     Read bytes from socket until reaching given number of bytes, cancel
@@ -167,7 +187,7 @@ def read_until_bytes_received_or_enter_pressed(socket, n_bytes):
     # http://dabeaz.blogspot.de/2010/01/few-useful-bytearray-tricks.html
     array_parts = []
     n_remaining = n_bytes
-    while n_remaining > 0:
+    while (n_remaining > 0) and (not enter_pressed):
         chunk = socket.recv(n_remaining)
         array_parts.append(chunk)
         n_remaining -= len(chunk)
@@ -177,10 +197,10 @@ def read_until_bytes_received_or_enter_pressed(socket, n_bytes):
             if s == sys.stdin:
                 _ = sys.stdin.readline()
                 enter_pressed = True
-    array = b"".join(array_parts)
     if enter_pressed:
         return None
     else:
+        array = b"".join(array_parts)
         assert len(array) == n_bytes
         return array
 
@@ -188,6 +208,8 @@ def read_until_bytes_received_or_enter_pressed(socket, n_bytes):
 class PredictionServer(gevent.server.StreamServer):
     def __init__(self, listener, online_experiment, out_hostname, out_port,
         plot_sensors, use_out_server, save_data,
+                 model_base_name,
+                 save_model_trainer_params,
             handle=None, backlog=None, spawn='default', **ssl_args):
         """
         adapt_model only needed to know for saving
@@ -198,6 +220,8 @@ class PredictionServer(gevent.server.StreamServer):
         self.plot_sensors = plot_sensors
         self.use_out_server = use_out_server
         self.save_data = save_data
+        self.model_base_name = model_base_name
+        self.save_model_trainer_params = save_model_trainer_params
         super(PredictionServer, self).__init__(listener, handle=handle, spawn=spawn)
 
 
@@ -226,16 +250,24 @@ class PredictionServer(gevent.server.StreamServer):
                                                 n_bytes_per_block,
             n_chans, n_samples_per_block)
         log.info("After checking plot")
-        self.make_predictions_and_save_params(chan_names, n_chans,
+        self.make_predictions_until_enter_press(chan_names, n_chans,
                                               n_samples_per_block,
             n_bytes_per_block, data_receiver, prediction_sender)
+        now = datetime.datetime.now()
+        if self.save_data:
+            self.save_signal_markers(now)
+        if self.save_model_trainer_params:
+            self.save_params(now)
+        self.print_results()
         self.stop()
+
 
     def connect_to_prediction_receiver(self):
         out_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         print("Out server connected at:", self.out_hostname, self.out_port)
         out_socket.connect((self.out_hostname, self.out_port))
         return PredictionSender(out_socket)
+
 
     def receive_header(self, in_socket):
         chan_names_line = '' + in_socket.recv(1).decode('utf-8')
@@ -267,6 +299,7 @@ class PredictionServer(gevent.server.StreamServer):
         assert n_rows == len(chan_names)
         return chan_names, n_rows, n_cols
 
+
     def plot_sensors_until_enter_press(self, chan_names, in_socket, n_bytes,
                                        n_chans, n_samples_per_block):
         log.info("Starting Plot for plot")
@@ -294,165 +327,138 @@ class PredictionServer(gevent.server.StreamServer):
         live_plot.close()
         log.info("Plot finished")
 
-    def make_predictions_and_save_params(self, chan_names, n_chans,
+
+    def make_predictions_until_enter_press(self, chan_names, n_chans,
                                          n_samples_per_block, n_bytes,
                                          data_receiver, prediction_sender):
         
-
-        # this is to be able to show scores later
-        all_preds =  []
-        all_pred_samples = []
-        all_sample_blocks = []
 
         self.online_experiment.set_supplier(data_receiver)
         # -1 because n_chans includes marker chan
         self.online_experiment.set_buffer(DataMarkerBuffer(n_chans - 1, 20000))
         self.online_experiment.set_sender(prediction_sender)
+        self.online_experiment.trainer.set_n_chans(n_chans - 1)
         self.online_experiment.run()
+        print("Finished online experiment")
         return
-
-        from numpy.random import RandomState
-        rng = RandomState(39489348)
-        dummy_i = 0
-        while True:
-            array = read_until_bytes_received_or_enter_pressed(in_socket,
-                n_bytes)
-            if array is None:
-                # enter was pressed! quit! :)
-                break;
-            
-            array = np.fromstring(array, dtype=np.float32)
-            array = array.reshape(n_chans, n_samples_per_block, order='F')
-            all_sample_blocks.append(array.T)
-
-
-            pred, i_sample = rng.rand(5).tolist(), dummy_i
-            log.info("Prediction for sample {:d}:\n{:s}".format(
-                i_sample, str(pred)))
-            if self.use_out_server:
-                # +1 to convert 0-based to 1-based indexing
-                out_socket.sendall("{:d}\n".format(i_sample + 1).encode('utf-8'))
-                n_preds = len(pred)
-                # format all preds as floats with spaces inbetween
-                format_str = " ".join(["{:f}"] * n_preds) + "\n"
-                pred_str = format_str.format(*pred)
-                out_socket.sendall(pred_str.encode('utf-8'))
-            all_preds.append(pred)
-            all_pred_samples.append(i_sample)
-
-            dummy_i += 1
-        all_samples = np.concatenate(all_sample_blocks).astype(np.float32)
-        all_preds = np.array(all_preds).squeeze()
-        all_pred_samples = np.array(all_pred_samples)
-        log.setLevel("INFO") # show what you are saving again even if printing
-        # disabled before...
-        now = datetime.datetime.now()
-        now_timestring = now.strftime('%Y-%m-%d_%H-%M-%S')
-        if self.adapt_model:
-            # Save parameters for model
-            all_layers = lasagne.layers.get_all_layers(self.coordinator.model.model)
-            filename = "{:s}.{:s}.model_params.npy".format(self.model_base_name,
-                now_timestring)
-            log.info("Saving model params to {:s}...".format(filename))
-            np.save(filename, lasagne.layers.get_all_param_values(all_layers))
-            # save parameters for trainer
-            # this is an ordered dict!! so should be fine to save in order
-            train_params = self.coordinator.trainer.train_params
-            train_param_values = [p.get_value() for p in train_params]
-            filename = "{:s}.{:s}.trainer_params.npy".format(
-                self.model_base_name, now_timestring)
-            log.info("Saving train params to {:s}...".format(filename))
-            np.save(filename, train_param_values)
-        if self.save_data:
-            day_string = now.strftime('%Y-%m-%d')
-            data_folder = 'data/online/{:s}'.format(day_string)
-            if not os.path.exists(data_folder):
-                os.makedirs(data_folder)
-            data_filename = os.path.join(data_folder, "{:s}.npy".format(
-                now_timestring))
-            log.info("Saving data to {:s}".format(data_filename))
-            np.save(data_filename, all_samples)
-        self.print_results(all_samples, all_preds, all_pred_samples)
-            
             
 
-    def print_results(self, all_samples, all_preds, all_pred_samples):
-        # y labels i from 0 to n_classes (inclusive!), 0 representing
-        # non-trial => no known marker state -> set to rest class now
+    def print_results(self):
         n_classes = 5
-        y_labels = all_samples[:,-1]
-        y_signal = np.ones((len(y_labels), n_classes)) * np.nan
-        y_signal[:,0] = y_labels == 1
-        y_signal[:,1] = y_labels == 2
-        y_signal[:,2] = y_labels == 3
-        y_signal[:,3] = y_labels == 4
-        y_signal[:,4] = np.logical_or(y_labels == 0, y_labels==n_classes)
-        
-        assert not np.any(np.isnan(y_signal))
-        
-        interpolate_fn = interpolate.interp1d(all_pred_samples, all_preds.T,
-                                             bounds_error=False, fill_value=0)
-        interpolated_preds = interpolate_fn(range(0,len(y_labels)))
-        # interpolated_preds are classes x samples (!!)
-        corrcoeffs = np.corrcoef(interpolated_preds, y_signal.T)[:n_classes,
-            n_classes:]
+        i_samples = list(zip(
+            *self.online_experiment.storer.i_samples_and_predictions))[0]
+        predictions = list(zip(
+            *self.online_experiment.storer.i_samples_and_predictions))[1]
+        predictions = np.array(predictions)
+        markers = np.concatenate(self.online_experiment.storer.marker_blocks)
 
-        print("Corrcoeffs")
+        interpolate_fn = interpolate.interp1d(i_samples, predictions.T,
+                                              bounds_error=False, fill_value=0)
+        interpolated_preds = interpolate_fn(range(0, len(markers)))
+        markers_1_hot = np.zeros((len(markers), n_classes))
+        for i_class in range(n_classes):
+            markers_1_hot[:, i_class] = (markers == (i_class + 1))
+
+        markers_1_hot[:, -1] = ((markers == n_classes) | (markers == -1))
+        corrcoeffs = np.corrcoef(interpolated_preds, markers_1_hot.T)[
+                     n_classes:,:n_classes]
+
+        print("Corrcoeffs (assuming n_classes=5)")
         print(corrcoeffs)
+        print("diagonal")
+        print(np.diag(corrcoeffs))
         print("mean across diagonal")
         print(np.mean(np.diag(corrcoeffs)))
-        interpolated_pred_labels = np.argmax(interpolated_preds, axis=0)
-        
+
+
         # inside trials
-        corrcoeffs = np.corrcoef(interpolated_preds[:,y_labels!=0], 
-                                 y_signal[y_labels!=0].T)[:n_classes,n_classes:]
+        corrcoeffs = np.corrcoef(interpolated_preds[:,markers!=0],
+                                 markers_1_hot[markers!=0].T)[:n_classes,n_classes:]
         print("Corrcoeffs inside trial")
         print(corrcoeffs)
+        print("diagonal")
+        print(np.diag(corrcoeffs))
         print("mean across diagonal inside trial")
         print(np.mean(np.diag(corrcoeffs)))
-        
+
+        # Accuracies
+        interpolated_pred_labels = np.argmax(interpolated_preds, axis=0)
         # -1 since we have 0 as "break" "non-trial" marker
-        label_pred_equal = interpolated_pred_labels == y_labels - 1
-        label_pred_trial_equal = label_pred_equal[y_labels!=0]
+        label_pred_equal = interpolated_pred_labels == markers - 1
+        label_pred_trial_equal = label_pred_equal[markers != 0]
         print("Sample accuracy inside trials")
         print(np.mean(label_pred_trial_equal))
-        y_label_with_breaks = np.copy(y_labels)
+        markers_with_breaks = np.copy(markers)
         # set break to rest label
-        y_label_with_breaks[y_label_with_breaks == 0] = n_classes
+        markers_with_breaks[markers_with_breaks == 0] = n_classes
         # from 1-based to 0-based
-        y_label_with_breaks -= 1
-        label_pred_equal = interpolated_pred_labels == y_label_with_breaks
-        print("Sample accuracy total")  
+        markers_with_breaks -= 1
+        label_pred_equal = interpolated_pred_labels == markers_with_breaks
+        print("Sample accuracy total")
         print(np.mean(label_pred_equal))
-        
+
         # also compute trial preds
         # compute boundarides so that boundaries give
         # indices of starts of new trials/new breaks
         trial_labels = []
         trial_pred_labels = []
-        boundaries = np.flatnonzero(np.diff(y_labels) != 0) + 1
+        boundaries = np.flatnonzero(np.diff(markers) != 0) + 1
         last_bound = 0
         for i_bound in boundaries:
             # i bounds are first sample of new trial
-            this_labels = y_label_with_breaks[last_bound:i_bound]
+            this_labels = markers_with_breaks[last_bound:i_bound]
             assert len(np.unique(this_labels) == 1), (
                 "Expect only one label, got {:s}".format(str(
                     np.unique(this_labels))))
             trial_labels.append(this_labels[0])
-            this_preds = interpolated_preds[:,last_bound:i_bound]
+            this_preds = interpolated_preds[:, last_bound:i_bound]
             pred_label = np.argmax(np.mean(this_preds, axis=1))
             trial_pred_labels.append(pred_label)
             last_bound = i_bound
         trial_labels = np.array(trial_labels)
         trial_pred_labels = np.array(trial_pred_labels)
-        print("Trialwise accuracy (mean prediction) of {:d} trials (including breaks, without offset)".format(
+        print(
+        "Trialwise accuracy (mean prediction) of {:d} trials (including breaks, without offset)".format(
             len(trial_labels)))
         print(np.mean(trial_labels == trial_pred_labels))
+
+
+    def save_signal_markers(self, now):
+        now_timestring = now.strftime('%Y-%m-%d_%H-%M-%S')
+        all_data = np.concatenate(self.online_experiment.storer.data_blocks)
+        all_markers = np.concatenate(
+            self.online_experiment.storer.marker_blocks)
+        combined = np.concatenate((all_data, all_markers[:, None]),
+                                  axis=1).astype(np.float32)
+        day_string = now.strftime('%Y-%m-%d')
+        data_folder = 'data/online/{:s}'.format(day_string)
+        if not os.path.exists(data_folder):
+            os.makedirs(data_folder)
+        data_filename = os.path.join(data_folder, "{:s}.npy".format(
+                now_timestring))
+        log.info("Saving data to {:s}".format(data_filename))
+        np.save(data_filename, combined)
+
+
+    def save_params(self, now):
+        now_timestring = now.strftime('%Y-%m-%d_%H-%M-%S')
+        filename = os.path.join(
+            self.model_base_name,
+            "{:s}.model_params.pkl".format(now_timestring))
+        log.info("Save model params to {:s}".format(filename))
+        th.save(self.online_experiment.trainer.model.state_dict(), filename)
+        filename = os.path.join(
+            self.model_base_name,
+            "{:s}.trainer_params.pkl".format(now_timestring))
+        log.info("Save trainer params to {:s}".format(filename))
+        th.save(self.online_experiment.trainer.optimizer.state_dict(), filename)
+
 
 def get_now_timestring():
     now = datetime.datetime.now()
     time_string = now.strftime('%Y-%m-%d_%H-%M-%S')
     return time_string      
+
 
 def setup_logging():
     """ Set up a root logger so that other modules can use logging
@@ -461,37 +467,102 @@ def setup_logging():
     logging.basicConfig(format='%(asctime)s %(levelname)s : %(message)s',
                         level=logging.DEBUG, stream=sys.stdout)
 
-def main(out_hostname, out_port, base_name, params_filename, plot_sensors,
+
+def main(
+        out_hostname, out_port, base_name, params_filename, plot_sensors,
         use_out_server, adapt_model, save_data, n_updates_per_break, batch_size,
         learning_rate, n_min_trials, trial_start_offset, break_start_offset,
         break_stop_offset,
         pred_gap,
-        incoming_port,load_old_data,use_new_adam_params,
+        incoming_port, load_old_data, use_new_adam_params,
         input_time_length,
         train_on_breaks,
         min_break_samples,
-        min_trial_samples):
+        min_trial_samples,
+        n_chans,
+        cuda):
     setup_logging()
 
     hostname = ''
-    from bdonline.datasuppliers import ArraySupplier
-    from bdonline.experiment import OnlineExperiment
-    from bdonline.buffer import DataMarkerBuffer
-    from bdonline.predictors import DummyPredictor
-    from bdonline.processors import StandardizeProcessor
-    from bdonline.trainers import DummyTrainer
     supplier = None
     sender = None
     buffer = None
+    # load model to correct gpu id
+    gpu_id = th.FloatTensor(1).cuda().get_device()
+    def inner_device_mapping(storage, location):
+        return storage.cuda(gpu_id)
+    model_name = os.path.join(base_name, 'model.pkl')
+    model = th.load(model_name, map_location=inner_device_mapping)
+
+    predictor = ModelPredictor(
+        model, input_time_length=input_time_length, pred_gap=pred_gap,
+        cuda=cuda)
+    if adapt_model:
+        loss_function = log_categorical_crossentropy
+        model_loss_function = None
+        model_constraint = MaxNormDefaultConstraint()
+        optimizer = Adam(model.parameters(), lr=learning_rate)
+        n_preds_per_input = None # set later
+        n_classes = None # set later
+        trainer = BatchCntTrainer(
+            model, loss_function, model_loss_function, model_constraint,
+            optimizer, input_time_length,
+            n_preds_per_input, n_classes,
+            n_updates_per_break=n_updates_per_break,
+            batch_size=batch_size,
+            n_min_trials=n_min_trials,
+            trial_start_offset=trial_start_offset,
+            break_start_offset=break_start_offset,
+            break_stop_offset=break_stop_offset,
+            add_breaks=train_on_breaks,
+            min_break_samples=min_break_samples,
+            min_trial_samples=min_trial_samples,
+            cuda=cuda)
+        trainer.set_n_chans(n_chans)
+    else:
+        trainer = NoTrainer()
+
+    if params_filename is not None:
+        if params_filename == 'newest':
+            # sort will already sort temporally with our time string format
+            all_params_files = sorted(glob(os.path.join(base_name,
+                                                        "*.model_params.pkl")))
+            assert len(all_params_files) > 0, ("Expect atleast one params file "
+                "if 'newest' given as argument")
+            params_filename = all_params_files[-1]
+        log.info("Loading model params from {:s}".format(params_filename))
+        model_params = th.load(params_filename, map_location=inner_device_mapping)
+        model.load_state_dict(model_params)
+        train_params_filename = params_filename.replace('model_params.pkl',
+                                                        'trainer_params.pkl')
+        log.info("Loading trainer params from {:s}".format(
+            train_params_filename))
+        if os.path.isfile(train_params_filename):
+            if use_new_adam_params:
+                log.info("Loading trainer params from {:s}".format(
+                    train_params_filename))
+                train_params = th.load(train_params_filename,
+                                       map_location=inner_device_mapping)
+                optimizer.load_state_dict(train_params)
+        else:
+            log.warn("No train/adam params found, starting optimization params "
+                     "from scratch (model params will be loaded anyways).")
+    processor = StandardizeProcessor()
+    if adapt_model and load_old_data:
+        trainer.add_data_from_today(
+            factor_new=processor.factor_new, eps=processor.eps)
     online_exp = OnlineExperiment(
         supplier=supplier, buffer=buffer,
-        processor=StandardizeProcessor(),
-        predictor=DummyPredictor(), trainer=DummyTrainer(), sender=sender)
+        processor=processor,
+        predictor=predictor, trainer=trainer, sender=sender)
     server = PredictionServer(
         (hostname, incoming_port),
         online_experiment=online_exp,
-        out_hostname=out_hostname, out_port=out_port, plot_sensors=plot_sensors,
-        use_out_server=use_out_server, save_data=save_data)
+        out_hostname=out_hostname, out_port=out_port,
+        plot_sensors=plot_sensors,
+        use_out_server=use_out_server, save_data=save_data,
+        model_base_name=base_name,
+        save_model_trainer_params=adapt_model)
     # Compilation takes some time so initialize trainer already
     # before waiting in connection in server
     log.info("Starting server on port {:d}".format(incoming_port))
@@ -507,7 +578,8 @@ if __name__ == '__main__':
     # factor for converting to samples
     ms_to_samples = args.fs / 1000.0
     # convert all millisecond arguments to number of samples
-    main(out_hostname=args.outhost,
+    main(
+        out_hostname=args.outhost,
         out_port=args.outport,
         base_name=args.modelfile,
         params_filename=args.paramsfile,
@@ -519,9 +591,9 @@ if __name__ == '__main__':
         batch_size=args.batchsize,
         learning_rate=args.learningrate,
         n_min_trials=args.mintrials, 
-        trial_start_offset=int(args.trialstartoffset * ms_to_samples), 
-        break_start_offset=int(args.breakstartoffset * ms_to_samples),
-        break_stop_offset=int(args.breakstopoffset * ms_to_samples),
+        trial_start_offset=int(args.trialstartoffsetms * ms_to_samples),
+        break_start_offset=int(args.breakstartoffsetms * ms_to_samples),
+        break_stop_offset=int(args.breakstopoffsetms * ms_to_samples),
         pred_gap=int(args.predgap * ms_to_samples),
         incoming_port=args.inport,
         load_old_data=not args.noolddata,
@@ -530,5 +602,7 @@ if __name__ == '__main__':
         train_on_breaks=(not args.nobreaktraining),
         min_break_samples=int(args.minbreakms * ms_to_samples),
         min_trial_samples=int(args.mintrialms * ms_to_samples),
+        n_chans=args.nchans,
+        cuda=not args.cpu,
         )
     
