@@ -17,8 +17,8 @@ def parse_command_line_arguments():
     required_named.add_argument('--fs', action='store', type=int,
         help="Sampling rate of EEG signal (in Hz). Only used to convert "
         "other arguments from milliseconds to number of samples", required=True)
-    required_named.add_argument('--modelfile', action='store',
-        help='Basename of the modelfile', required=True)
+    required_named.add_argument('--expfolder', action='store',
+        help='Folder with model etc.', required=True)
     required_named.add_argument('--inputsamples', action='store',
         type=int,
         help='Input samples (!) for the ConvNet (in samples!).', required=True)
@@ -579,7 +579,7 @@ if __name__ == '__main__':
     main(
         out_hostname=args.outhost,
         out_port=args.outport,
-        base_name=args.modelfile,
+        base_name=args.expfolder,
         params_filename=args.paramsfile,
         plot_sensors=args.plot,
         save_data=not args.nosave,
