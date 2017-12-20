@@ -48,6 +48,7 @@ def send_file_data():
 
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect(("127.0.0.1", 7987))
+    gevent.sleep(2) # allow other server some time to react to connection first
 
     chan_names = ['Fp1', 'Fpz', 'Fp2', 'AF7',
                   'AF3', 'AF4', 'AF8', 'F7',
@@ -72,15 +73,27 @@ def send_file_data():
     i_block = 0  # if setting i_block to sth higher, printed results will incorrect
     max_stop_block = 10000
     stop_block = 100
+    cur_marker = 0
+    n_samples_waiting = 49
+    n_to_next_marker = n_samples_waiting
     rng = RandomState(3948394)
     assert stop_block < max_stop_block
     while i_block < stop_block:
         # chan x time
         arr = rng.randn(n_chans, n_samples).astype(np.float32)
+
+        arr[-1,:] = cur_marker
         s.send(arr.tobytes(order='F'))
         assert arr.shape == (n_chans, n_samples)
         i_block += 1
         gevent.sleep(0.03)
+        n_to_next_marker -= n_samples
+        if n_to_next_marker <= 0:
+            n_to_next_marker = n_samples_waiting
+            if cur_marker  == 0:
+                cur_marker = float(rng.randint(1,6))
+            else:
+                cur_marker = 0
     print("Done.")
 
 

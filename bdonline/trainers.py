@@ -117,8 +117,9 @@ class BatchCntTrainer(object):
                 marker_buffer)
             trial_start = trial_starts[-1]
             trial_stop = trial_stops[-1]
-            log.info("Trial has ended for class {:d}".format(
-                int(marker_buffer[trial_start])))
+            ## Logging and assertions
+            log.info("Trial has ended for class {:d}, from {:d} to {:d}".format(
+                int(marker_buffer[trial_start]), trial_start, trial_stop))
             assert trial_start < trial_stop, ("trial start {:d} should be "
                                               "before trial stop {:d}, markers: {:s}").format(
                 trial_start,
@@ -241,7 +242,17 @@ class BatchCntTrainer(object):
                            all_markers):
         """Assumes all markers already changed the class for break."""
         crop_size = self.input_time_length - self.n_preds_per_input + 1
+        if pred_stop < crop_size:
+            log.info("Prediction stop {:d} smaller crop size {:d}, not adding"
+                     "".format(pred_stop, crop_size))
+            return
         in_sample_start = pred_start - crop_size + 1
+        if in_sample_start < 0:
+            pred_start = crop_size - 1
+            in_sample_start = pred_start - crop_size + 1
+            assert in_sample_start == 0
+            log.info("Prediction start before start of buffer, resetting to 0.")
+        assert in_sample_start >= 0
         # Later functions need one marker per input sample
         # (so also need markers at start that will not actually be used,
         # which are only there
@@ -269,16 +280,18 @@ class BatchCntTrainer(object):
                 len(needed_markers), n_expected_samples))
         # handle case where trial is too small
         if pred_stop - pred_start < self.n_preds_per_input:
-            log.warn("Trial/break has only {:d} predicted samples in it, "
+            log.warn("Trial/break has only {:d} predicted samples "
+                     "from {:d} to {:d} in it, "
                      "less than the "
-                     "{:d} concurrently processed samples of the model!"
+                     "{:d} concurrently processed samples of the model! "
                      "Will add padding that should be masked during training.".format(
                 pred_stop - pred_start,
+                pred_start, pred_stop,
                 self.n_preds_per_input))
             # add -1 markers that will not be used during training for the
             # data before
             n_pad_samples = self.n_preds_per_input - (pred_stop - pred_start)
-            pad_markers = np.zeros(n_pad_samples, dtype=all_markers.dtype)
+            pad_markers = np.zeros(n_pad_samples, dtype=all_markers.dtype) - 1
             needed_markers = np.concatenate((pad_markers, needed_markers))
             pad_samples = np.zeros_like(all_samples[0:n_pad_samples])
             needed_samples = np.concatenate((pad_samples, needed_samples))
@@ -327,11 +340,15 @@ class BatchCntTrainer(object):
         trial_y = np.copy(
             trial_markers) - 1  # -1 as zero is non-trial marker
         trial_len = len(trial_data)
+        i_pred_start = crop_size - 1
+        i_pred_stop = trial_len
         start_stop_blocks = _get_start_stop_blocks_for_trial(
-            crop_size - 1, trial_len - 1, self.input_time_length,
+            i_pred_start, i_pred_stop, self.input_time_length,
             self.n_preds_per_input)
         assert start_stop_blocks[0][0] == 0, (
-            "First block should start at first sample")
+            "First block should start at first sample, starts at {:d}".format(
+                start_stop_blocks[0][0]
+            ))
         batch = self._create_batch_from_start_stop_blocks(
             trial_data, trial_y, start_stop_blocks, self.n_preds_per_input)
         self.data_batches.append(batch[0])

@@ -18,10 +18,10 @@ def parse_command_line_arguments():
         help="Sampling rate of EEG signal (in Hz). Only used to convert "
         "other arguments from milliseconds to number of samples", required=True)
     required_named.add_argument('--modelfile', action='store',
-        help='Basename of the modelfile')
-    parser.add_argument('--inputsamples', action='store',
+        help='Basename of the modelfile', required=True)
+    required_named.add_argument('--inputsamples', action='store',
         type=int,
-        help='Input samples (!) for the ConvNet.')
+        help='Input samples (!) for the ConvNet (in samples!).', required=True)
     parser.add_argument('--inport', action='store', type=int,
         default=7987, help='Port from which to accept incoming sensor data.')
     parser.add_argument('--outhost', action='store',
@@ -535,16 +535,14 @@ def main(
         model.load_state_dict(model_params)
         train_params_filename = params_filename.replace('model_params.pkl',
                                                         'trainer_params.pkl')
-        log.info("Loading trainer params from {:s}".format(
-            train_params_filename))
         if os.path.isfile(train_params_filename):
-            if use_new_adam_params:
+            if adapt_model and use_new_adam_params:
                 log.info("Loading trainer params from {:s}".format(
                     train_params_filename))
                 train_params = th.load(train_params_filename,
                                        map_location=inner_device_mapping)
                 optimizer.load_state_dict(train_params)
-        else:
+        elif adapt_model:
             log.warn("No train/adam params found, starting optimization params "
                      "from scratch (model params will be loaded anyways).")
     processor = StandardizeProcessor()
