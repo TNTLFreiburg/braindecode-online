@@ -26,7 +26,7 @@ def parse_command_line_arguments():
         default=7987, help='Port from which to accept incoming sensor data.')
     parser.add_argument('--outhost', action='store',
         default='172.30.0.117', help='Hostname/IP of the prediction receiver')
-    parser.add_argument('--outport', action='store',
+    parser.add_argument('--outport', action='store', type=int,
         default=30000, help='Port of the prediction receiver')
     parser.add_argument('--paramsfile', action='store', 
         help='Use these (possibly adapted) parameters for the model. '
