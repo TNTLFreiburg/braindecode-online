@@ -118,30 +118,30 @@ class BatchCntTrainer(object):
             trial_start = trial_starts[-1]
             trial_stop = trial_stops[-1]
             ## Logging and assertions
-            log.info("Trial has ended for class {:d}, from {:d} to {:d}".format(
+            log.info("Trial has ended for class {}, from {} to {}".format(
                 int(marker_buffer[trial_start]), trial_start, trial_stop))
-            assert trial_start < trial_stop, ("trial start {:d} should be "
-                                              "before trial stop {:d}, markers: {:s}").format(
+            assert trial_start < trial_stop, ("trial start {} should be "
+                                              "before trial stop {}, markers: {}").format(
                 trial_start,
                 trial_stop, str(marker_samples_with_overlap))
             assert marker_buffer[trial_start - 1] == 0, (
-                "Expect a 0 marker before trial start, instead {:d}".format(
+                "Expect a 0 marker before trial start, instead {}".format(
                     marker_buffer[trial_start - 1]))
             assert marker_buffer[trial_start] != 0, (
-                "Expect a nonzero marker at trial start instead {:d}".format(
+                "Expect a nonzero marker at trial start instead {}".format(
                     marker_buffer[trial_start]))
             assert marker_buffer[trial_stop - 1] != 0, (
-                "Expect a nonzero marker at trial end instead {:d}".format(
+                "Expect a nonzero marker at trial end instead {}".format(
                     marker_buffer[trial_stop]))
             assert marker_buffer[trial_start] == marker_buffer[
                 trial_stop - 1], (
-                "Expect a same marker at trial start and end instead {:d} / {:d}".format(
+                "Expect a same marker at trial start and end instead {} / {}".format(
                     marker_buffer[trial_start],
                     marker_buffer[trial_stop]))
             self.add_trial(trial_start, trial_stop,
                            buffer.data_buffer,
                            marker_buffer)
-            log.info("Now {:d} trials (including breaks)".format(
+            log.info("Now {} trials (including breaks)".format(
                 len(self.data_batches)))
 
             start_train_time = time.time()
@@ -315,6 +315,10 @@ class BatchCntTrainer(object):
         # but stop indices in python are exclusive so +1
         trial_stops = np.flatnonzero(np.diff(markers) < 0) + 1
 
+        if len(trial_starts) == 0 or len(trial_stops) == 0:
+            print('len(trial_starts):', len(trial_starts))
+            print('len(trial_stops):', len(trial_stops))
+        
         if trial_starts[0] >= trial_stops[0]:
             # cut out first trial which only has end marker
             trial_stops = trial_stops[1:]

@@ -36,7 +36,7 @@ class RememberPredictionsServer(gevent.server.StreamServer):
 
 
 def start_remember_predictions_server():
-    hostname = ''
+    hostname = 'localhost'
     server = RememberPredictionsServer((hostname, 30000))
     print("Starting server")
     server.start()
@@ -66,13 +66,13 @@ def send_file_data():
     chan_line = " ".join(chan_names) + "\n"
     s.send(chan_line.encode('utf-8'))
     n_chans = 65
-    n_samples = 50
+    n_samples = 100
     s.send(np.array([n_chans], dtype=np.int32).tobytes())
     s.send(np.array([n_samples], dtype=np.int32).tobytes())
     print("Sending data...")
     i_block = 0  # if setting i_block to sth higher, printed results will incorrect
     max_stop_block = 10000
-    stop_block = 100
+    stop_block = 1000
     cur_marker = 0
     n_samples_waiting = 49
     n_to_next_marker = n_samples_waiting
@@ -198,11 +198,16 @@ if __name__ == "__main__":
     # also start server, should also expect a quit signal....
     # (for now just stop reading after 10 preds)
     # wait for enter press to continue
-    gevent.signal(signal.SIGQUIT, gevent.kill)
+    gevent.signal(signal.SIGINT, gevent.kill)
     server = start_remember_predictions_server()
     send_file_data()
 
+    
     print("Finished sending data, press enter to continue")
+    
+    input()
+    
+    """
     enter_pressed = False
     while not enter_pressed:
         i, o, e = gevent.select.select([sys.stdin], [], [], 0.1)
@@ -210,6 +215,8 @@ if __name__ == "__main__":
             if s == sys.stdin:
                 _ = sys.stdin.readline()
                 enter_pressed = True
+    """            
+                
     """Not needed anymore? reactivate this?
     y_signal = create_y_signal(cnt)
     i_pred_samples = [int(line[:-1]) for line in server.i_pred_samples]
