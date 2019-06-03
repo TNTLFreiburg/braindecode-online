@@ -1,10 +1,4 @@
 #!/usr/bin/env python
-import matplotlib
-import logging
-
-# Have to do this here in for choosing correct matplotlib backend before
-# it is imported anywhere
-
 
 def parse_command_line_arguments():
     import argparse
@@ -84,22 +78,30 @@ def parse_command_line_arguments():
         "offset, you supplied {:d}".format(args.breakstopoffset))
     return args
 
-log = logging.getLogger(__name__)
+    
+#
+# imports
+#
+import sys
+import os
+import os.path
+import signal
+import argparse
+import datetime
+import time
+from glob import glob
+import threading
+import logging
+
+import matplotlib
 matplotlib_backend = parse_command_line_arguments().plotbackend
 try:
     matplotlib.use(matplotlib_backend)
 except:
     print("Could not use {:s} backend for matplotlib".format(
         matplotlib_backend))
-
-import signal
-import argparse
-import datetime
-import time
-import os.path
-import sys
-from glob import glob
-import os
+mpl_logger = logging.getLogger('matplotlib')
+mpl_logger.setLevel(logging.WARNING) 
 
 import numpy as np
 import torch as th
@@ -109,18 +111,56 @@ import gevent.select
 import gevent.server
 from scipy import interpolate
 import h5py
+
 from braindecode.torch_ext.constraints import MaxNormDefaultConstraint
 from braindecode.torch_ext.losses import log_categorical_crossentropy
 
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from bdonline.datasuppliers import ArraySupplier
 from bdonline.experiment import OnlineExperiment
 from bdonline.buffer import DataMarkerBuffer
 from bdonline.predictors import DummyPredictor, ModelPredictor
 from bdonline.processors import StandardizeProcessor
 from bdonline.trainers import NoTrainer
-from bdonline.experiment import OnlineExperiment
-from bdonline.buffer import DataMarkerBuffer
 from bdonline.trainers import BatchCntTrainer
+from braindevel_online.live_plot import LivePlot
+
+
+
+class AsyncStdinReader(threading.Thread):
+    
+    # override for threading.Thread
+    def __init__(self):
+        self.active = False
+        self.input_string = None
+        super(AsyncStdinReader, self).__init__()
+    
+    # override for threading.Thread
+    def run(self):
+        print('AsyncStdinReader: reading until enter:')
+        self.input_string = input()
+        self.active = False
+    
+    def input_async(self):
+        if self.active:
+            return None
+        elif self.input_string is None:
+            self.active = True
+            self.start()
+            return None
+        else:
+            returnstring = self.input_string
+            self.input_string = None
+            return returnstring
+
+            
+#
+# global variables
+#
+log = logging.getLogger(__name__)
+my_async_stdin_reader = AsyncStdinReader()            
+            
+            
 
 
 class PredictionSender(object):
@@ -169,8 +209,9 @@ def read_until_bytes_received(socket, n_bytes):
         n_remaining -= len(chunk)
     array = b"".join(array_parts)
     return array
-
-
+        
+    
+    
 def read_until_bytes_received_or_enter_pressed(socket, n_bytes):
     '''
     Read bytes from socket until reaching given number of bytes, cancel
@@ -192,11 +233,16 @@ def read_until_bytes_received_or_enter_pressed(socket, n_bytes):
         array_parts.append(chunk)
         n_remaining -= len(chunk)
         # check if enter is pressed
-        i, o, e = gevent.select.select([sys.stdin], [], [], 0.0001)
-        for s in i:
-            if s == sys.stdin:
-                _ = sys.stdin.readline()
-                enter_pressed = True
+        # throws exception on windows. needed?->yes! when stopped the program saves model and data
+        # i, o, e = gevent.select.select([sys.stdin], [], [], 0.0001)
+        # for s in i:
+        #     if s == sys.stdin:
+        #         _ = sys.stdin.readline()
+        #         enter_pressed = True
+        input_string = my_async_stdin_reader.input_async()
+        if input_string is not None:
+            enter_pressed = True
+            
     if enter_pressed:
         return None
     else:
@@ -271,7 +317,7 @@ class PredictionServer(gevent.server.StreamServer):
 
     def receive_header(self, in_socket):
         chan_names_line = '' + in_socket.recv(1).decode('utf-8')
-        while chan_names_line[-1] != '\n':
+        while len(chan_names_line) == 0 or chan_names_line[-1] != '\n':
             chan_names_line += in_socket.recv(1).decode('utf-8')
         log.info("Chan names:\n{:s}".format(chan_names_line))
         chan_names = chan_names_line.replace('\n','').split(" ")
@@ -303,8 +349,6 @@ class PredictionServer(gevent.server.StreamServer):
     def plot_sensors_until_enter_press(self, chan_names, in_socket, n_bytes,
                                        n_chans, n_samples_per_block):
         log.info("Starting Plot for plot")
-        from  braindevel.online.live_plot import LivePlot
-        log.info("Import")
         live_plot = LivePlot(plot_freq=150)
         log.info("Liveplot created")
         live_plot.initPlots(chan_names)
@@ -318,11 +362,15 @@ class PredictionServer(gevent.server.StreamServer):
             array = array.reshape(n_chans, n_samples_per_block, order='F')
             live_plot.accept_samples(array.T)
             # check if enter is pressed
-            i,o,e = gevent.select.select([sys.stdin],[],[],0.001)
-            for s in i:
-                if s == sys.stdin:
-                    _ = sys.stdin.readline()
-                    enter_pressed = True
+            # throws exception on Windows. 
+            # i,o,e = gevent.select.select([sys.stdin],[],[],0.001)
+            # for s in i:
+            #     if s == sys.stdin:
+            #         _ = sys.stdin.readline()
+            #         enter_pressed = True
+            input_string = my_async_stdin_reader.input_async()
+            if input_string is not None:
+                enter_pressed = True
 
         live_plot.close()
         log.info("Plot finished")
@@ -344,7 +392,7 @@ class PredictionServer(gevent.server.StreamServer):
             
 
     def print_results(self):
-        n_classes = 5
+        n_classes = 2
         i_samples = list(zip(
             *self.online_experiment.storer.i_samples_and_predictions))[0]
         predictions = list(zip(
@@ -363,7 +411,7 @@ class PredictionServer(gevent.server.StreamServer):
         corrcoeffs = np.corrcoef(interpolated_preds, markers_1_hot.T)[
                      n_classes:,:n_classes]
 
-        print("Corrcoeffs (assuming n_classes=5)")
+        print("Corrcoeffs (assuming n_classes=", n_classes, ")")
         print(corrcoeffs)
         print("diagonal")
         print(np.diag(corrcoeffs))
@@ -483,7 +531,7 @@ def main(
         cuda):
     setup_logging()
 
-    hostname = ''
+    hostname = 'localhost'
     supplier = None
     sender = None
     buffer = None
@@ -569,7 +617,7 @@ def main(
     server.serve_forever()
 
 if __name__ == '__main__':
-    gevent.signal(signal.SIGQUIT, gevent.kill)
+    gevent.signal(signal.SIGINT, gevent.kill)
     args = parse_command_line_arguments()
     if args.noprint:
         log.setLevel("WARN")
