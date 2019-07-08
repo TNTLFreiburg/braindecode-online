@@ -4,9 +4,10 @@ import os.path
 import logging
 from copy import deepcopy
 import time
-
+import torch
 import numpy as np
 from numpy.random import RandomState
+from torch.autograd import Variable
 
 from braindecode.datautil.signalproc import exponential_running_standardize
 from braindecode.datautil.iterators import _get_start_stop_blocks_for_trial, \
@@ -35,15 +36,14 @@ class BatchCntTrainer(object):
                  n_classes,
                  n_updates_per_break, batch_size,
                  n_min_trials, trial_start_offset, break_start_offset,
-                 break_stop_offset, add_breaks=True,
+                 break_stop_offset, gradfolder, add_breaks=True,
                  min_break_samples=0, min_trial_samples=0,
-                 cuda=True):
+                 cuda=True, savegrad=False):
         self.__dict__.update(locals())
         del self.self
         self.rng = RandomState(30948348)
         self.data_batches = []
         self.y_batches = []
-
 
     def set_n_chans(self, n_chans):
         test_input = np_to_var(
@@ -55,7 +55,6 @@ class BatchCntTrainer(object):
         self.n_preds_per_input = int(out.size()[2])
         self.n_classes = int(out.size()[1])
         return
-
 
     def add_data_from_today(self, factor_new, eps):
         # Check if old data exists, if yes add it
@@ -158,12 +157,12 @@ class BatchCntTrainer(object):
             if trial_end_in_marker_buffer:
                 # +1 necessary since diff removes one index
                 trial_start = \
-                np.flatnonzero(np.diff(marker_buffer) > 0)[-1] + 1
+                    np.flatnonzero(np.diff(marker_buffer) > 0)[-1] + 1
                 trial_stop = \
-                np.flatnonzero(np.diff(marker_buffer) < 0)[-1] + 1
+                    np.flatnonzero(np.diff(marker_buffer) < 0)[-1] + 1
                 assert trial_start > trial_stop, (
-                "If trial has just started "
-                "expect this to be after stop of last trial")
+                    "If trial has just started "
+                    "expect this to be after stop of last trial")
                 assert marker_buffer[trial_start - 1] == 0, (
                     "Expect a 0 marker before trial start, instead {:d}".format(
                         marker_buffer[trial_start - 1]))
@@ -188,9 +187,9 @@ class BatchCntTrainer(object):
         # determine markers and in samples for default case
         pred_start = trial_start + self.trial_start_offset
         if (pred_start < trial_stop) and (
-                trial_stop - trial_start >= self.min_trial_samples):
+                        trial_stop - trial_start >= self.min_trial_samples):
             assert (
-            len(np.unique(all_markers[pred_start:trial_stop])) == 1), (
+                len(np.unique(all_markers[pred_start:trial_stop])) == 1), (
                 "All predicted markers should be the same in one trial, instead got:"
                 "{:s}".format(
                     str(np.unique(all_markers[trial_start:trial_stop]))))
@@ -220,7 +219,7 @@ class BatchCntTrainer(object):
             pred_start = break_start + self.break_start_offset
             pred_stop = break_stop + self.break_stop_offset
             if (pred_start < pred_stop) and (
-                    break_stop - break_start >= self.min_break_samples):
+                            break_stop - break_start >= self.min_break_samples):
                 # keep n_classes for 1-based matlab indexing logic in markers
                 all_markers[pred_start:pred_stop] = self.n_classes
                 self.add_trial_or_break(pred_start, pred_stop, all_samples,
@@ -318,7 +317,7 @@ class BatchCntTrainer(object):
         if len(trial_starts) == 0 or len(trial_stops) == 0:
             print('len(trial_starts):', len(trial_starts))
             print('len(trial_stops):', len(trial_stops))
-        
+
         if trial_starts[0] >= trial_stops[0]:
             # cut out first trial which only has end marker
             trial_stops = trial_stops[1:]
@@ -364,7 +363,7 @@ class BatchCntTrainer(object):
         Xs = []
         ys = []
         for start, stop in start_stop_blocks:
-            Xs.append(trial_X[start:stop].T[:,:,None])
+            Xs.append(trial_X[start:stop].T[:, :, None])
             ys.append(trial_y[stop - n_preds_per_input:stop])
         batch_X = np.array(Xs).astype(np.float32)
         batch_y = np.array(ys).astype(np.int64)
@@ -372,6 +371,7 @@ class BatchCntTrainer(object):
 
     def train(self):
         n_trials = len(self.data_batches)
+        print(n_trials)
         if n_trials >= self.n_min_trials:
             log.info("Training model...")
             # Remember values as backup in case of NaNs
@@ -423,6 +423,13 @@ class BatchCntTrainer(object):
                 i_supercrops = self.rng.choice(n_total_supercrops,
                                                size=self.batch_size,
                                                p=block_probs)
+                # saving indices of the samples
+                if self.savegrad:
+                    now = datetime.datetime.now()
+                    file_name = str(now.day) + '-' + str(now.month) + '-' + str(now.year) + '_' + \
+                                str(now.hour) + '-' + str(now.minute) + '-' + str(now.second)
+                    torch.save(i_supercrops, self.gradfolder + 'batchInd_' + file_name)
+
                 this_y = np.asarray(all_y_blocks[i_supercrops])
                 this_topo = np.zeros((len(i_supercrops),) +
                                      self.data_batches[0].shape[1:],
@@ -454,10 +461,33 @@ class BatchCntTrainer(object):
         self.model.train()
         input_vars = np_to_var(inputs)
         target_vars = np_to_var(targets)
+
         if self.cuda:
             input_vars = input_vars.cuda()
             target_vars = target_vars.cuda()
         self.optimizer.zero_grad()
+
+        if self.savegrad:
+            layer_names = list(dict(self.model.named_children()).keys())
+
+            gradients = {}
+            weights = {}
+            for l_nr, layer in enumerate(self.model):
+                if hasattr(layer, 'weight'):
+                    gradients[layer_names[l_nr] + '_weight_grad'] = layer.weight.grad
+                    weights[layer_names[l_nr] + '_weight'] = layer.weight
+                if hasattr(layer, 'bias'):
+                    if hasattr(layer.bias, 'grad'):
+                        gradients[layer_names[l_nr] + '_bias_grad'] = layer.bias.grad
+                        weights[layer_names[l_nr] + '_bias'] = layer.bias
+            now = datetime.datetime.now()
+            file_name = str(now.day) + '-' + str(now.month) + '-' + str(now.year) + '_' + \
+                        str(now.hour) + '-' + str(now.minute) + '-' + str(now.second)
+            torch.save(gradients, self.gradfolder + 'grad_' + file_name)
+            torch.save(self.optimizer.state_dict(), self.gradfolder + 'optimizer_' + file_name)
+            torch.save(weights, self.gradfolder + 'weights_' + file_name)
+
+
         outputs = self.model(input_vars)
         loss = self.loss_function(outputs, target_vars)
         if self.model_loss_function is not None:
@@ -468,9 +498,10 @@ class BatchCntTrainer(object):
             self.model_constraint.apply(self.model)
 
 
-
 def var_or_tensor_to_np(v):
     try:
         return var_to_np(v)
     except RuntimeError:
+
+
         return v.cpu().numpy()

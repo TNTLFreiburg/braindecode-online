@@ -9,82 +9,84 @@ def parse_command_line_arguments():
     # see http://stackoverflow.com/a/24181138/1469195
     required_named = parser.add_argument_group('required named arguments')
     required_named.add_argument('--fs', action='store', type=int,
-        help="Sampling rate of EEG signal (in Hz). Only used to convert "
-        "other arguments from milliseconds to number of samples", required=True)
+                                help="Sampling rate of EEG signal (in Hz). Only used to convert "
+                                     "other arguments from milliseconds to number of samples", required=True)
     required_named.add_argument('--expfolder', action='store',
-        help='Folder with model etc.', required=True)
+                                help='Folder with model etc.', required=True)
     required_named.add_argument('--inputsamples', action='store',
-        type=int,
-        help='Input samples (!) for the ConvNet (in samples!).', required=True)
+                                type=int,
+                                help='Input samples (!) for the ConvNet (in samples!).', required=True)
     parser.add_argument('--inport', action='store', type=int,
-        default=7987, help='Port from which to accept incoming sensor data.')
+                        default=7987, help='Port from which to accept incoming sensor data.')
     parser.add_argument('--outhost', action='store',
-        default='172.30.0.117', help='Hostname/IP of the prediction receiver')
+                        default='172.30.0.117', help='Hostname/IP of the prediction receiver')
     parser.add_argument('--outport', action='store', type=int,
-        default=30000, help='Port of the prediction receiver')
-    parser.add_argument('--paramsfile', action='store', 
-        help='Use these (possibly adapted) parameters for the model. '
-        'Filename should end with model_params.npy. Can also use "newest"'
-        'to load the newest available  parameter file. '
-        'None means to not load any new parameters, instead use '
-        'originally (offline)-trained parameters.')
+                        default=30000, help='Port of the prediction receiver')
+    parser.add_argument('--paramsfile', action='store',
+                        help='Use these (possibly adapted) parameters for the model. '
+                             'Filename should end with model_params.npy. Can also use "newest"'
+                             'to load the newest available  parameter file. '
+                             'None means to not load any new parameters, instead use '
+                             'originally (offline)-trained parameters.')
+    parser.add_argument('--plot', action='store_true',
+                        help="Show plots of the sensors first.")
+    parser.add_argument('--noout', action='store_true',
+                        help="Don't wait for prediction receiver.")
+    parser.add_argument('--noadapt', action='store_true',
+                        help="Don't adapt model while running online.")
+    parser.add_argument('--updatesperbreak', action='store', default=5,
+                        type=int, help="How many updates to adapt the model during trial break.")
+    parser.add_argument('--batchsize', action='store', default=45, type=int,
+                        help="Batch size for adaptation updates.")
+    parser.add_argument('--learningrate', action='store', default=1e-4,
+                        type=float, help="Learning rate for adaptation updates.")
+    parser.add_argument('--mintrials', action='store', default=10, type=int,
+                        help="Number of trials before starting adaptation updates.")
     ##### you add grad parameter here ######
 
     parser.add_argument('--savegrad', action='store', type=bool,
                         default=False, help='Saving the gradients on each batch')
+    parser.add_argument('--gradfolder', action='store', type=str,
+                        default='.\\param_ind_saving\\', help='Folder where to save all the parameters for reproducibility')
 
     #####
-    parser.add_argument('--plot', action='store_true',
-        help="Show plots of the sensors first.")
-    parser.add_argument('--noout', action='store_true',
-        help="Don't wait for prediction receiver.")
-    parser.add_argument('--noadapt', action='store_true',
-        help="Don't adapt model while running online.")
-    parser.add_argument('--updatesperbreak', action='store', default=5,
-        type=int, help="How many updates to adapt the model during trial break.")
-    parser.add_argument('--batchsize', action='store', default=45, type=int,
-        help="Batch size for adaptation updates.")
-    parser.add_argument('--learningrate', action='store', default=1e-4, 
-        type=float, help="Learning rate for adaptation updates.")
-    parser.add_argument('--mintrials', action='store', default=10, type=int,
-        help="Number of trials before starting adaptation updates.")
     parser.add_argument('--trialstartoffsetms', action='store', default=500, type=int,
-        help="Time offset for the first sample to use (within a trial, in ms) "
-        "for adaptation updates.")
+                        help="Time offset for the first sample to use (within a trial, in ms) "
+                             "for adaptation updates.")
     parser.add_argument('--breakstartoffsetms', action='store', default=1000, type=int,
-        help="Time offset for the first sample to use (within a break(!), in ms) "
-        "for adaptation updates.")
+                        help="Time offset for the first sample to use (within a break(!), in ms) "
+                             "for adaptation updates.")
     parser.add_argument('--breakstopoffsetms', action='store', default=-1000, type=int,
-        help="Sample offset for the last sample to use (within a break(!), in ms) "
-        "for adaptation updates.")
+                        help="Sample offset for the last sample to use (within a break(!), in ms) "
+                             "for adaptation updates.")
     parser.add_argument('--predgap', action='store', default=200, type=int,
-        help="Amount of milliseconds between predictions.")
+                        help="Amount of milliseconds between predictions.")
     parser.add_argument('--minbreakms', action='store', default=2000, type=int,
-        help="Minimum length of a break to be used for training (in ms).")
+                        help="Minimum length of a break to be used for training (in ms).")
     parser.add_argument('--mintrialms', action='store', default=0, type=int,
-        help="Minimum length of a trial to be used for training (in ms).")
+                        help="Minimum length of a trial to be used for training (in ms).")
     parser.add_argument('--noprint', action='store_true',
-        help="Don't print on terminal.")
+                        help="Don't print on terminal.")
     parser.add_argument('--nosave', action='store_true',
-        help="Don't save streamed data (including markers).")
+                        help="Don't save streamed data (including markers).")
     parser.add_argument('--noolddata', action='store_true',
-        help="Dont load and use old data for adaptation")
+                        help="Dont load and use old data for adaptation")
     parser.add_argument('--plotbackend', action='store',
-        default='agg', help='Matplotlib backend to use for plotting.')
+                        default='agg', help='Matplotlib backend to use for plotting.')
     parser.add_argument('--nooldadamparams', action='store_true',
-        help='Do not load old adam params.')
-    parser.add_argument('--nobreaktraining',action='store_true',
-        help='Do not use the breaks as training examples for the rest class.')
-    parser.add_argument('--cpu',action='store_true',
-        help='Use the CPU instead of GPU/Cuda.')
+                        help='Do not load old adam params.')
+    parser.add_argument('--nobreaktraining', action='store_true',
+                        help='Do not use the breaks as training examples for the rest class.')
+    parser.add_argument('--cpu', action='store_true',
+                        help='Use the CPU instead of GPU/Cuda.')
     parser.add_argument('--nchans', action='store', default=64, type=int,
-        help="Number of EEG channels")
+                        help="Number of EEG channels")
     args = parser.parse_args()
     assert args.breakstopoffsetms <= 0, ("Please supply a nonpositive break stop "
-        "offset, you supplied {:d}".format(args.breakstopoffset))
+                                         "offset, you supplied {:d}".format(args.breakstopoffset))
     return args
 
-    
+
 #
 # imports
 #
@@ -100,6 +102,7 @@ import threading
 import logging
 
 import matplotlib
+
 matplotlib_backend = parse_command_line_arguments().plotbackend
 try:
     matplotlib.use(matplotlib_backend)
@@ -107,10 +110,14 @@ except:
     print("Could not use {:s} backend for matplotlib".format(
         matplotlib_backend))
 mpl_logger = logging.getLogger('matplotlib')
-mpl_logger.setLevel(logging.WARNING) 
+mpl_logger.setLevel(logging.WARNING)
 
 import numpy as np
 import torch as th
+import pyxdf as xdf
+import xdf_to_bd
+import index_sender
+from scipy.signal import filtfilt, iirnotch, butter
 from torch.optim import Adam
 from gevent import socket
 import gevent.select
@@ -131,6 +138,13 @@ from bdonline.trainers import NoTrainer
 from bdonline.trainers import BatchCntTrainer
 from braindevel_online.live_plot import LivePlot
 
+TCP_SENDER_EEG_NCHANS = 65  # number of channels to send to braindecode-online, includes labels
+TCP_SENDER_EEG_NSAMPLES = 10
+
+
+
+xdf_filenames=['D:\\DLVR\\Data\\subjM\\block1.xdf', 'D:\\DLVR\Data\\subjM\\block2.xdf', 'D:\\DLVR\\Data\\subjM\\block3.xdf']
+DATA_AND_LABELS, CHAN_NAMES = xdf_to_bd.xdf_to_bd(xdf_filenames, 250)
 
 
 class AsyncStdinReader(threading.Thread):
@@ -163,7 +177,10 @@ class AsyncStdinReader(threading.Thread):
 #
 # global variables
 #
+LOG_FILENAME = 'stored_experiment.txt'
+logging.basicConfig(filename=LOG_FILENAME, filemode='w', level=logging.INFO)
 log = logging.getLogger(__name__)
+
 my_async_stdin_reader = AsyncStdinReader()            
             
             
@@ -205,6 +222,21 @@ class DataReceiver(object):
             markers = array[-1]
             return data, markers
 
+class Data_from_file():
+    def __init__(self, socket):
+        self.socket = socket
+
+
+    def wait_for_data(self):
+        idx = self.socket.recv(4)
+        idx = np.frombuffer(idx, dtype='int32')
+
+        array = DATA_AND_LABELS[:, idx]
+        data = array[:-1,:].T
+        markers = array[-1,:]
+        if np.any(markers):
+            log.info('Class label is {}'.format(markers[0]))
+        return data, markers
 
 def read_until_bytes_received(socket, n_bytes):
     array_parts = []
@@ -288,11 +320,11 @@ class PredictionServer(gevent.server.StreamServer):
             prediction_sender=None
 
         # Receive Header
-        chan_names, n_chans, n_samples_per_block = self.receive_header(in_socket)
+        chan_names, n_chans, n_samples_per_block = CHAN_NAMES, TCP_SENDER_EEG_NCHANS, TCP_SENDER_EEG_NSAMPLES
         n_numbers = n_chans * n_samples_per_block
         n_bytes_per_block = n_numbers * 4 # float32
-        data_receiver = DataReceiver(in_socket,  n_chans, n_samples_per_block,
-                                     n_bytes_per_block)
+        data_receiver = Data_from_file(in_socket)
+
         log.info("Numbers in total:  {:d}".format(n_numbers))
         
         log.info("Before checking plot")
@@ -535,7 +567,7 @@ def main(
         min_trial_samples,
         n_chans,
         cuda,
-        savegrad):
+        savegrad, gradfolder):
     setup_logging()
 
     hostname = 'localhost'
@@ -546,14 +578,16 @@ def main(
     gpu_id = th.FloatTensor(1).cuda().get_device()
     def inner_device_mapping(storage, location):
         return storage.cuda(gpu_id)
-    model_name = os.path.join(base_name, 'model.pkl')
+    model_name = os.path.join(base_name, 'deep_4_test')
     model = th.load(model_name, map_location=inner_device_mapping)
 
     predictor = ModelPredictor(
         model, input_time_length=input_time_length, pred_gap=pred_gap,
         cuda=cuda)
     if adapt_model:
-        loss_function = log_categorical_crossentropy
+        #loss_function = log_categorical_crossentropy
+        loss_function = th.nn.CrossEntropyLoss()
+
         model_loss_function = None
         model_constraint = MaxNormDefaultConstraint()
         optimizer = Adam(model.parameters(), lr=learning_rate)
@@ -573,7 +607,8 @@ def main(
             min_break_samples=min_break_samples,
             min_trial_samples=min_trial_samples,
             cuda=cuda,
-            savegrad=savegrad)
+            savegrad=savegrad,
+            gradfolder=gradfolder)
         trainer.set_n_chans(n_chans)
     else:
         trainer = NoTrainer()
@@ -622,6 +657,8 @@ def main(
     log.info("Starting server on port {:d}".format(incoming_port))
     server.start()
     log.info("Started server")
+    print('started server')
+
     server.serve_forever()
 
 if __name__ == '__main__':
@@ -658,5 +695,6 @@ if __name__ == '__main__':
         min_trial_samples=int(args.mintrialms * ms_to_samples),
         n_chans=args.nchans,
         cuda=not args.cpu,
-        savegrad=args.savegrad)
+        savegrad=args.savegrad,
+        gradfolder=args.gradfolder)
     

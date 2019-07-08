@@ -288,7 +288,7 @@ def forward_forever():
         if eeg_sample is not None and eeg_timestamp is not None:
             if DEBUG:
                 print('got new eeg sample. eeg_sample_counter:', eeg_sample_counter)
-            eeg_sample = np.concatenate((eeg_sample[0:34], eeg_sample[42:]))
+            eeg_sample = np.concatenate((eeg_sample[0:34], eeg_sample[42:-3]))
             eeg_samplebuffer[:-1, eeg_sample_counter] = eeg_sample
             eeg_samplebuffer[-1, eeg_sample_counter] = eeg_sample_label
             eeg_sample_counter += 1

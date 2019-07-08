@@ -57,10 +57,12 @@ class ModelPredictor(object):
             in_var = in_var.cuda()
         pred = var_to_np(self.model(in_var))
         # possibly mean across time axis
-        if pred.ndim > 2:
-            pred = np.mean(pred, axis=2).squeeze()
         if self.exponentiate_preds:
             pred = np.exp(pred)
+        if pred.ndim > 2:
+            pred = np.mean(pred, axis=2).squeeze()
+        '''if self.exponentiate_preds:
+            pred = np.exp(pred)'''
         return pred
 
 
