@@ -1,2 +1,3 @@
-python server_save_and_replay.py --fs 250 --expfolder D:\braindecode-online_new\bdonline\models\ --inputsamples 500 --predgap 10 --outhost localhost --nobreaktraining --trialstartoffsetms 0 --savegrad True
---gradfolder D:\\DLVR\\savegrad\\ --mintrials 1
+python server_save_and_replay.py --fs 250 --expfolder D:\braindecode-online\bdonline\models\best_model  --inputsamples 500 --predgap 250 --outhost localhost --nobreaktraining --trialstartoffsetms 0 --savegrad True --gradfolder D:\\DLVR\\savegrad\\ --mintrials 1
+
+python server.py --fs 250 --expfolder D:\braindecode-online\bdonline\models\\best_model --inputsamples 500 --predgap 250 --outhost localhost --nobreaktraining --trialstartoffsetms 0 --mintrials 1 --savegrad True --gradfolder D:\\DLVR\\savegrad\\

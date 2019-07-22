@@ -38,12 +38,14 @@ class BatchCntTrainer(object):
                  n_min_trials, trial_start_offset, break_start_offset,
                  break_stop_offset, gradfolder, add_breaks=True,
                  min_break_samples=0, min_trial_samples=0,
-                 cuda=True, savegrad=False):
+                 cuda=True, savegrad=False, savetimestamps=False):
         self.__dict__.update(locals())
         del self.self
         self.rng = RandomState(30948348)
         self.data_batches = []
         self.y_batches = []
+        self.savetimestamps = savetimestamps
+        self.timestamp_batches = []
 
     def set_n_chans(self, n_chans):
         test_input = np_to_var(
@@ -137,12 +139,17 @@ class BatchCntTrainer(object):
                 "Expect a same marker at trial start and end instead {} / {}".format(
                     marker_buffer[trial_start],
                     marker_buffer[trial_stop]))
-            self.add_trial(trial_start, trial_stop,
-                           buffer.data_buffer,
-                           marker_buffer)
+            if self.savetimestamps:
+                print(buffer.timestamp_buffer.shape)
+                self.add_trial(trial_start, trial_stop,
+                               buffer.data_buffer,
+                               marker_buffer, buffer.timestamp_buffer)
+            else:
+                self.add_trial(trial_start, trial_stop,
+                               buffer.data_buffer,
+                               marker_buffer)
             log.info("Now {} trials (including breaks)".format(
                 len(self.data_batches)))
-
             start_train_time = time.time()
             self.train()
             end_train_time = time.time()
@@ -175,7 +182,7 @@ class BatchCntTrainer(object):
                                all_markers=marker_buffer)
                 # log.info("Break added, now at {:d} batches".format(len(self.data_batches)))
 
-    def add_trial(self, trial_start, trial_stop, all_samples, all_markers):
+    def add_trial(self, trial_start, trial_stop, all_samples, all_markers, all_time_stamps=np.array([])):
         # Add trial by determining needed signal/samples and markers
         # In case the model predicts more samples concurrently
         # than the number of trials in this sample
@@ -193,7 +200,11 @@ class BatchCntTrainer(object):
                 "All predicted markers should be the same in one trial, instead got:"
                 "{:s}".format(
                     str(np.unique(all_markers[trial_start:trial_stop]))))
-            self.add_trial_or_break(pred_start, trial_stop, all_samples,
+            if all_time_stamps.any():
+                self.add_trial_or_break(pred_start, trial_stop, all_samples,
+                                    all_markers, all_time_stamps)
+            else:
+                self.add_trial_or_break(pred_start, trial_stop, all_samples,
                                     all_markers)
         elif pred_start >= trial_stop:
             log.warning(
@@ -238,7 +249,7 @@ class BatchCntTrainer(object):
             pass  # Ignore break that was supposed to be added
 
     def add_trial_or_break(self, pred_start, pred_stop, all_samples,
-                           all_markers):
+                           all_markers, all_timestamps=np.array([])):
         """Assumes all markers already changed the class for break."""
         crop_size = self.input_time_length - self.n_preds_per_input + 1
         if pred_stop < crop_size:
@@ -269,6 +280,7 @@ class BatchCntTrainer(object):
         needed_markers = np.concatenate((np.zeros(crop_size - 1,
                                                   dtype=needed_markers.dtype),
                                          needed_markers))
+        needed_timestamps = all_timestamps[in_sample_start:pred_stop]
         assert len(needed_samples) == len(needed_markers), (
             "{:d} markers and {:d} samples (should be same)".format(
                 len(needed_samples), len(needed_markers)))
@@ -304,7 +316,7 @@ class BatchCntTrainer(object):
         assert len(needed_samples) == n_expected_samples, (
             "Extracted {:d} samples, but should have {:d}".format(
                 len(needed_samples), n_expected_samples))
-        self.add_trial_topo_trial_y(needed_samples, needed_markers)
+        self.add_trial_topo_trial_y(needed_samples, needed_markers, needed_timestamps)
 
     def get_trial_start_stop_indices(self, markers):
         # + 1 as diff "removes" one index, i.e. diff will be above zero
@@ -331,7 +343,7 @@ class BatchCntTrainer(object):
         assert (np.all(trial_starts <= trial_stops))
         return trial_starts, trial_stops
 
-    def add_trial_topo_trial_y(self, trial_data, trial_markers):
+    def add_trial_topo_trial_y(self, trial_data, trial_markers, timestamps=np.array([])):
         """ needed_samples are samples needed for predicting entire trial,
         i.e. they typically include a part before the first sample of the trial."""
         crop_size = self.input_time_length - self.n_preds_per_input + 1
@@ -353,25 +365,34 @@ class BatchCntTrainer(object):
                 start_stop_blocks[0][0]
             ))
         batch = self._create_batch_from_start_stop_blocks(
-            trial_data, trial_y, start_stop_blocks, self.n_preds_per_input)
+            trial_data, trial_y, start_stop_blocks, self.n_preds_per_input, timestamps)
         self.data_batches.append(batch[0])
         self.y_batches.append(batch[1])
+        if timestamps.any():
+            self.timestamp_batches.append(batch[2])
 
     def _create_batch_from_start_stop_blocks(self, trial_X, trial_y,
                                              start_stop_blocks,
-                                             n_preds_per_input):
+                                             n_preds_per_input, timestamps=np.array([])):
         Xs = []
         ys = []
+        if timestamps.any():
+            Ts = []
         for start, stop in start_stop_blocks:
             Xs.append(trial_X[start:stop].T[:, :, None])
             ys.append(trial_y[stop - n_preds_per_input:stop])
+            if timestamps.any():
+                Ts.append(timestamps[start:stop])
         batch_X = np.array(Xs).astype(np.float32)
         batch_y = np.array(ys).astype(np.int64)
-        return batch_X, batch_y
+        if timestamps.any():
+            batch_T = np.array(Ts)
+            return batch_X, batch_y, batch_T
+        else:
+            return batch_X, batch_y
 
     def train(self):
         n_trials = len(self.data_batches)
-        print(n_trials)
         if n_trials >= self.n_min_trials:
             log.info("Training model...")
             # Remember values as backup in case of NaNs
@@ -379,7 +400,8 @@ class BatchCntTrainer(object):
             optimizer_dict_before = deepcopy(self.optimizer.state_dict())
 
             all_y_blocks = np.concatenate(self.y_batches, axis=0)
-
+            if self.savetimestamps:
+                all_timestamps_blocks = np.concatenate(self.timestamp_batches)
             # make classes balanced
             # hopefully this is correct?! any sample shd be fine, -1 is a random decision
             labels_per_block = all_y_blocks[:, -1]
@@ -431,6 +453,13 @@ class BatchCntTrainer(object):
                     torch.save(i_supercrops, self.gradfolder + 'batchInd_' + file_name)
 
                 this_y = np.asarray(all_y_blocks[i_supercrops])
+                if self.savetimestamps:
+                    this_timestamp = np.asarray(all_timestamps_blocks[i_supercrops])
+                    now = datetime.datetime.now()
+                    file_name = str(now.day) + '-' + str(now.month) + '-' + str(now.year) + '_' + \
+                                str(now.hour) + '-' + str(now.minute) + '-' + str(now.second)
+                    torch.save(this_timestamp, self.gradfolder + 'timestamps_' + file_name)
+
                 this_topo = np.zeros((len(i_supercrops),) +
                                      self.data_batches[0].shape[1:],
                                      dtype=np.float32)

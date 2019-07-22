@@ -32,6 +32,10 @@ def parse_command_line_arguments():
 
     parser.add_argument('--savegrad', action='store', type=bool,
                         default=False, help='Saving the gradients on each batch')
+    parser.add_argument('--savetimestamps', action='store', type=bool,
+                        default=False, help='Save the timestamps of every batch')
+    parser.add_argument('--gradfolder', action='store', type=str,
+                        default='.\\param_ind_saving\\', help='Folder where to save all the parameters for reproducibility')
 
     #####
     parser.add_argument('--plot', action='store_true',
@@ -173,9 +177,9 @@ class PredictionSender(object):
     def __init__(self, socket):
         self.socket = socket
 
-    def send_prediction(self, i_sample, prediction):
-        log.info("Prediction for sample {:d}:\n{:s}".format(
-            i_sample, str(prediction)))
+    def send_prediction(self, i_sample, prediction, label):
+        log.info("Prediction for sample {:d}:\n{:s} with true label \n {}".format(
+            i_sample, str(prediction), str(label)))
         # +1 to convert 0-based to 1-based indexing
         self.socket.sendall("{:d}\n".format(i_sample + 1).encode('utf-8'))
         n_preds = len(prediction) # e.g. number of classes
@@ -186,11 +190,12 @@ class PredictionSender(object):
 
 
 class DataReceiver(object):
-    def __init__(self, socket, n_chans, n_samples_per_block, n_bytes_per_block):
+    def __init__(self, socket, n_chans, n_samples_per_block, n_bytes_per_block, savetimestamps):
         self.socket = socket
         self.n_chans = n_chans
         self.n_samples_per_block = n_samples_per_block
         self.n_bytes_per_block = n_bytes_per_block
+        self.savetimestamps = savetimestamps
 
     def wait_for_data(self):
         array = read_until_bytes_received_or_enter_pressed(
@@ -198,12 +203,22 @@ class DataReceiver(object):
         if array is None:
             return None
         else:
-            array = np.fromstring(array, dtype=np.float32)
-            array = array.reshape(self.n_chans, self.n_samples_per_block,
+            if self.savetimestamps:
+                array = np.fromstring(array, dtype=np.float32)
+                array = array.reshape(self.n_chans, self.n_samples_per_block,
                                   order='F')
-            data = array[:-1].T
-            markers = array[-1]
-            return data, markers
+                data = array[:-2].T
+                markers = array[-2]
+                timestamps = array[-1]
+                return data, markers, timestamps
+            else:
+                array = np.fromstring(array, dtype=np.float32)
+                array = array.reshape(self.n_chans, self.n_samples_per_block, order='F')
+                data = array[:-1].T
+                markers = array[-1]
+                print(markers)
+                return data, markers
+
 
 
 def read_until_bytes_received(socket, n_bytes):
@@ -261,7 +276,7 @@ class PredictionServer(gevent.server.StreamServer):
     def __init__(self, listener, online_experiment, out_hostname, out_port,
         plot_sensors, use_out_server, save_data,
                  model_base_name,
-                 save_model_trainer_params,
+                 save_model_trainer_params, savetimestamps,
             handle=None, backlog=None, spawn='default', **ssl_args):
         """
         adapt_model only needed to know for saving
@@ -274,6 +289,7 @@ class PredictionServer(gevent.server.StreamServer):
         self.save_data = save_data
         self.model_base_name = model_base_name
         self.save_model_trainer_params = save_model_trainer_params
+        self.savetimestamps = savetimestamps
         super(PredictionServer, self).__init__(listener, handle=handle, spawn=spawn)
 
 
@@ -291,8 +307,9 @@ class PredictionServer(gevent.server.StreamServer):
         chan_names, n_chans, n_samples_per_block = self.receive_header(in_socket)
         n_numbers = n_chans * n_samples_per_block
         n_bytes_per_block = n_numbers * 4 # float32
+        numbers = np.array([n_chans, n_samples_per_block, n_numbers, n_bytes_per_block])
         data_receiver = DataReceiver(in_socket,  n_chans, n_samples_per_block,
-                                     n_bytes_per_block)
+                                     n_bytes_per_block, self.savetimestamps)
         log.info("Numbers in total:  {:d}".format(n_numbers))
         
         log.info("Before checking plot")
@@ -327,27 +344,43 @@ class PredictionServer(gevent.server.StreamServer):
             chan_names_line += in_socket.recv(1).decode('utf-8')
         log.info("Chan names:\n{:s}".format(chan_names_line))
         chan_names = chan_names_line.replace('\n','').split(" ")
-        
+        print(chan_names)
         #
-        assert np.array_equal(chan_names, ['Fp1', 'Fpz', 'Fp2', 'AF7',
-         'AF3', 'AF4', 'AF8', 'F7',
-         'F5', 'F3', 'F1', 'Fz', 'F2', 'F4', 'F6', 'F8', 'FT7', 'FC5', 'FC3',
-         'FC1', 'FCz', 'FC2', 'FC4', 'FC6', 'FT8', 'M1', 'T7', 'C5', 'C3',
-         'C1', 'Cz', 'C2', 'C4', 'C6', 'T8', 'M2', 'TP7', 'CP5', 'CP3',
-         'CP1', 'CPz', 'CP2', 'CP4', 'CP6', 'TP8', 'P7', 'P5', 'P3', 'P1',
-         'Pz', 'P2', 'P4', 'P6', 'P8', 'PO7', 'PO5', 'PO3', 'POz', 'PO4',
-         'PO6', 'PO8', 'O1', 'Oz', 'O2', 'marker']
-            ) or np.array_equal(chan_names,
-         ['Fp1', 'Fpz', 'Fp2', 'AF7', 'AF3', 'AFz', 'AF4', 'AF8',
-         'F5', 'F3', 'F1', 'Fz', 'F2', 'F4', 'F6', 'FC1', 'FCz',
-         'FC2', 'C3', 'C1', 'Cz', 'C2', 'C4', 'CP3', 'CP1', 'CPz',
-         'CP2', 'CP4', 'P1', 'Pz', 'P2', 'POz', 'marker'])
+        if self.savetimestamps:
+            assert np.array_equal(chan_names, ['Fp1', 'Fpz', 'Fp2', 'AF7',
+             'AF3', 'AF4', 'AF8', 'F7',
+             'F5', 'F3', 'F1', 'Fz', 'F2', 'F4', 'F6', 'F8', 'FT7', 'FC5', 'FC3',
+             'FC1', 'FCz', 'FC2', 'FC4', 'FC6', 'FT8', 'M1', 'T7', 'C5', 'C3',
+             'C1', 'Cz', 'C2', 'C4', 'C6', 'T8', 'M2', 'TP7', 'CP5', 'CP3',
+             'CP1', 'CPz', 'CP2', 'CP4', 'CP6', 'TP8', 'P7', 'P5', 'P3', 'P1',
+             'Pz', 'P2', 'P4', 'P6', 'P8', 'PO7', 'PO5', 'PO3', 'POz', 'PO4',
+             'PO6', 'PO8', 'O1', 'Oz', 'O2', 'marker', 'time_stamp']
+                ) or np.array_equal(chan_names,
+             ['Fp1', 'Fpz', 'Fp2', 'AF7', 'AF3', 'AFz', 'AF4', 'AF8',
+             'F5', 'F3', 'F1', 'Fz', 'F2', 'F4', 'F6', 'FC1', 'FCz',
+             'FC2', 'C3', 'C1', 'Cz', 'C2', 'C4', 'CP3', 'CP1', 'CPz',
+             'CP2', 'CP4', 'P1', 'Pz', 'P2', 'POz', 'marker', 'time_stamp'])
+        else:
+            assert np.array_equal(chan_names, ['Fp1', 'Fpz', 'Fp2', 'AF7',
+             'AF3', 'AF4', 'AF8', 'F7',
+             'F5', 'F3', 'F1', 'Fz', 'F2', 'F4', 'F6', 'F8', 'FT7', 'FC5', 'FC3',
+             'FC1', 'FCz', 'FC2', 'FC4', 'FC6', 'FT8', 'M1', 'T7', 'C5', 'C3',
+             'C1', 'Cz', 'C2', 'C4', 'C6', 'T8', 'M2', 'TP7', 'CP5', 'CP3',
+             'CP1', 'CPz', 'CP2', 'CP4', 'CP6', 'TP8', 'P7', 'P5', 'P3', 'P1',
+             'Pz', 'P2', 'P4', 'P6', 'P8', 'PO7', 'PO5', 'PO3', 'POz', 'PO4',
+             'PO6', 'PO8', 'O1', 'Oz', 'O2', 'marker']
+                ) or np.array_equal(chan_names,
+             ['Fp1', 'Fpz', 'Fp2', 'AF7', 'AF3', 'AFz', 'AF4', 'AF8',
+             'F5', 'F3', 'F1', 'Fz', 'F2', 'F4', 'F6', 'FC1', 'FCz',
+             'FC2', 'C3', 'C1', 'Cz', 'C2', 'C4', 'CP3', 'CP1', 'CPz',
+             'CP2', 'CP4', 'P1', 'Pz', 'P2', 'POz', 'marker'])
         n_rows = read_until_bytes_received(in_socket, 4)#n_chans+marker
         n_rows = np.fromstring(n_rows, dtype=np.int32)[0]
         log.info("Number of rows:    {:d}".format(n_rows))
         n_cols = read_until_bytes_received(in_socket, 4)#n_samples_per_block
         n_cols = np.fromstring(n_cols, dtype=np.int32)[0]
         log.info("Number of columns: {:d}".format(n_cols))
+        #print("Number of columns: {:d}".format(n_cols))
         assert n_rows == len(chan_names)
         return chan_names, n_rows, n_cols
 
@@ -389,9 +422,16 @@ class PredictionServer(gevent.server.StreamServer):
 
         self.online_experiment.set_supplier(data_receiver)
         # -1 because n_chans includes marker chan
-        self.online_experiment.set_buffer(DataMarkerBuffer(n_chans - 1, 20000))
+        if self.savetimestamps:
+            self.online_experiment.set_buffer(DataMarkerBuffer(n_chans - 2, 20000, self.savetimestamps))
+        else:
+            self.online_experiment.set_buffer(DataMarkerBuffer(n_chans - 1, 20000, self.savetimestamps))
+
         self.online_experiment.set_sender(prediction_sender)
-        self.online_experiment.trainer.set_n_chans(n_chans - 1)
+        if self.savetimestamps:
+            self.online_experiment.trainer.set_n_chans(n_chans - 2)
+        else:
+            self.online_experiment.trainer.set_n_chans(n_chans - 1)
         self.online_experiment.run()
         print("Finished online experiment")
         return
@@ -535,7 +575,7 @@ def main(
         min_trial_samples,
         n_chans,
         cuda,
-        savegrad):
+        savegrad, gradfolder, savetimestamps):
     setup_logging()
 
     hostname = 'localhost'
@@ -546,7 +586,7 @@ def main(
     gpu_id = th.FloatTensor(1).cuda().get_device()
     def inner_device_mapping(storage, location):
         return storage.cuda(gpu_id)
-    model_name = os.path.join(base_name, 'model.pkl')
+    model_name = os.path.join(base_name, 'deep_4_test')
     model = th.load(model_name, map_location=inner_device_mapping)
 
     predictor = ModelPredictor(
@@ -573,7 +613,7 @@ def main(
             min_break_samples=min_break_samples,
             min_trial_samples=min_trial_samples,
             cuda=cuda,
-            savegrad=savegrad)
+            savegrad=savegrad, gradfolder=gradfolder, savetimestamps=savetimestamps)
         trainer.set_n_chans(n_chans)
     else:
         trainer = NoTrainer()
@@ -608,7 +648,7 @@ def main(
     online_exp = OnlineExperiment(
         supplier=supplier, buffer=buffer,
         processor=processor,
-        predictor=predictor, trainer=trainer, sender=sender)
+        predictor=predictor, trainer=trainer, sender=sender, savetimestamps=savetimestamps)
     server = PredictionServer(
         (hostname, incoming_port),
         online_experiment=online_exp,
@@ -616,7 +656,8 @@ def main(
         plot_sensors=plot_sensors,
         use_out_server=use_out_server, save_data=save_data,
         model_base_name=base_name,
-        save_model_trainer_params=adapt_model)
+        save_model_trainer_params=adapt_model,
+        savetimestamps=savetimestamps)
     # Compilation takes some time so initialize trainer already
     # before waiting in connection in server
     log.info("Starting server on port {:d}".format(incoming_port))
@@ -658,5 +699,7 @@ if __name__ == '__main__':
         min_trial_samples=int(args.mintrialms * ms_to_samples),
         n_chans=args.nchans,
         cuda=not args.cpu,
-        savegrad=args.savegrad)
+        savegrad=args.savegrad,
+        gradfolder=args.gradfolder,
+        savetimestamps=args.savetimestamps)
     

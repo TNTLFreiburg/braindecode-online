@@ -9,7 +9,7 @@ from psychopy.clock import wait
 import gevent.server
 from gevent.server import StreamServer
 import gevent.select
-
+import signal
 from gevent import socket
 
 TCP_SENDER_EEG_PORT = 7987                          # port of braindecode-online
@@ -31,7 +31,6 @@ EEG_CHANNELNAMES = ['Fp1', 'Fpz', 'Fp2', 'AF7',     # channel names send to brai
                   'PO6', 'PO8', 'O1', 'Oz', 'O2', 'marker']
 TCP_RECEIVER_PREDS_HOSTNAME = 'localhost'           # hostname of this PC, used to receive predictions
 TCP_RECEIVER_PREDS_PORT = 30000
-
 
 class PredictionReceiveServer(gevent.server.StreamServer):
     def __init__(self, listener,
@@ -61,6 +60,7 @@ class PredictionReceiveServer(gevent.server.StreamServer):
 
 
 
+
 def start_tcp_receiver_predictions():
     global tcp_recv_server_preds
 
@@ -69,16 +69,17 @@ def start_tcp_receiver_predictions():
                                                      TCP_RECEIVER_PREDS_PORT))
     tcp_recv_server_preds.start()
     print("[done]")
-    return tcp_recv_server_preds
 def main():
-    tcp_recv_server_preds =  start_tcp_receiver_predictions()
+    #start_tcp_receiver_predictions()
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
         sock.connect((TCP_RECEIVER_PREDS_HOSTNAME, TCP_SENDER_EEG_PORT))
+        print('start sending')
         idx = np.array([0])
         while True:
             sock.sendall(idx.tobytes())
             idx +=1
             wait(0.004)
+
 
 if __name__=='__main__':
     main()

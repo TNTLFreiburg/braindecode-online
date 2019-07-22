@@ -20,6 +20,7 @@ import signal
 import pylsl as lsl
 from scipy.signal import filtfilt, iirnotch, butter
 from scipy.stats import ttest_ind
+from psychopy.clock import wait
 
 
 # log = logging.getLogger(__name__)
@@ -40,9 +41,7 @@ DEBUG = False                                       # DEBUG=True activates extra
 
 TCP_SENDER_EEG_PORT = 7987                          # port of braindecode-online
 TCP_SENDER_EEG_HOSTNAME = '127.0.0.1'               # hostname of braindecode-online
-TCP_SENDER_EEG_NCHANS_TIME= 66                          # number of channels to send to braindecode-online, includes labels and timestamps
-TCP_SENDER_EEG_NCHANS= 65                       # number of channels to send to braindecode-online, includes labels
-
+TCP_SENDER_EEG_NCHANS = 65                          # number of channels to send to braindecode-online, includes labels
 TCP_SENDER_EEG_NSAMPLES = 400# number of samples * DOWNSAMPLING_COEF per channel to send to braindecode-online at once
 
 LSL_RECEIVER_EEG_NAME = 'NeuroneStream'             # name of the lsl stream to receive EEG data
@@ -57,18 +56,6 @@ LSL_SENDER_PREDS_ID = 'braindecode preds'           # id of the lsl stream to pu
 TCP_RECEIVER_PREDS_HOSTNAME = 'localhost'           # hostname of this PC, used to receive predictions
 TCP_RECEIVER_PREDS_PORT = 30000                     # port on this PC, used to receive predictions
 
-EEG_CHANNELNAMES_TIME = ['Fp1', 'Fpz', 'Fp2', 'AF7',     # channel names send to braindecode-online
-                  'AF3', 'AF4', 'AF8', 'F7',
-                  'F5', 'F3', 'F1', 'Fz', 'F2', 'F4', 'F6', 'F8', 'FT7', 'FC5',
-                  'FC3',
-                  'FC1', 'FCz', 'FC2', 'FC4', 'FC6', 'FT8', 'M1', 'T7', 'C5',
-                  'C3',
-                  'C1', 'Cz', 'C2', 'C4', 'C6', 'T8', 'M2', 'TP7', 'CP5', 'CP3',
-                  'CP1', 'CPz', 'CP2', 'CP4', 'CP6', 'TP8', 'P7', 'P5', 'P3',
-                  'P1',
-                  'Pz', 'P2', 'P4', 'P6', 'P8', 'PO7', 'PO5', 'PO3', 'POz',
-                  'PO4',
-                  'PO6', 'PO8', 'O1', 'Oz', 'O2', 'marker', 'time_stamp']
 EEG_CHANNELNAMES = ['Fp1', 'Fpz', 'Fp2', 'AF7',     # channel names send to braindecode-online
                   'AF3', 'AF4', 'AF8', 'F7',
                   'F5', 'F3', 'F1', 'Fz', 'F2', 'F4', 'F6', 'F8', 'FT7', 'FC5',
@@ -96,17 +83,7 @@ Q = 30.0  # Quality factor
 # Design notch filter
 B_50, A_50 = iirnotch(F0, Q, TARGET_FS)
 
-def parse_command_line_arguments():
-    import argparse
-    parser = argparse.ArgumentParser(
-        description="""Launch server for online decoding.""",
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter
-    )
-    # see http://stackoverflow.com/a/24181138/1469195
-    parser.add_argument('--savetimestamps', action='store', type=bool,
-                        default=False, help='Save the timestamps of every batch')
-    args = parser.parse_args()
-    return args
+                  
 class PredictionReceiveServer(gevent.server.StreamServer):
     def __init__(self, listener,
                  handle=None, backlog=None, spawn='default', **ssl_args):
@@ -186,7 +163,7 @@ def start_tcp_receiver_predictions():
 
     
     
-def connect_tcp_sender_eeg(savetimestamps):
+def connect_tcp_sender_eeg():
     global tcp_send_socket_eeg
     
     print('tcp connect sender of EEG-data (to braindecode-online)...', end='')
@@ -204,55 +181,14 @@ def connect_tcp_sender_eeg(savetimestamps):
     
     gevent.sleep(2) # allow other server some time to react to connection first
     print('tcp sender eeg data: send header to braindecode-online...', end='')
-    if savetimestamps:
-        chan_line = " ".join(EEG_CHANNELNAMES_TIME) + "\n"
-    else:
-        chan_line = " ".join(EEG_CHANNELNAMES) + "\n"
+    chan_line = " ".join(EEG_CHANNELNAMES) + "\n"
     tcp_send_socket_eeg.send(chan_line.encode('utf-8'))
-    if savetimestamps:
-        tcp_send_socket_eeg.send(np.array([TCP_SENDER_EEG_NCHANS_TIME], dtype=np.int32).tobytes())
-    else:
-        tcp_send_socket_eeg.send(np.array([TCP_SENDER_EEG_NCHANS], dtype=np.int32).tobytes())
+    tcp_send_socket_eeg.send(np.array([TCP_SENDER_EEG_NCHANS], dtype=np.int32).tobytes())
     tcp_send_socket_eeg.send(np.array([TCP_SENDER_EEG_NSAMPLES/DOWNSAMPLING_COEF], dtype=np.int32).tobytes())
     print('[done]')
     
-def label_gatherer(eeg_samplebuffer, DOWNSAMPLING_COEF, savetimestamps):
-    if savetimestamps:
-        eeg_labels = (np.array([np.max(eeg_samplebuffer[-2, i:i + DOWNSAMPLING_COEF]) for i in
-                                np.arange(0, TCP_SENDER_EEG_NSAMPLES, DOWNSAMPLING_COEF)]).reshape(-1, 1)).astype('float32')
-    else:
-        eeg_labels = (np.array([np.max(eeg_samplebuffer[-1, i:i + DOWNSAMPLING_COEF]) for i in
-                                np.arange(0, TCP_SENDER_EEG_NSAMPLES, DOWNSAMPLING_COEF)]).reshape(-1, 1)).astype(
-            'float32')
-    return eeg_labels
 
-def filter_and_downsample(eeg_samplebuffer, DOWNSAMPLING_COEF, savetimestamps):
-    if savetimestamps:
-        eeg_samplebuffer_filt = filtfilt(B_50, A_50, eeg_samplebuffer[:-2, :])
-        eeg_samplebuffer_filt = filtfilt(B_40, A_40, eeg_samplebuffer_filt)
-        eeg_samplebuffer_filt = filtfilt(B_1, A_1, eeg_samplebuffer_filt)
-    else:
-        eeg_samplebuffer_filt = filtfilt(B_50, A_50, eeg_samplebuffer[:-1, :])
-        eeg_samplebuffer_filt = filtfilt(B_40, A_40, eeg_samplebuffer_filt)
-        eeg_samplebuffer_filt = filtfilt(B_1, A_1, eeg_samplebuffer_filt)
-    # Resample
-    eeg_samples = np.array([np.mean(eeg_samplebuffer_filt[:, i:i + DOWNSAMPLING_COEF], axis=1) for i in
-                            np.arange(0, TCP_SENDER_EEG_NSAMPLES, DOWNSAMPLING_COEF)]).astype('float32')
-    return eeg_samples
-
-def timestamp_gatherer(eeg_samplebuffer, DOWNSAMPLING_COEF):
-    eeg_timestamps = (np.array([np.mean(eeg_samplebuffer[-1, i:i + DOWNSAMPLING_COEF]) for i in
-                            np.arange(0, TCP_SENDER_EEG_NSAMPLES, DOWNSAMPLING_COEF)]).reshape(-1, 1)).astype('float32')
-    return eeg_timestamps
-
-def concatenate_data_labels_stamps(eeg_samples, eeg_labels, eeg_timestamps=np.array([])):
-    if eeg_timestamps.any():
-        eeg_samplebuffer_filt_mean = np.concatenate([eeg_samples, eeg_labels,eeg_timestamps ], axis=1).T
-    else:
-        eeg_samplebuffer_filt_mean = np.concatenate([eeg_samples, eeg_labels], axis=1).T
-    return eeg_samplebuffer_filt_mean
-
-class AsyncSocketReader:
+class AsyncSocketReader:    
     def __init__(self, socket):
         self.line = ''
         self.lines = []
@@ -294,132 +230,39 @@ class AsyncSocketReader:
 
     
     
-def forward_forever(savetimestamps):
+def forward_forever():
     forwarding_loopcounter = 0
     loop_time = time.time()
     fallen_behind_labels = True
     fallen_behind_eeg = True
     fallen_behind_predictions = True
     tcp_recv_socketreader_preds = AsyncSocketReader(tcp_recv_socket_preds)
-    if savetimestamps:
-        eeg_samplebuffer = np.zeros((TCP_SENDER_EEG_NCHANS_TIME, TCP_SENDER_EEG_NSAMPLES), dtype='float32')
-    else:
-        eeg_samplebuffer = np.zeros((TCP_SENDER_EEG_NCHANS, TCP_SENDER_EEG_NSAMPLES), dtype='float32')
+    eeg_samplebuffer = np.zeros((TCP_SENDER_EEG_NCHANS, TCP_SENDER_EEG_NSAMPLES), dtype='float32')
     eeg_sample_counter = 0
     eeg_sample_label = 0
     eeg_forwarding_counter = 0
     print('Start forwarding in both directions.')
     # the operations in this loop must not block too long, to ensure that everything stays in sync
     # and we don't fall back behind the data streams
+    predictions = []
     while True:
-        time_elapsed = time.time() - loop_time
-        if time_elapsed > 1:
-            if fallen_behind_labels == True:
-                print('WARNING: falling behind labels, did not wait for them in last 1 sec.')
-            if fallen_behind_eeg == True:
-                print('WARNING: falling behind eeg, did not wait for them in last 1 sec.')   
-            if fallen_behind_predictions == True:
-                print('WARNING: falling behind predictions, did not wait for them in last 1 sec.')
-            warning_triggered = fallen_behind_labels or fallen_behind_eeg or fallen_behind_predictions
-            if warning_triggered:
-                print('WARNING: Info:', forwarding_loopcounter, 'loops in', time_elapsed, 'sec.')
-            fallen_behind_labels = True
-            fallen_behind_eeg = True
-            fallen_behind_predictions = True
-            loop_time = time.time()
-            forwarding_loopcounter = 0
-            
-        if DEBUG:
-            print("")
         forwarding_loopcounter += 1
-        
-        #
-        # read eeg labels from game
-        #
-        if DEBUG:
-            print('read eeg labels from game.')
-        eeg_sample_label_unchecked, eeg_timestamp_label = lsl_inlet_labels.pull_sample(timeout=0)
-        if eeg_sample_label_unchecked is not None and eeg_timestamp_label is not None:
-            eeg_sample_label_unchecked = eeg_sample_label_unchecked[0]
-            if eeg_sample_label_unchecked == 'Monster active':
-                pass
-                # print('new game state:', eeg_sample_label_unchecked)
-                # eeg_sample_label = 1
-            elif eeg_sample_label_unchecked == 'Monster right':
-                print('new game state:', eeg_sample_label_unchecked)
-                eeg_sample_label = 1
-                predictions = []
-            elif eeg_sample_label_unchecked == 'Monster left':
-                print('new game state:', eeg_sample_label_unchecked)
-                eeg_sample_label = 2
-                predictions = []
-            elif eeg_sample_label_unchecked == 'Monster destroyed':
-                print('new game state:', eeg_sample_label_unchecked)
-                eeg_sample_label = 0
-            else:
-                if DEBUG:
-                    print('DEBUG: got some other game state:', eeg_sample_label_unchecked)
-        else:
-            fallen_behind_labels = False
-        
-        #
-        # read eeg data and forward if there is enough
-        #
-        if DEBUG:
-            print('read eeg data from NeurOne.')
-        eeg_sample, eeg_timestamp = lsl_inlet_eeg.pull_sample(timeout=0)
-        if eeg_sample is not None and eeg_timestamp is not None:
-            if DEBUG:
-                print('got new eeg sample. eeg_sample_counter:', eeg_sample_counter)
-            eeg_sample = np.concatenate((eeg_sample[0:34], eeg_sample[42:-3]))
-            if savetimestamps:
-                eeg_samplebuffer[:-2, eeg_sample_counter] = eeg_sample
-                eeg_samplebuffer[-2, eeg_sample_counter] = eeg_sample_label
-                eeg_samplebuffer[-1, eeg_sample_counter] = eeg_timestamp
-            else:
-                eeg_samplebuffer[:-1, eeg_sample_counter] = eeg_sample
-                eeg_samplebuffer[-1, eeg_sample_counter] = eeg_sample_label
-            eeg_sample_counter += 1
-            if eeg_sample_counter == (eeg_samplebuffer.shape[1]):
-                if DEBUG:
-                    print('got enough eeg samples, forwarding. eeg_forwarding_counter:', eeg_forwarding_counter)
-                eeg_forwarding_counter += 1
-                if DEBUG:
-                    print('eeg_samplebuffer:', eeg_samplebuffer)
-                #filter the incoming data
-                eeg_labels = label_gatherer(eeg_samplebuffer, DOWNSAMPLING_COEF, savetimestamps)
-                eeg_time_series = filter_and_downsample(eeg_samplebuffer, DOWNSAMPLING_COEF, savetimestamps)
-                if savetimestamps:
-                    eeg_timestamps = timestamp_gatherer(eeg_samplebuffer, DOWNSAMPLING_COEF)
-                    eeg_samplebuffer_filt_mean = concatenate_data_labels_stamps(eeg_time_series, eeg_labels, eeg_timestamps)
-                else:
-                    eeg_samplebuffer_filt_mean = concatenate_data_labels_stamps(eeg_time_series, eeg_labels)
-                tcp_send_socket_eeg.send(eeg_samplebuffer_filt_mean.tobytes(order='F'))
-                eeg_sample_counter = 0
-                if DEBUG:
-                    print('forwarding eeg_data done.')
-        else:
-            fallen_behind_eeg = False
-            if DEBUG:
-                print('no eeg sample received.')
-        # print('forwarding: Instead eeg-data and labels send some random data.')
-        # send_random_data(tcp_send_socket_eeg, no_blocks=100)
-        # print('forwarding: sending random data done.')
-        
-        #
+        wait(0.1)
+
         # read predictions and forward them
-        # 
-        if forwarding_loopcounter % 20 == 0:   # save time, cause readlines_string blocks at least 1ms
+        #
+        if forwarding_loopcounter % 2 == 0:   # save time, cause readlines_string blocks at least 1ms
             if DEBUG:
                 print('read predictions from braindecode-online...')
             try:
-                i_sample, preds = tcp_recv_socketreader_preds.readlines_string(timeout=0.001, num_lines=2)
+                i_sample, preds, pred_label = tcp_recv_socketreader_preds.readlines_string(timeout=0.001, num_lines=3)
+                pred_label = float(pred_label)
+
             except TimeoutError:
                 fallen_behind_predictions = False
                 if DEBUG:
                     print("no prediction to forward yet.")
             else:
-                print('got new prediction.')
                 if DEBUG:
                     print('got new prediction.')
                     print('i_sample[:-1] =', i_sample[:-1])  # :-1 => without newline
@@ -428,18 +271,22 @@ def forward_forever(savetimestamps):
                 splitted_predictions = preds.split(" ")
                 parsed_predictions = [float(i_sample)] + \
                                     [float(splitted_predictions[i]) for i in range(PREDICTION_NUM_CLASSES)]
-                if eeg_sample_label :
+                if pred_label > 0.5 :
+                    print('prediction length', len(predictions))
                     list_preds = [float(splitted_predictions[0]), float(splitted_predictions[1])]
                     predictions.append(list_preds)
                     all_preds = np.concatenate(predictions).reshape(-1, 2)
                     meaned_preds = np.mean(all_preds, axis=0)
                     max_class = np.argmax(meaned_preds)
+                    print(max_class, 'this is true', pred_label-1)
                     if meaned_preds[max_class] > 0.05:
                         t, prob = ttest_ind(all_preds[:, max_class], np.ones(all_preds.shape[0])*0.05)
                         if prob < 0.20:
                             action = max_class +1
                             print('Action', action)
 
+                else:
+                    predictions = []
                 lsl_outlet_predictions.push_sample(np.array(parsed_predictions, dtype='float32'))
                 if DEBUG:
                     print('forwarding predictions done.')
@@ -475,18 +322,18 @@ def send_random_data(socket, no_blocks=100):
     
 if __name__ == "__main__":
     gevent.signal(signal.SIGINT, gevent.kill)   # used to be signal.SIGQUIT, but didn't work
-    args = parse_command_line_arguments()
-    connect_lsl_receiver_eeg()
-    connect_lsl_receiver_labels()
+    
+    #connect_lsl_receiver_eeg()
+    #connect_lsl_receiver_labels()
     connect_lsl_sender_predictions()
     start_tcp_receiver_predictions()
-    connect_tcp_sender_eeg(args.savetimestamps)
+    #connect_tcp_sender_eeg()
     
     while tcp_recv_preds_connected == False:
         gevent.sleep(0.01)
     print("Started system successfully.")
     
-    forward_forever(args.savetimestamps)
+    forward_forever()
     
 
     

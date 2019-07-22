@@ -1,5 +1,11 @@
 #!/usr/bin/env python
 
+'''
+Server application that takes in a stream of data and labels.
+It makes predictions for all data at regular intervals and can train on data if labels are available.
+This server has been hardwired to load the data and labels itself and then step throigh them to allow replay
+ of previous experiments.
+'''
 def parse_command_line_arguments():
     import argparse
     parser = argparse.ArgumentParser(
@@ -116,7 +122,6 @@ import numpy as np
 import torch as th
 import pyxdf as xdf
 import xdf_to_bd
-import index_sender
 from scipy.signal import filtfilt, iirnotch, butter
 from torch.optim import Adam
 from gevent import socket
@@ -143,8 +148,8 @@ TCP_SENDER_EEG_NSAMPLES = 10
 
 
 
-xdf_filenames=['D:\\DLVR\\Data\\subjM\\block1.xdf', 'D:\\DLVR\Data\\subjM\\block2.xdf', 'D:\\DLVR\\Data\\subjM\\block3.xdf']
-DATA_AND_LABELS, CHAN_NAMES = xdf_to_bd.xdf_to_bd(xdf_filenames, 250)
+xdf_filenames=['D:\\DLVR\\Data\\subjH\\block1.xdf', 'D:\\DLVR\Data\\subjH\\block2.xdf', 'D:\\DLVR\\Data\\subjH\\block3.xdf'] #the data we want to replay
+DATA_AND_LABELS, CHAN_NAMES = xdf_to_bd.bd_data_from_xdf(xdf_filenames, 250) #Load in all data and labels
 
 
 class AsyncStdinReader(threading.Thread):
@@ -190,9 +195,9 @@ class PredictionSender(object):
     def __init__(self, socket):
         self.socket = socket
 
-    def send_prediction(self, i_sample, prediction):
-        log.info("Prediction for sample {:d}:\n{:s}".format(
-            i_sample, str(prediction)))
+    def send_prediction(self, i_sample, prediction, label):
+        log.info("Prediction for sample {:d}:\n{:s} with label{:s}".format(
+            i_sample, str(prediction), str(label)))
         # +1 to convert 0-based to 1-based indexing
         self.socket.sendall("{:d}\n".format(i_sample + 1).encode('utf-8'))
         n_preds = len(prediction) # e.g. number of classes
@@ -200,29 +205,12 @@ class PredictionSender(object):
         format_str = " ".join(["{:f}"] * n_preds) + "\n"
         pred_str = format_str.format(*prediction)
         self.socket.sendall(pred_str.encode('utf-8'))
+        label_str = str(label) + "\n"
+        self.socket.sendall(label_str.encode('utf-8'))
 
 
-class DataReceiver(object):
-    def __init__(self, socket, n_chans, n_samples_per_block, n_bytes_per_block):
-        self.socket = socket
-        self.n_chans = n_chans
-        self.n_samples_per_block = n_samples_per_block
-        self.n_bytes_per_block = n_bytes_per_block
 
-    def wait_for_data(self):
-        array = read_until_bytes_received_or_enter_pressed(
-            self.socket, self.n_bytes_per_block)
-        if array is None:
-            return None
-        else:
-            array = np.fromstring(array, dtype=np.float32)
-            array = array.reshape(self.n_chans, self.n_samples_per_block,
-                                  order='F')
-            data = array[:-1].T
-            markers = array[-1]
-            return data, markers
-
-class Data_from_file():
+class DataFromFile():       #mimick the receiving of data through LSL
     def __init__(self, socket):
         self.socket = socket
 
@@ -234,8 +222,7 @@ class Data_from_file():
         array = DATA_AND_LABELS[:, idx]
         data = array[:-1,:].T
         markers = array[-1,:]
-        if np.any(markers):
-            log.info('Class label is {}'.format(markers[0]))
+
         return data, markers
 
 def read_until_bytes_received(socket, n_bytes):
@@ -323,7 +310,7 @@ class PredictionServer(gevent.server.StreamServer):
         chan_names, n_chans, n_samples_per_block = CHAN_NAMES, TCP_SENDER_EEG_NCHANS, TCP_SENDER_EEG_NSAMPLES
         n_numbers = n_chans * n_samples_per_block
         n_bytes_per_block = n_numbers * 4 # float32
-        data_receiver = Data_from_file(in_socket)
+        data_receiver = DataFromFile(in_socket)
 
         log.info("Numbers in total:  {:d}".format(n_numbers))
         

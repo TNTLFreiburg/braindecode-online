@@ -14,8 +14,8 @@ class RingBuffer(np.ndarray):
         return np.ndarray.__array_wrap__(self, out_arr, context)
 
     def extend(self, xs):
-        'Adds array xs to the ring buffer. If xs is longer than the ring '
-        'buffer, the last len(ring buffer) of xs are added the ring buffer.'
+        '''Adds array xs to the ring buffer. If xs is longer than the ring
+        buffer, the last len(ring buffer) of xs are added the ring buffer.'''
         xs = np.asarray(xs)
         if self.shape[1:] != xs.shape[1:]:
             raise ValueError("Element's shape mismatch. RingBuffer.shape={}. "
@@ -40,15 +40,20 @@ class RingBuffer(np.ndarray):
 
 
 class DataMarkerBuffer(object):
-    def __init__(self, n_chans, n_samples_in_buffer):
+    def __init__(self, n_chans, n_samples_in_buffer, savetimestamps=False):
         self.data_buffer = RingBuffer(np.zeros((
             n_samples_in_buffer, n_chans), dtype=np.float32))
         self.marker_buffer = RingBuffer(np.zeros((
             n_samples_in_buffer), dtype=np.float32))
+        if savetimestamps:
+            self.timestamp_buffer = RingBuffer(np.zeros((
+                n_samples_in_buffer), dtype=np.float32))
         self.n_total_samples = 0
 
-    def buffer(self, data, markers):
+    def buffer(self, data, markers, timestamps=np.array([])):
         assert len(data) == len(markers)
         self.data_buffer.extend(data)
         self.marker_buffer.extend(markers)
+        if timestamps.any():
+            self.timestamp_buffer.extend(timestamps)
         self.n_total_samples += len(data)

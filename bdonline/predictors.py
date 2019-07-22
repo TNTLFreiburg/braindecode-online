@@ -44,10 +44,11 @@ class ModelPredictor(object):
         if end == 0:
             end = None
         input_for_pred = buffer.data_buffer[start:end]
+        label_for_pred = np.max(buffer.marker_buffer[start:end])
         prediction = self.predict_with_model(input_for_pred)
         # -1 since we have 0-based indexing in python
         self.i_last_pred = buffer.n_total_samples - n_samples_after_pred - 1
-        return self.i_last_pred, prediction
+        return self.i_last_pred, prediction, label_for_pred
 
     def predict_with_model(self, data):
         self.model.eval()
