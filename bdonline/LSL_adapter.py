@@ -419,7 +419,6 @@ def forward_forever(savetimestamps):
                 if DEBUG:
                     print("no prediction to forward yet.")
             else:
-                print('got new prediction.')
                 if DEBUG:
                     print('got new prediction.')
                     print('i_sample[:-1] =', i_sample[:-1])  # :-1 => without newline

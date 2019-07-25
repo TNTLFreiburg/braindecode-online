@@ -1,94 +1,4 @@
 #!/usr/bin/env python
-
-def parse_command_line_arguments():
-    import argparse
-    parser = argparse.ArgumentParser(
-        description="""Launch server for online decoding.""",
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter
-    )
-    # see http://stackoverflow.com/a/24181138/1469195
-    required_named = parser.add_argument_group('required named arguments')
-    required_named.add_argument('--fs', action='store', type=int,
-        help="Sampling rate of EEG signal (in Hz). Only used to convert "
-        "other arguments from milliseconds to number of samples", required=True)
-    required_named.add_argument('--expfolder', action='store',
-        help='Folder with model etc.', required=True)
-    required_named.add_argument('--inputsamples', action='store',
-        type=int,
-        help='Input samples (!) for the ConvNet (in samples!).', required=True)
-    parser.add_argument('--inport', action='store', type=int,
-        default=7987, help='Port from which to accept incoming sensor data.')
-    parser.add_argument('--outhost', action='store',
-        default='172.30.0.117', help='Hostname/IP of the prediction receiver')
-    parser.add_argument('--outport', action='store', type=int,
-        default=30000, help='Port of the prediction receiver')
-    parser.add_argument('--paramsfile', action='store', 
-        help='Use these (possibly adapted) parameters for the model. '
-        'Filename should end with model_params.npy. Can also use "newest"'
-        'to load the newest available  parameter file. '
-        'None means to not load any new parameters, instead use '
-        'originally (offline)-trained parameters.')
-    ##### you add grad parameter here ######
-
-    parser.add_argument('--savegrad', action='store', type=bool,
-                        default=False, help='Saving the gradients on each batch')
-    parser.add_argument('--savetimestamps', action='store', type=bool,
-                        default=False, help='Save the timestamps of every batch')
-    parser.add_argument('--gradfolder', action='store', type=str,
-                        default='.\\param_ind_saving\\', help='Folder where to save all the parameters for reproducibility')
-
-    #####
-    parser.add_argument('--plot', action='store_true',
-        help="Show plots of the sensors first.")
-    parser.add_argument('--noout', action='store_true',
-        help="Don't wait for prediction receiver.")
-    parser.add_argument('--noadapt', action='store_true',
-        help="Don't adapt model while running online.")
-    parser.add_argument('--updatesperbreak', action='store', default=5,
-        type=int, help="How many updates to adapt the model during trial break.")
-    parser.add_argument('--batchsize', action='store', default=45, type=int,
-        help="Batch size for adaptation updates.")
-    parser.add_argument('--learningrate', action='store', default=1e-4, 
-        type=float, help="Learning rate for adaptation updates.")
-    parser.add_argument('--mintrials', action='store', default=10, type=int,
-        help="Number of trials before starting adaptation updates.")
-    parser.add_argument('--trialstartoffsetms', action='store', default=500, type=int,
-        help="Time offset for the first sample to use (within a trial, in ms) "
-        "for adaptation updates.")
-    parser.add_argument('--breakstartoffsetms', action='store', default=1000, type=int,
-        help="Time offset for the first sample to use (within a break(!), in ms) "
-        "for adaptation updates.")
-    parser.add_argument('--breakstopoffsetms', action='store', default=-1000, type=int,
-        help="Sample offset for the last sample to use (within a break(!), in ms) "
-        "for adaptation updates.")
-    parser.add_argument('--predgap', action='store', default=200, type=int,
-        help="Amount of milliseconds between predictions.")
-    parser.add_argument('--minbreakms', action='store', default=2000, type=int,
-        help="Minimum length of a break to be used for training (in ms).")
-    parser.add_argument('--mintrialms', action='store', default=0, type=int,
-        help="Minimum length of a trial to be used for training (in ms).")
-    parser.add_argument('--noprint', action='store_true',
-        help="Don't print on terminal.")
-    parser.add_argument('--nosave', action='store_true',
-        help="Don't save streamed data (including markers).")
-    parser.add_argument('--noolddata', action='store_true',
-        help="Dont load and use old data for adaptation")
-    parser.add_argument('--plotbackend', action='store',
-        default='agg', help='Matplotlib backend to use for plotting.')
-    parser.add_argument('--nooldadamparams', action='store_true',
-        help='Do not load old adam params.')
-    parser.add_argument('--nobreaktraining',action='store_true',
-        help='Do not use the breaks as training examples for the rest class.')
-    parser.add_argument('--cpu',action='store_true',
-        help='Use the CPU instead of GPU/Cuda.')
-    parser.add_argument('--nchans', action='store', default=64, type=int,
-        help="Number of EEG channels")
-    args = parser.parse_args()
-    assert args.breakstopoffsetms <= 0, ("Please supply a nonpositive break stop "
-        "offset, you supplied {:d}".format(args.breakstopoffset))
-    return args
-
-    
 #
 # imports
 #
@@ -104,14 +14,7 @@ import threading
 import logging
 
 import matplotlib
-matplotlib_backend = parse_command_line_arguments().plotbackend
-try:
-    matplotlib.use(matplotlib_backend)
-except:
-    print("Could not use {:s} backend for matplotlib".format(
-        matplotlib_backend))
-mpl_logger = logging.getLogger('matplotlib')
-mpl_logger.setLevel(logging.WARNING) 
+
 
 import numpy as np
 import torch as th
@@ -126,150 +29,34 @@ from braindecode.torch_ext.constraints import MaxNormDefaultConstraint
 from braindecode.torch_ext.losses import log_categorical_crossentropy
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from bdonline.parsers import parse_command_line_arguments
 from bdonline.datasuppliers import ArraySupplier
 from bdonline.experiment import OnlineExperiment
 from bdonline.buffer import DataMarkerBuffer
-from bdonline.predictors import DummyPredictor, ModelPredictor
+from bdonline.predictors import ModelPredictor
 from bdonline.processors import StandardizeProcessor
 from bdonline.trainers import NoTrainer
 from bdonline.trainers import BatchCntTrainer
 from braindevel_online.live_plot import LivePlot
+from bdonline.receivers import DataReceiver
+from bdonline.read import read_until_bytes_received, AsyncStdinReader, my_async_stdin_reader
+from bdonline.senders import PredictionSender
 
+matplotlib_backend = parse_command_line_arguments().plotbackend
+try:
+    matplotlib.use(matplotlib_backend)
+except:
+    print("Could not use {:s} backend for matplotlib".format(
+        matplotlib_backend))
+mpl_logger = logging.getLogger('matplotlib')
+mpl_logger.setLevel(logging.WARNING)
 
-
-class AsyncStdinReader(threading.Thread):
-    
-    # override for threading.Thread
-    def __init__(self):
-        self.active = False
-        self.input_string = None
-        super(AsyncStdinReader, self).__init__()
-    
-    # override for threading.Thread
-    def run(self):
-        print('AsyncStdinReader: reading until enter:')
-        self.input_string = input()
-        self.active = False
-    
-    def input_async(self):
-        if self.active:
-            return None
-        elif self.input_string is None:
-            self.active = True
-            self.start()
-            return None
-        else:
-            returnstring = self.input_string
-            self.input_string = None
-            return returnstring
 
             
 #
 # global variables
 #
 log = logging.getLogger(__name__)
-my_async_stdin_reader = AsyncStdinReader()            
-            
-            
-
-
-class PredictionSender(object):
-    def __init__(self, socket):
-        self.socket = socket
-
-    def send_prediction(self, i_sample, prediction, label):
-        log.info("Prediction for sample {:d}:\n{:s} with true label \n {}".format(
-            i_sample, str(prediction), str(label)))
-        # +1 to convert 0-based to 1-based indexing
-        self.socket.sendall("{:d}\n".format(i_sample + 1).encode('utf-8'))
-        n_preds = len(prediction) # e.g. number of classes
-        # format all preds as floats with spaces inbetween
-        format_str = " ".join(["{:f}"] * n_preds) + "\n"
-        pred_str = format_str.format(*prediction)
-        self.socket.sendall(pred_str.encode('utf-8'))
-
-
-class DataReceiver(object):
-    def __init__(self, socket, n_chans, n_samples_per_block, n_bytes_per_block, savetimestamps):
-        self.socket = socket
-        self.n_chans = n_chans
-        self.n_samples_per_block = n_samples_per_block
-        self.n_bytes_per_block = n_bytes_per_block
-        self.savetimestamps = savetimestamps
-
-    def wait_for_data(self):
-        array = read_until_bytes_received_or_enter_pressed(
-            self.socket, self.n_bytes_per_block)
-        if array is None:
-            return None
-        else:
-            if self.savetimestamps:
-                array = np.fromstring(array, dtype=np.float32)
-                array = array.reshape(self.n_chans, self.n_samples_per_block,
-                                  order='F')
-                data = array[:-2].T
-                markers = array[-2]
-                timestamps = array[-1]
-                return data, markers, timestamps
-            else:
-                array = np.fromstring(array, dtype=np.float32)
-                array = array.reshape(self.n_chans, self.n_samples_per_block, order='F')
-                data = array[:-1].T
-                markers = array[-1]
-                print(markers)
-                return data, markers
-
-
-
-def read_until_bytes_received(socket, n_bytes):
-    array_parts = []
-    n_remaining = n_bytes
-    while n_remaining > 0:
-        chunk = socket.recv(n_remaining)
-        array_parts.append(chunk)
-        n_remaining -= len(chunk)
-    array = b"".join(array_parts)
-    return array
-        
-    
-    
-def read_until_bytes_received_or_enter_pressed(socket, n_bytes):
-    '''
-    Read bytes from socket until reaching given number of bytes, cancel
-    if enter was pressed.
-
-    Parameters
-    ----------
-    socket:
-        Socket to read from.
-    n_bytes: int
-        Number of bytes to read.
-    '''
-    enter_pressed = False
-    # http://dabeaz.blogspot.de/2010/01/few-useful-bytearray-tricks.html
-    array_parts = []
-    n_remaining = n_bytes
-    while (n_remaining > 0) and (not enter_pressed):
-        chunk = socket.recv(n_remaining)
-        array_parts.append(chunk)
-        n_remaining -= len(chunk)
-        # check if enter is pressed
-        # throws exception on windows. needed?->yes! when stopped the program saves model and data
-        # i, o, e = gevent.select.select([sys.stdin], [], [], 0.0001)
-        # for s in i:
-        #     if s == sys.stdin:
-        #         _ = sys.stdin.readline()
-        #         enter_pressed = True
-        input_string = my_async_stdin_reader.input_async()
-        if input_string is not None:
-            enter_pressed = True
-            
-    if enter_pressed:
-        return None
-    else:
-        array = b"".join(array_parts)
-        assert len(array) == n_bytes
-        return array
 
 
 class PredictionServer(gevent.server.StreamServer):
