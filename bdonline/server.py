@@ -18,12 +18,13 @@ import matplotlib
 
 import numpy as np
 import torch as th
-from torch.optim import Adam
+from torch.optim import Adam, SGD
 from gevent import socket
 import gevent.select
 import gevent.server
 from scipy import interpolate
 import h5py
+sys.path.append('D:\\DLVR\\braindecode')
 
 from braindecode.torch_ext.constraints import MaxNormDefaultConstraint
 from braindecode.torch_ext.losses import log_categorical_crossentropy
