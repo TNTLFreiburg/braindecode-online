@@ -84,6 +84,9 @@ EEG_CHANNELNAMES = ['Fp1', 'Fpz', 'Fp2', 'AF7',     # channel names send to brai
 PREDICTION_NUM_CLASSES = 2
 TARGET_FS = 250
 DOWNSAMPLING_COEF = int(5000 / TARGET_FS)
+PRED_WINDOW_SIZE = 10
+PRED_THRESHOLD = 0.6
+ACTION_THRESHOLD = 0.8
 # Butter filter (highpass) for 1 Hz
 B_1, A_1 = butter(6, 1 / TARGET_FS, btype='high', output='ba')
 
@@ -348,11 +351,15 @@ def forward_forever(savetimestamps):
             elif eeg_sample_label_unchecked == 'Monster right':
                 print('new game state:', eeg_sample_label_unchecked)
                 eeg_sample_label = 1
-                predictions = []
+                predictions = np.zeros((PRED_WINDOW_SIZE, 1))
+                pred_counter = 0
+                sample_start = time.time()
             elif eeg_sample_label_unchecked == 'Monster left':
                 print('new game state:', eeg_sample_label_unchecked)
                 eeg_sample_label = 2
-                predictions = []
+                predictions = np.zeros((PRED_WINDOW_SIZE, 1))
+                sample_start = time.time()
+                pred_counter = 0
             elif eeg_sample_label_unchecked == 'Monster destroyed':
                 print('new game state:', eeg_sample_label_unchecked)
                 eeg_sample_label = 0
@@ -408,7 +415,7 @@ def forward_forever(savetimestamps):
         
         #
         # read predictions and forward them
-        # 
+        #
         if forwarding_loopcounter % 20 == 0:   # save time, cause readlines_string blocks at least 1ms
             if DEBUG:
                 print('read predictions from braindecode-online...')
@@ -427,21 +434,30 @@ def forward_forever(savetimestamps):
                 splitted_predictions = preds.split(" ")
                 parsed_predictions = [float(i_sample)] + \
                                     [float(splitted_predictions[i]) for i in range(PREDICTION_NUM_CLASSES)]
-                if eeg_sample_label :
-                    list_preds = [float(splitted_predictions[0]), float(splitted_predictions[1])]
-                    predictions.append(list_preds)
-                    all_preds = np.concatenate(predictions).reshape(-1, 2)
-                    meaned_preds = np.mean(all_preds, axis=0)
-                    max_class = np.argmax(meaned_preds)
-                    if meaned_preds[max_class] > 0.05:
-                        t, prob = ttest_ind(all_preds[:, max_class], np.ones(all_preds.shape[0])*0.05)
-                        prob = (prob - 0.2) / 0.8
-                        prob = np.max((0., prob))
+                if eeg_sample_label and time.time() - sample_start > 0.5:
+                    list_preds = np.array([float(splitted_predictions[0]), float(splitted_predictions[1])])
+                    if np.max(list_preds) > PRED_THRESHOLD:
+                        if np.argmax(list_preds) == 0:
+                            predictions[pred_counter % PRED_WINDOW_SIZE] = 1
+                        elif np.argmax(list_preds) == 1:
+                            predictions[pred_counter % PRED_WINDOW_SIZE] = -1
+                    else:
+                        predictions[pred_counter % PRED_WINDOW_SIZE] = 0
+                    prob = np.mean(predictions)
+                    if prob < 0:
+                        max_class = 2
+                        prob = np.abs(prob)
+                        prob = np.max((0, (0.8 - prob) / 0.8))
                         max_class_prob = np.array([max_class, prob], dtype='float32')
                         lsl_outlet_predictions.push_sample(max_class_prob)
-                        if prob < 0.20:
-                            action = max_class +1
-                            print('Action', action)
+                    if prob >= 0:
+                        max_class = 1
+                        prob = np.abs(prob)
+                        prob = np.max((0, (0.8 - prob) / 0.8))
+                        max_class_prob = np.array([max_class, prob], dtype='float32')
+                        lsl_outlet_predictions.push_sample(max_class_prob)
+
+                    pred_counter += 1
                 if DEBUG:
                     print('forwarding predictions done.')
     
