@@ -29,7 +29,8 @@ sys.path.append('D:\\DLVR\\braindecode')
 from braindecode.models import deep4
 from braindecode.torch_ext.constraints import MaxNormDefaultConstraint
 from braindecode.torch_ext.losses import log_categorical_crossentropy
-
+from braindecode.models import deep4
+from braindecode.models.util import to_dense_prediction_model
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from bdonline.parsers import parse_command_line_arguments
 from bdonline.datasuppliers import ArraySupplier
@@ -375,12 +376,21 @@ def main(
     gpu_id = th.FloatTensor(1).cuda().get_device()
     def inner_device_mapping(storage, location):
         return storage.cuda(gpu_id)
+    """
     model_name = os.path.join(base_name, 'model_dict')
     model_parameters = th.load(model_name)
     model = deep4.Deep4Net(64, 2, input_time_length, 1)
     model = model.create_network()
     to_dense_prediction_model(model)
     model.load_state_dict(model_parameters)
+    model.cuda()
+    """
+    model_name = os.path.join(base_name, 'deep_4_params')
+    model_dict = th.load(model_name)
+    model = deep4.Deep4Net(n_chans, 2, input_time_length, 1)
+    model = model.create_network()
+    model.load_state_dict(model_dict)
+    to_dense_prediction_model(model)
     model.cuda()
 
     predictor = ModelPredictor(
