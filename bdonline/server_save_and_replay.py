@@ -18,7 +18,7 @@ def parse_command_line_arguments():
                                 help="Sampling rate of EEG signal (in Hz). Only used to convert "
                                      "other arguments from milliseconds to number of samples", required=True)
     required_named.add_argument('--expfolder', action='store',
-                                help='Folder with model etc.', required=True)
+                                help='F1', required=True)
     required_named.add_argument('--inputsamples', action='store',
                                 type=int,
                                 help='Input samples (!) for the ConvNet (in samples!).', required=True)
