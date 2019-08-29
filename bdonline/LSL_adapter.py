@@ -24,6 +24,7 @@ import signal
 import pylsl as lsl
 from scipy.signal import filtfilt, iirnotch, butter
 from scipy.stats import ttest_ind
+from braindecode.datautil.signalproc import exponential_running_standardize
 
 
 # log = logging.getLogger(__name__)
@@ -240,14 +241,16 @@ def label_gatherer(eeg_samplebuffer, DOWNSAMPLING_COEF, savetimestamps):
     return eeg_labels
 
 def filter_and_downsample(eeg_samplebuffer, DOWNSAMPLING_COEF, savetimestamps):
-    if savetimestamps:
-        eeg_samplebuffer_filt = filtfilt(B_50, A_50, eeg_samplebuffer[:-2, :])
-        eeg_samplebuffer_filt = filtfilt(B_40, A_40, eeg_samplebuffer_filt)
-        eeg_samplebuffer_filt = filtfilt(B_1, A_1, eeg_samplebuffer_filt)
-    else:
-        eeg_samplebuffer_filt = filtfilt(B_50, A_50, eeg_samplebuffer[:-1, :])
-        eeg_samplebuffer_filt = filtfilt(B_40, A_40, eeg_samplebuffer_filt)
-        eeg_samplebuffer_filt = filtfilt(B_1, A_1, eeg_samplebuffer_filt)
+	
+	if savetimestamps:
+		eeg_samplebuffer_filt = exponential_running_standardize(eeg_samplebuffer[:-2, :], factor_new=0.001, init_block_size=None, eps=0.0001)
+	else:
+		eeg_samplebuffer_filt = exponential_running_standardize(eeg_samplebuffer[:-1, :], factor_new=0.001, init_block_size=None, eps=0.0001)
+   
+    eeg_samplebuffer_filt = filtfilt(B_50, A_50, eeg_samplebuffer_filt)
+    eeg_samplebuffer_filt = filtfilt(B_40, A_40, eeg_samplebuffer_filt)
+    eeg_samplebuffer_filt = filtfilt(B_1, A_1, eeg_samplebuffer_filt)
+    
     # Resample
     eeg_samples = np.array([np.mean(eeg_samplebuffer_filt[:, i:i + DOWNSAMPLING_COEF], axis=1) for i in
                             np.arange(0, TCP_SENDER_EEG_NSAMPLES, DOWNSAMPLING_COEF)]).astype('float32')

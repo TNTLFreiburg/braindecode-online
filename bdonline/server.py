@@ -448,7 +448,8 @@ def main(
         elif adapt_model:
             log.warn("No train/adam params found, starting optimization params "
                      "from scratch (model params will be loaded anyways).")
-    processor = StandardizeProcessor()
+    #processor = StandardizeProcessor()
+	processor = NoProcessor()
     if adapt_model and load_old_data:
         trainer.add_data_from_today(
             factor_new=processor.factor_new, eps=processor.eps)
