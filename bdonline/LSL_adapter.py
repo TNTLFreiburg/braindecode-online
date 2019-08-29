@@ -2,6 +2,10 @@
 Receive EEG-data from NeurOne and labels from the Unity game both via lsl.
 Pass EEG-data and labels to braindecode-online via TCP/IP.
 Simultaniously receive predictions from braindecode-online and publish them on lsl.
+
+Uses Waveguard 75 Channel setup.
+
+Hacked to put EMG on C3/C4
 """
 
 
@@ -57,30 +61,36 @@ LSL_SENDER_PREDS_ID = 'braindecode preds'           # id of the lsl stream to pu
 TCP_RECEIVER_PREDS_HOSTNAME = 'localhost'           # hostname of this PC, used to receive predictions
 TCP_RECEIVER_PREDS_PORT = 30000                     # port on this PC, used to receive predictions
 
-EEG_CHANNELNAMES_TIME = ['Fp1', 'Fpz', 'Fp2', 'AF7',     # channel names send to braindecode-online
-                  'AF3', 'AF4', 'AF8', 'F7',
-                  'F5', 'F3', 'F1', 'Fz', 'F2', 'F4', 'F6', 'F8', 'FT7', 'FC5',
-                  'FC3',
-                  'FC1', 'FCz', 'FC2', 'FC4', 'FC6', 'FT8', 'M1', 'T7', 'C5',
-                  'C3',
-                  'C1', 'Cz', 'C2', 'C4', 'C6', 'T8', 'M2', 'TP7', 'CP5', 'CP3',
-                  'CP1', 'CPz', 'CP2', 'CP4', 'CP6', 'TP8', 'P7', 'P5', 'P3',
-                  'P1',
-                  'Pz', 'P2', 'P4', 'P6', 'P8', 'PO7', 'PO5', 'PO3', 'POz',
-                  'PO4',
-                  'PO6', 'PO8', 'O1', 'Oz', 'O2', 'marker', 'time_stamp']
-EEG_CHANNELNAMES = ['Fp1', 'Fpz', 'Fp2', 'AF7',     # channel names send to braindecode-online
-                  'AF3', 'AF4', 'AF8', 'F7',
-                  'F5', 'F3', 'F1', 'Fz', 'F2', 'F4', 'F6', 'F8', 'FT7', 'FC5',
-                  'FC3',
-                  'FC1', 'FCz', 'FC2', 'FC4', 'FC6', 'FT8', 'M1', 'T7', 'C5',
-                  'C3',
-                  'C1', 'Cz', 'C2', 'C4', 'C6', 'T8', 'M2', 'TP7', 'CP5', 'CP3',
-                  'CP1', 'CPz', 'CP2', 'CP4', 'CP6', 'TP8', 'P7', 'P5', 'P3',
-                  'P1',
-                  'Pz', 'P2', 'P4', 'P6', 'P8', 'PO7', 'PO5', 'PO3', 'POz',
-                  'PO4',
-                  'PO6', 'PO8', 'O1', 'Oz', 'O2', 'marker']
+#Channel names send to braindecode online
+EEG_CHANNELNAMES_TIME = ['Fp1', 'Fpz', 'Fp2', 'F7', 'F3', 'Fz', 'F4', 'F8', 'FC5', 'FC1',
+                'FC2', 'FC6', 'M1', 'T7', 'C3', 'Cz', 'C4', 'T8', 'M2', 'CP5',
+                'CP1', 'CP2', 'CP6', 'P7', 'P3', 'Pz', 'P4', 'P8', 'POz', 'O1',
+                'Oz', 'O2',
+                'AF7', 'AF3', 'AF4', 'AF8', 'F5', 'F1', 'F2', 'F6', 'FC3', 'FCz',
+                'FC4', 'C5', 'C1', 'C2', 'C6', 'CP3', 'CPz', 'CP4', 'P5', 'P1',
+                'P2', 'P6', 'PO5', 'PO3', 'PO4', 'PO6', 'FT7', 'FT8', 'TP7', 'TP8',
+                'PO7', 'PO8', 'marker', 'time_stamp']
+EEG_CHANNELNAMES = ['Fp1', 'Fpz', 'Fp2', 'F7', 'F3', 'Fz', 'F4', 'F8', 'FC5', 'FC1',
+                'FC2', 'FC6', 'M1', 'T7', 'C3', 'Cz', 'C4', 'T8', 'M2', 'CP5',
+                'CP1', 'CP2', 'CP6', 'P7', 'P3', 'Pz', 'P4', 'P8', 'POz', 'O1',
+                'Oz', 'O2',
+                'AF7', 'AF3', 'AF4', 'AF8', 'F5', 'F1', 'F2', 'F6', 'FC3', 'FCz',
+                'FC4', 'C5', 'C1', 'C2', 'C6', 'CP3', 'CPz', 'CP4', 'P5', 'P1',
+                'P2', 'P6', 'PO5', 'PO3', 'PO4', 'PO6', 'FT7', 'FT8', 'TP7', 'TP8',
+                'PO7', 'PO8', 'marker']         
+"""
+ LSL Waveguard 75 Channel names:
+ 
+ ['Fp1', 'Fpz', 'Fp2', 'F7', 'F3', 'Fz', 'F4', 'F8', 'FC5', 'FC1',
+                'FC2', 'FC6', 'M1', 'T7', 'C3', 'Cz', 'C4', 'T8', 'M2', 'CP5',
+                'CP1', 'CP2', 'CP6', 'P7', 'P3', 'Pz', 'P4', 'P8', 'POz', 'O1',
+                'Oz', 'O2', 'EMG_RH', 'EMG_LH', 'EMG_RF', 'EMG_LF', 'EOG_R', 'EOG_L', 'EOG_U', 'EOG_D',
+                'AF7', 'AF3', 'AF4', 'AF8', 'F5', 'F1', 'F2', 'F6', 'FC3', 'FCz',
+                'FC4', 'C5', 'C1', 'C2', 'C6', 'CP3', 'CPz', 'CP4', 'P5', 'P1',
+                'P2', 'P6', 'PO5', 'PO3', 'PO4', 'PO6', 'FT7', 'FT8', 'TP7', 'TP8',
+                'PO7', 'PO8', 'ECG', 'Respiration', 'GSR']
+"""
+
 PREDICTION_NUM_CLASSES = 2
 TARGET_FS = 250
 DOWNSAMPLING_COEF = int(5000 / TARGET_FS)
@@ -378,6 +388,13 @@ def forward_forever(savetimestamps):
         if eeg_sample is not None and eeg_timestamp is not None:
             if DEBUG:
                 print('got new eeg sample. eeg_sample_counter:', eeg_sample_counter)
+            
+            #Hack EMG onto C3/C4 TODO: Remove    
+            eeg_sample[14] = eeg_sample[33] #C3 = EMG_LH
+            eeg_sample[16] = eeg_sample[32] #C4 = EMG_RH
+            
+            
+            #Only use EEG channels
             eeg_sample = np.concatenate((eeg_sample[0:34], eeg_sample[42:-3]))
             if savetimestamps:
                 eeg_samplebuffer[:-2, eeg_sample_counter] = eeg_sample
@@ -434,6 +451,26 @@ def forward_forever(savetimestamps):
                 splitted_predictions = preds.split(" ")
                 parsed_predictions = [float(i_sample)] + \
                                     [float(splitted_predictions[i]) for i in range(PREDICTION_NUM_CLASSES)]
+
+                """
+                if eeg_sample_label and splitted_predictions:
+                    list_preds = [float(splitted_predictions[0]), float(splitted_predictions[1])]
+                    predictions.append(list_preds)
+                    all_preds = np.concatenate(predictions).reshape(-1, 2)
+                    meaned_preds = np.mean(all_preds, axis=0)
+                    max_class = np.argmax(meaned_preds)
+                    if meaned_preds[max_class] > 0.50:
+                        t, prob = ttest_ind(all_preds[:, max_class], np.ones(all_preds.shape[0])*0.50)
+                        print(prob)
+                        prob = (prob - 0.2) / 0.8
+                        prob = np.max((0., prob))
+                        max_class += 1
+                        max_class_prob = np.array([max_class, prob], dtype='float32')
+                        lsl_outlet_predictions.push_sample(max_class_prob)
+                        if prob < 0.20:
+                            action = max_class
+                            print('Action', action)
+                """
                 if eeg_sample_label and time.time() - sample_start > 0.5:
                     list_preds = np.array([float(splitted_predictions[0]), float(splitted_predictions[1])])
                     if np.max(list_preds) > PRED_THRESHOLD:
@@ -458,6 +495,7 @@ def forward_forever(savetimestamps):
                         lsl_outlet_predictions.push_sample(max_class_prob)
 
                     pred_counter += 1
+
                 if DEBUG:
                     print('forwarding predictions done.')
     

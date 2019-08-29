@@ -26,6 +26,7 @@ from scipy import interpolate
 import h5py
 sys.path.append('D:\\DLVR\\braindecode')
 
+from braindecode.models import deep4
 from braindecode.torch_ext.constraints import MaxNormDefaultConstraint
 from braindecode.torch_ext.losses import log_categorical_crossentropy
 from braindecode.models import deep4
@@ -34,6 +35,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from bdonline.parsers import parse_command_line_arguments
 from bdonline.datasuppliers import ArraySupplier
 from bdonline.experiment import OnlineExperiment
+from braindecode.models.util import to_dense_prediction_model
 from bdonline.buffer import DataMarkerBuffer
 from bdonline.predictors import ModelPredictor
 from bdonline.processors import StandardizeProcessor
@@ -133,31 +135,30 @@ class PredictionServer(gevent.server.StreamServer):
             chan_names_line += in_socket.recv(1).decode('utf-8')
         log.info("Chan names:\n{:s}".format(chan_names_line))
         chan_names = chan_names_line.replace('\n','').split(" ")
-        print(chan_names)
         #
         if self.savetimestamps:
-            assert np.array_equal(chan_names, ['Fp1', 'Fpz', 'Fp2', 'AF7',
-             'AF3', 'AF4', 'AF8', 'F7',
-             'F5', 'F3', 'F1', 'Fz', 'F2', 'F4', 'F6', 'F8', 'FT7', 'FC5', 'FC3',
-             'FC1', 'FCz', 'FC2', 'FC4', 'FC6', 'FT8', 'M1', 'T7', 'C5', 'C3',
-             'C1', 'Cz', 'C2', 'C4', 'C6', 'T8', 'M2', 'TP7', 'CP5', 'CP3',
-             'CP1', 'CPz', 'CP2', 'CP4', 'CP6', 'TP8', 'P7', 'P5', 'P3', 'P1',
-             'Pz', 'P2', 'P4', 'P6', 'P8', 'PO7', 'PO5', 'PO3', 'POz', 'PO4',
-             'PO6', 'PO8', 'O1', 'Oz', 'O2', 'marker', 'time_stamp']
+            assert np.array_equal(chan_names, ['Fp1', 'Fpz', 'Fp2', 'F7', 'F3', 'Fz', 'F4', 'F8', 'FC5', 'FC1',
+                'FC2', 'FC6', 'M1', 'T7', 'C3', 'Cz', 'C4', 'T8', 'M2', 'CP5',
+                'CP1', 'CP2', 'CP6', 'P7', 'P3', 'Pz', 'P4', 'P8', 'POz', 'O1',
+                'Oz', 'O2',
+                'AF7', 'AF3', 'AF4', 'AF8', 'F5', 'F1', 'F2', 'F6', 'FC3', 'FCz',
+                'FC4', 'C5', 'C1', 'C2', 'C6', 'CP3', 'CPz', 'CP4', 'P5', 'P1',
+                'P2', 'P6', 'PO5', 'PO3', 'PO4', 'PO6', 'FT7', 'FT8', 'TP7', 'TP8',
+                'PO7', 'PO8', 'marker', 'time_stamp']
                 ) or np.array_equal(chan_names,
              ['Fp1', 'Fpz', 'Fp2', 'AF7', 'AF3', 'AFz', 'AF4', 'AF8',
              'F5', 'F3', 'F1', 'Fz', 'F2', 'F4', 'F6', 'FC1', 'FCz',
              'FC2', 'C3', 'C1', 'Cz', 'C2', 'C4', 'CP3', 'CP1', 'CPz',
              'CP2', 'CP4', 'P1', 'Pz', 'P2', 'POz', 'marker', 'time_stamp'])
         else:
-            assert np.array_equal(chan_names, ['Fp1', 'Fpz', 'Fp2', 'AF7',
-             'AF3', 'AF4', 'AF8', 'F7',
-             'F5', 'F3', 'F1', 'Fz', 'F2', 'F4', 'F6', 'F8', 'FT7', 'FC5', 'FC3',
-             'FC1', 'FCz', 'FC2', 'FC4', 'FC6', 'FT8', 'M1', 'T7', 'C5', 'C3',
-             'C1', 'Cz', 'C2', 'C4', 'C6', 'T8', 'M2', 'TP7', 'CP5', 'CP3',
-             'CP1', 'CPz', 'CP2', 'CP4', 'CP6', 'TP8', 'P7', 'P5', 'P3', 'P1',
-             'Pz', 'P2', 'P4', 'P6', 'P8', 'PO7', 'PO5', 'PO3', 'POz', 'PO4',
-             'PO6', 'PO8', 'O1', 'Oz', 'O2', 'marker']
+            assert np.array_equal(chan_names, ['Fp1', 'Fpz', 'Fp2', 'F7', 'F3', 'Fz', 'F4', 'F8', 'FC5', 'FC1',
+                'FC2', 'FC6', 'M1', 'T7', 'C3', 'Cz', 'C4', 'T8', 'M2', 'CP5',
+                'CP1', 'CP2', 'CP6', 'P7', 'P3', 'Pz', 'P4', 'P8', 'POz', 'O1',
+                'Oz', 'O2',
+                'AF7', 'AF3', 'AF4', 'AF8', 'F5', 'F1', 'F2', 'F6', 'FC3', 'FCz',
+                'FC4', 'C5', 'C1', 'C2', 'C6', 'CP3', 'CPz', 'CP4', 'P5', 'P1',
+                'P2', 'P6', 'PO5', 'PO3', 'PO4', 'PO6', 'FT7', 'FT8', 'TP7', 'TP8',
+                'PO7', 'PO8', 'marker']
                 ) or np.array_equal(chan_names,
              ['Fp1', 'Fpz', 'Fp2', 'AF7', 'AF3', 'AFz', 'AF4', 'AF8',
              'F5', 'F3', 'F1', 'Fz', 'F2', 'F4', 'F6', 'FC1', 'FCz',
@@ -375,6 +376,17 @@ def main(
     gpu_id = th.FloatTensor(1).cuda().get_device()
     def inner_device_mapping(storage, location):
         return storage.cuda(gpu_id)
+
+    """
+    model_name = os.path.join(base_name, 'model_dict')
+    model_parameters = th.load(model_name)
+    model = deep4.Deep4Net(64, 2, input_time_length, 1)
+    model = model.create_network()
+    to_dense_prediction_model(model)
+    model.load_state_dict(model_parameters)
+    model.cuda()
+    """
+
     model_name = os.path.join(base_name, 'deep_4_params')
     model_dict = th.load(model_name)
     model = deep4.Deep4Net(n_chans, 2, input_time_length, 1)
