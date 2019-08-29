@@ -98,16 +98,16 @@ PRED_WINDOW_SIZE = 10
 PRED_THRESHOLD = 0.6
 ACTION_THRESHOLD = 0.8
 # Butter filter (highpass) for 1 Hz
-B_1, A_1 = butter(6, 1 / TARGET_FS, btype='high', output='ba')
+B_1, A_1 = butter(6, 1, btype='high', output='ba', fs = 5000)
 
 # Butter filter (lowpass) for 30 Hz
-B_40, A_40 = butter(6, 40 / TARGET_FS, btype='low', output='ba')
+B_40, A_40 = butter(6, 40, btype='low', output='ba', fs = 5000)
 
 # Notch filter with 50 HZ
 F0 = 50.0
 Q = 30.0  # Quality factor
 # Design notch filter
-B_50, A_50 = iirnotch(F0, Q, TARGET_FS)
+B_50, A_50 = iirnotch(F0, Q, 5000)
 
 def parse_command_line_arguments():
     import argparse
