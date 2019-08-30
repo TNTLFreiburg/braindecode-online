@@ -99,7 +99,7 @@ PRED_WINDOW_SIZE = 10
 PRED_THRESHOLD = 0.6
 ACTION_THRESHOLD = 0.8
 # Butter filter (highpass) for 1 Hz
-B_1, A_1 = butter(6, 1, btype='high', output='ba', fs = 5000)
+B_1, A_1 = butter(5, 1, btype='high', output='ba', fs = 5000)
 
 # Butter filter (lowpass) for 30 Hz
 B_40, A_40 = butter(6, 40, btype='low', output='ba', fs = 5000)
