@@ -38,7 +38,7 @@ from bdonline.experiment import OnlineExperiment
 from braindecode.models.util import to_dense_prediction_model
 from bdonline.buffer import DataMarkerBuffer
 from bdonline.predictors import ModelPredictor
-from bdonline.processors import StandardizeProcessor
+from bdonline.processors import NoProcessor
 from bdonline.trainers import NoTrainer
 from bdonline.trainers import BatchCntTrainer
 from braindevel_online.live_plot import LivePlot
@@ -389,7 +389,8 @@ def main(
 
     model_name = os.path.join(base_name, 'deep_4_params')
     model_dict = th.load(model_name)
-    model = deep4.Deep4Net(n_chans, 2, input_time_length, 1)
+    final_conv_length = 2
+    model = deep4.Deep4Net(n_chans, 2, input_time_length, final_conv_length)
     model = model.create_network()
     model.load_state_dict(model_dict)
     to_dense_prediction_model(model)
@@ -449,7 +450,7 @@ def main(
             log.warn("No train/adam params found, starting optimization params "
                      "from scratch (model params will be loaded anyways).")
     #processor = StandardizeProcessor()
-	processor = NoProcessor()
+    processor = NoProcessor()
     if adapt_model and load_old_data:
         trainer.add_data_from_today(
             factor_new=processor.factor_new, eps=processor.eps)
