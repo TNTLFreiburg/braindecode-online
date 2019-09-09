@@ -280,7 +280,8 @@ class BatchCntTrainer(object):
         needed_markers = np.concatenate((np.zeros(crop_size - 1,
                                                   dtype=needed_markers.dtype),
                                          needed_markers))
-        needed_timestamps = all_timestamps[in_sample_start:pred_stop]
+        if all_timestamps.any():
+            needed_timestamps = all_timestamps[in_sample_start:pred_stop]
         assert len(needed_samples) == len(needed_markers), (
             "{:d} markers and {:d} samples (should be same)".format(
                 len(needed_samples), len(needed_markers)))
@@ -316,7 +317,11 @@ class BatchCntTrainer(object):
         assert len(needed_samples) == n_expected_samples, (
             "Extracted {:d} samples, but should have {:d}".format(
                 len(needed_samples), n_expected_samples))
-        self.add_trial_topo_trial_y(needed_samples, needed_markers, needed_timestamps)
+        if all_timestamps.any():
+            self.add_trial_topo_trial_y(needed_samples, needed_markers, needed_timestamps)
+        else:
+            self.add_trial_topo_trial_y(needed_samples, needed_markers)
+
 
     def get_trial_start_stop_indices(self, markers):
         # + 1 as diff "removes" one index, i.e. diff will be above zero

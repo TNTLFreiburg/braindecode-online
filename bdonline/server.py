@@ -392,7 +392,7 @@ def main(
     final_conv_length = 2
     model = deep4.Deep4Net(n_chans, 2, input_time_length, final_conv_length)
     model = model.create_network()
-    model.load_state_dict(model_dict)
+    model.network.load_state_dict(model_dict)
     to_dense_prediction_model(model)
     model.cuda()
 
