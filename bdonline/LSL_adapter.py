@@ -82,7 +82,7 @@ EEG_CHANNELNAMES = ['Fp1', 'Fpz', 'Fp2', 'F7', 'F3', 'Fz', 'F4', 'F8', 'FC5', 'F
 """
  LSL Waveguard 75 Channel names:
  
- ['Fp1', 'Fpz', 'Fp2', 'F7', 'F3', 'Fz', 'F4', 'F8', 'FC5', 'FC1',
+                ['Fp1', 'Fpz', 'Fp2', 'F7', 'F3', 'Fz', 'F4', 'F8', 'FC5', 'FC1',
                 'FC2', 'FC6', 'M1', 'T7', 'C3', 'Cz', 'C4', 'T8', 'M2', 'CP5',
                 'CP1', 'CP2', 'CP6', 'P7', 'P3', 'Pz', 'P4', 'P8', 'POz', 'O1',
                 'Oz', 'O2', 'EMG_RH', 'EMG_LH', 'EMG_RF', 'EMG_LF', 'EOG_R', 'EOG_L', 'EOG_U', 'EOG_D',
@@ -102,7 +102,7 @@ ACTION_THRESHOLD = 0.8
 B_1, A_1 = butter(5, 1, btype='high', output='ba', fs = 5000)
 
 # Butter filter (lowpass) for 30 Hz
-B_40, A_40 = butter(6, 40, btype='low', output='ba', fs = 5000)
+B_40, A_40 = butter(6, 120, btype='low', output='ba', fs = 5000) #TODO: Set back to 40
 
 # Notch filter with 50 HZ
 F0 = 50.0
@@ -241,20 +241,22 @@ def label_gatherer(eeg_samplebuffer, DOWNSAMPLING_COEF, savetimestamps):
     return eeg_labels
 
 def filter_and_downsample(eeg_samplebuffer, DOWNSAMPLING_COEF, savetimestamps):
+
+    if savetimestamps:
+        #eeg_samplebuffer_filt = exponential_running_standardize(eeg_samplebuffer[:-2, :], factor_new=0.001, init_block_size=None, eps=0.0001)
+        eeg_samplebuffer_filt = eeg_samplebuffer[:-2,:]
+    else:
+        #eeg_samplebuffer_filt = exponential_running_standardize(eeg_samplebuffer[:-1, :], factor_new=0.001, init_block_size=None, eps=0.0001)
+        eeg_samplebuffer_filt = eeg_samplebuffer[:-1,:]
 	
-	if savetimestamps:
-		eeg_samplebuffer_filt = exponential_running_standardize(eeg_samplebuffer[:-2, :], factor_new=0.001, init_block_size=None, eps=0.0001)
-	else:
-		eeg_samplebuffer_filt = exponential_running_standardize(eeg_samplebuffer[:-1, :], factor_new=0.001, init_block_size=None, eps=0.0001)
-	
-	eeg_samplebuffer_filt = filtfilt(B_50, A_50, eeg_samplebuffer_filt)
-	eeg_samplebuffer_filt = filtfilt(B_40, A_40, eeg_samplebuffer_filt)
-	eeg_samplebuffer_filt = filtfilt(B_1, A_1, eeg_samplebuffer_filt)
+    eeg_samplebuffer_filt = filtfilt(B_50, A_50, eeg_samplebuffer_filt)
+    eeg_samplebuffer_filt = filtfilt(B_40, A_40, eeg_samplebuffer_filt)
+    #eeg_samplebuffer_filt = filtfilt(B_1, A_1, eeg_samplebuffer_filt)
     
     # Resample
-	eeg_samples = np.array([np.mean(eeg_samplebuffer_filt[:, i:i + DOWNSAMPLING_COEF], axis=1) for i in
+    eeg_samples = np.array([np.mean(eeg_samplebuffer_filt[:, i:i + DOWNSAMPLING_COEF], axis=1) for i in
 							np.arange(0, TCP_SENDER_EEG_NSAMPLES, DOWNSAMPLING_COEF)]).astype('float32')
-	return eeg_samples
+    return eeg_samples
 
 def timestamp_gatherer(eeg_samplebuffer, DOWNSAMPLING_COEF):
     eeg_timestamps = (np.array([np.mean(eeg_samplebuffer[-1, i:i + DOWNSAMPLING_COEF]) for i in
@@ -398,7 +400,7 @@ def forward_forever(savetimestamps):
             
             
             #Only use EEG channels
-            eeg_sample = np.concatenate((eeg_sample[0:34], eeg_sample[42:-3]))
+            eeg_sample = np.concatenate((eeg_sample[0:32], eeg_sample[40:-3]))
             if savetimestamps:
                 eeg_samplebuffer[:-2, eeg_sample_counter] = eeg_sample
                 eeg_samplebuffer[-2, eeg_sample_counter] = eeg_sample_label
@@ -490,7 +492,7 @@ def forward_forever(savetimestamps):
                         prob = np.max((0, (0.8 - prob) / 0.8))
                         max_class_prob = np.array([max_class, prob], dtype='float32')
                         lsl_outlet_predictions.push_sample(max_class_prob)
-                    if prob >= 0:
+                    elif prob >= 0:
                         max_class = 1
                         prob = np.abs(prob)
                         prob = np.max((0, (0.8 - prob) / 0.8))
