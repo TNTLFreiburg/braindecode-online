@@ -3,8 +3,8 @@ import numpy as np
 from scipy.signal import filtfilt, iirnotch, butter
 
 def applyfilters_downsample(filter1freq, filter2freq, target_fs, eeg_time_series):
-        b_1, a_1 = butter(6, filter1freq / target_fs, btype='high', output='ba')
-        b_30, a_30 = butter(6, filter2freq / target_fs, btype='low', output='ba')
+        b_1, a_1 = butter(5, filter1freq, btype='high', output='ba', fs = target_fs)
+        b_30, a_30 = butter(6, filter2freq, btype='low', output='ba', fs = target_fs)
         f0 = 50.0
         Q = 30.0  # Quality factor
         # Design notch filter

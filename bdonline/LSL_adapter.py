@@ -488,16 +488,12 @@ def forward_forever(savetimestamps):
                     prob = np.mean(predictions)
                     if prob < 0:
                         max_class = 2
-                        prob = np.abs(prob)
-                        prob = np.max((0, (0.8 - prob) / 0.8))
-                        max_class_prob = np.array([max_class, prob], dtype='float32')
-                        lsl_outlet_predictions.push_sample(max_class_prob)
-                    elif prob >= 0:
+                    else:
                         max_class = 1
-                        prob = np.abs(prob)
-                        prob = np.max((0, (0.8 - prob) / 0.8))
-                        max_class_prob = np.array([max_class, prob], dtype='float32')
-                        lsl_outlet_predictions.push_sample(max_class_prob)
+                    prob = np.abs(prob)
+                    prob = np.max((0, (0.8 - prob) / 0.8))
+                    max_class_prob = np.array([max_class, prob], dtype='float32')
+                    lsl_outlet_predictions.push_sample(max_class_prob)
 
                     pred_counter += 1
 
