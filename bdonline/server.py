@@ -39,6 +39,7 @@ from braindecode.models.util import to_dense_prediction_model
 from bdonline.buffer import DataMarkerBuffer
 from bdonline.predictors import ModelPredictor
 from bdonline.processors import NoProcessor
+from bdonline.processors import StandardizeProcessor
 from bdonline.trainers import NoTrainer
 from bdonline.trainers import BatchCntTrainer
 from braindevel_online.live_plot import LivePlot
@@ -449,8 +450,8 @@ def main(
         elif adapt_model:
             log.warn("No train/adam params found, starting optimization params "
                      "from scratch (model params will be loaded anyways).")
-    #processor = StandardizeProcessor()
-    processor = NoProcessor()
+    processor = StandardizeProcessor()
+    #processor = NoProcessor()
     if adapt_model and load_old_data:
         trainer.add_data_from_today(
             factor_new=processor.factor_new, eps=processor.eps)

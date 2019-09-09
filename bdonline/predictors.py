@@ -1,4 +1,6 @@
 import numpy as np
+from matplotlib import pyplot as plt
+import torch
 
 from braindecode.torch_ext.util import np_to_var, var_to_np
 
@@ -20,6 +22,7 @@ class ModelPredictor(object):
         self.i_last_pred = -1
         self.cuda = cuda
         self.exponentiate_preds = exponentiate_preds
+        self.pred_count = 0
 
     def enough_data_for_new_prediction(self, buffer):
         return (buffer.n_total_samples >= self.input_time_length and
@@ -51,15 +54,30 @@ class ModelPredictor(object):
         return self.i_last_pred, prediction, label_for_pred
 
     def predict_with_model(self, data):
-        self.model.eval()
+        #fig, axes = plt.subplots(4,1, sharex = True, sharey=True)
+        #for i in np.arange(14,18):
+            #axes[i-14].plot(data[:,i])
+           # axes[i-14].set(ylabel = 'Channel '+np.str(i))
+        #plt.suptitle("50 Notch, 120 Low, StandardizeProcessor")
+        #plt.savefig('D:\\DLVRData\\test.png')
+        #plt.close()
+        #self.model.eval()
         # data is time x channels
+        #print("data = ", data.shape)
+        #print("np_to_var input = ", data.T[None,:,:,None].shape)
         in_var = np_to_var(data.T[None,:,:,None], dtype=np.float32)
+
+        #Save tensor for offline analysis        
+        torch.save(in_var, 'D:\\DLVRData\\Supercrops600\\Tensor_'+str(self.pred_count))
+        self.pred_count += 1
+
         if self.cuda:
             in_var = in_var.cuda()
         pred = var_to_np(self.model(in_var))
         # possibly mean across time axis
         if self.exponentiate_preds:
             pred = np.exp(pred)
+        #print("exp pred: ", pred)
         if pred.ndim > 2:
             pred = np.mean(pred, axis=2).squeeze()
         '''if self.exponentiate_preds:
