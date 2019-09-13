@@ -1,604 +1,272 @@
-INFO:bdonline.trainers:No data files found to load for adaptation in data/online/2019-07-19
+INFO:bdonline.trainers:No data files found to load for adaptation in data/online/2019-09-13
 INFO:__main__:Starting server on port 7987
 INFO:__main__:Started server
-INFO:__main__:New connection from ('127.0.0.1', 52768)!
+INFO:__main__:New connection from ('127.0.0.1', 48736)!
 INFO:__main__:Connected to out Server
 INFO:__main__:Numbers in total:  650
 INFO:__main__:Before checking plot
 INFO:__main__:After checking plot
-INFO:__main__:Prediction for sample 499:
-[0.98746943 0.01253059] with label0.0
-INFO:__main__:Prediction for sample 561:
-[0.7533931  0.24660686] with label0.0
-INFO:__main__:Prediction for sample 623:
-[0.75487936 0.24512067] with label0.0
-INFO:__main__:Prediction for sample 685:
-[0.7412346  0.25876543] with label0.0
-INFO:__main__:Prediction for sample 747:
-[0.8248584  0.17514153] with label0.0
-INFO:__main__:Prediction for sample 809:
-[0.62289655 0.37710336] with label0.0
-INFO:__main__:Prediction for sample 871:
-[0.7206816  0.27931833] with label0.0
-INFO:__main__:Prediction for sample 933:
-[0.55116546 0.44883454] with label0.0
-INFO:__main__:Prediction for sample 995:
-[0.5829616  0.41703844] with label0.0
-INFO:__main__:Prediction for sample 1057:
-[0.704712   0.29528797] with label0.0
-INFO:__main__:Prediction for sample 1119:
-[0.5327853  0.46721467] with label0.0
-INFO:__main__:Prediction for sample 1181:
-[0.5487545  0.45124546] with label0.0
-INFO:__main__:Prediction for sample 1243:
-[0.3478063 0.6521938] with label0.0
-INFO:__main__:Prediction for sample 1305:
-[0.32618982 0.6738102 ] with label0.0
-INFO:__main__:Prediction for sample 1367:
-[0.37003917 0.62996095] with label0.0
-INFO:__main__:Prediction for sample 1429:
-[0.03827737 0.9617226 ] with label0.0
-INFO:__main__:Prediction for sample 1491:
-[0.39636514 0.6036349 ] with label0.0
-INFO:__main__:Prediction for sample 1553:
-[0.231507 0.768493] with label0.0
-INFO:__main__:Prediction for sample 1615:
-[0.13052158 0.8694784 ] with label0.0
-INFO:__main__:Prediction for sample 1677:
-[0.21900882 0.78099126] with label0.0
-INFO:__main__:Prediction for sample 1739:
-[0.28726175 0.7127383 ] with label0.0
-INFO:__main__:Prediction for sample 1801:
-[0.13547459 0.8645255 ] with label0.0
-INFO:__main__:Prediction for sample 1863:
-[0.3645555  0.63544446] with label0.0
-INFO:__main__:Prediction for sample 1925:
-[0.22360955 0.7763905 ] with label0.0
-INFO:__main__:Prediction for sample 1987:
-[0.5201076  0.47989237] with label0.0
-INFO:__main__:Prediction for sample 2049:
-[0.2860448  0.71395516] with label0.0
-INFO:__main__:Prediction for sample 2111:
-[0.22336124 0.77663875] with label0.0
-INFO:__main__:Prediction for sample 2173:
-[0.41573957 0.58426034] with label0.0
-INFO:__main__:Prediction for sample 2235:
-[0.30665302 0.69334704] with label0.0
-INFO:__main__:Prediction for sample 2297:
-[0.17744187 0.8225581 ] with label0.0
-INFO:__main__:Prediction for sample 2359:
-[0.2977541 0.7022459] with label0.0
-INFO:__main__:Prediction for sample 2421:
-[0.1918013  0.80819875] with label0.0
-INFO:__main__:Prediction for sample 2483:
-[0.07204921 0.9279509 ] with label0.0
-INFO:__main__:Prediction for sample 2545:
-[0.29289138 0.7071086 ] with label0.0
-INFO:__main__:Prediction for sample 2607:
-[0.15940765 0.8405923 ] with label0.0
-INFO:__main__:Prediction for sample 2669:
-[0.16802712 0.8319729 ] with label0.0
-INFO:__main__:Prediction for sample 2731:
-[0.08739351 0.9126064 ] with label0.0
-INFO:__main__:Prediction for sample 2793:
-[0.11599313 0.88400686] with label0.0
-INFO:__main__:Prediction for sample 2855:
-[0.21737745 0.7826225 ] with label0.0
-INFO:__main__:Prediction for sample 2917:
-[0.09770448 0.9022954 ] with label0.0
-INFO:__main__:Prediction for sample 2979:
-[0.18609834 0.8139017 ] with label0.0
-INFO:__main__:Prediction for sample 3041:
-[0.50924474 0.4907553 ] with label0.0
-INFO:__main__:Prediction for sample 3103:
-[0.13323733 0.8667627 ] with label0.0
-INFO:__main__:Prediction for sample 3165:
-[0.26481894 0.7351811 ] with label0.0
-INFO:__main__:Prediction for sample 3227:
-[0.19741382 0.80258626] with label0.0
-INFO:__main__:Prediction for sample 3289:
-[0.09113651 0.9088634 ] with label0.0
-INFO:__main__:Prediction for sample 3351:
-[0.11599073 0.88400924] with label0.0
-INFO:__main__:Prediction for sample 3413:
-[0.14397626 0.8560238 ] with label0.0
-INFO:__main__:Prediction for sample 3475:
-[0.17409888 0.82590115] with label0.0
-INFO:__main__:Prediction for sample 3537:
-[0.08383632 0.91616374] with label0.0
+INFO:__main__:Prediction for sample 599:
+[0.5689501 0.4310499] with label0.0
+INFO:__main__:Prediction for sample 724:
+[0.60732514 0.39267483] with label0.0
+INFO:__main__:Prediction for sample 849:
+[0.5700504 0.4299496] with label0.0
+INFO:__main__:Prediction for sample 974:
+[0.5340243 0.4659757] with label0.0
+INFO:__main__:Prediction for sample 1099:
+[0.6174715 0.3825284] with label0.0
+INFO:__main__:Prediction for sample 1224:
+[0.6043629  0.39563707] with label0.0
+INFO:__main__:Prediction for sample 1349:
+[0.5927613  0.40723878] with label0.0
+INFO:__main__:Prediction for sample 1474:
+[0.6005268  0.39947325] with label0.0
+INFO:__main__:Prediction for sample 1599:
+[0.62025064 0.3797494 ] with label0.0
+INFO:__main__:Prediction for sample 1724:
+[0.5744593  0.42554075] with label0.0
+INFO:__main__:Prediction for sample 1849:
+[0.6063068  0.39369333] with label0.0
+INFO:__main__:Prediction for sample 1974:
+[0.6132643 0.3867358] with label0.0
+INFO:__main__:Prediction for sample 2099:
+[0.6589802 0.3410199] with label0.0
+INFO:__main__:Prediction for sample 2224:
+[0.61023396 0.38976598] with label0.0
+INFO:__main__:Prediction for sample 2349:
+[0.55470043 0.44529957] with label0.0
+INFO:__main__:Prediction for sample 2474:
+[0.58274657 0.41725332] with label0.0
+INFO:__main__:Prediction for sample 2599:
+[0.61190885 0.38809118] with label0.0
+INFO:__main__:Prediction for sample 2724:
+[0.56764513 0.43235475] with label0.0
+INFO:__main__:Prediction for sample 2849:
+[0.621505   0.37849498] with label0.0
+INFO:__main__:Prediction for sample 2974:
+[0.63492393 0.36507592] with label0.0
+INFO:__main__:Prediction for sample 3099:
+[0.60460836 0.3953917 ] with label0.0
+INFO:__main__:Prediction for sample 3224:
+[0.5708522  0.42914778] with label0.0
+INFO:__main__:Prediction for sample 3349:
+[0.57739913 0.42260087] with label0.0
+INFO:__main__:Prediction for sample 3474:
+[0.5583363  0.44166362] with label0.0
 INFO:__main__:Prediction for sample 3599:
-[0.0545186  0.94548136] with label0.0
-INFO:__main__:Prediction for sample 3661:
-[0.08558001 0.91441995] with label0.0
-INFO:__main__:Prediction for sample 3723:
-[0.28417572 0.7158243 ] with label0.0
-INFO:__main__:Prediction for sample 3785:
-[0.12937747 0.8706226 ] with label0.0
-INFO:__main__:Prediction for sample 3847:
-[0.41862237 0.58137774] with label0.0
-INFO:__main__:Prediction for sample 3909:
-[0.46142778 0.53857225] with label0.0
-INFO:__main__:Prediction for sample 3971:
-[0.14350305 0.85649693] with label0.0
-INFO:__main__:Prediction for sample 4033:
-[0.1087885 0.8912115] with label0.0
-INFO:__main__:Prediction for sample 4095:
-[0.13822056 0.8617794 ] with label0.0
-INFO:__main__:Prediction for sample 4157:
-[0.20656529 0.79343474] with label0.0
-INFO:__main__:Prediction for sample 4219:
-[0.05900787 0.9409922 ] with label0.0
-INFO:__main__:Prediction for sample 4281:
-[0.10337034 0.89662963] with label0.0
-INFO:__main__:Prediction for sample 4343:
-[0.05131064 0.94868934] with label0.0
-INFO:__main__:Prediction for sample 4405:
-[0.11764459 0.88235545] with label0.0
-INFO:__main__:Prediction for sample 4467:
-[0.12558946 0.8744106 ] with label0.0
-INFO:__main__:Prediction for sample 4529:
-[0.23197097 0.768029  ] with label0.0
-INFO:__main__:Prediction for sample 4591:
-[0.02671709 0.9732828 ] with label0.0
-INFO:__main__:Prediction for sample 4653:
-[0.07699728 0.92300266] with label0.0
-INFO:__main__:Prediction for sample 4715:
-[0.04498045 0.95501953] with label0.0
-INFO:__main__:Prediction for sample 4777:
-[0.39753667 0.6024633 ] with label0.0
-INFO:__main__:Prediction for sample 4839:
-[0.24582912 0.75417084] with label0.0
-INFO:__main__:Prediction for sample 4901:
-[0.19371046 0.80628955] with label0.0
-INFO:__main__:Prediction for sample 4963:
-[0.20187785 0.7981222 ] with label0.0
-INFO:__main__:Prediction for sample 5025:
-[0.22391887 0.7760812 ] with label0.0
-INFO:__main__:Prediction for sample 5087:
-[0.07667451 0.9233255 ] with label0.0
-INFO:__main__:Prediction for sample 5149:
-[0.14860252 0.85139745] with label0.0
-INFO:__main__:Prediction for sample 5211:
-[0.19384883 0.8061513 ] with label0.0
-INFO:__main__:Prediction for sample 5273:
-[0.20090434 0.7990957 ] with label0.0
-INFO:__main__:Prediction for sample 5335:
-[0.10764137 0.8923587 ] with label0.0
-INFO:__main__:Prediction for sample 5397:
-[0.12908556 0.8709144 ] with label0.0
-INFO:__main__:Prediction for sample 5459:
-[0.03790933 0.9620907 ] with label0.0
-INFO:__main__:Prediction for sample 5521:
-[0.0946282 0.9053718] with label0.0
-INFO:__main__:Prediction for sample 5583:
-[0.07166585 0.9283342 ] with label0.0
-INFO:__main__:Prediction for sample 5645:
-[0.0427584  0.95724165] with label0.0
-INFO:__main__:Prediction for sample 5707:
-[0.0283755  0.97162455] with label0.0
-INFO:__main__:Prediction for sample 5769:
-[0.01266054 0.9873394 ] with label0.0
-INFO:__main__:Prediction for sample 5831:
-[0.02326991 0.9767301 ] with label0.0
-INFO:__main__:Prediction for sample 5893:
-[0.01984945 0.9801505 ] with label0.0
-INFO:__main__:Prediction for sample 5955:
-[0.00571858 0.9942815 ] with label0.0
-INFO:__main__:Prediction for sample 6017:
-[0.05841175 0.9415882 ] with label0.0
-INFO:__main__:Prediction for sample 6079:
-[0.10071054 0.8992894 ] with label0.0
-INFO:__main__:Prediction for sample 6141:
-[0.00754398 0.9924561 ] with label0.0
-INFO:__main__:Prediction for sample 6203:
-[0.22588621 0.77411383] with label0.0
-INFO:__main__:Prediction for sample 6265:
-[0.11334065 0.88665944] with label0.0
-INFO:__main__:Prediction for sample 6327:
-[0.08810138 0.9118986 ] with label0.0
-INFO:__main__:Prediction for sample 6389:
-[0.12746719 0.8725328 ] with label0.0
-INFO:__main__:Prediction for sample 6451:
-[0.04119318 0.95880675] with label0.0
-INFO:__main__:Prediction for sample 6513:
-[0.03584692 0.9641531 ] with label0.0
-INFO:__main__:Prediction for sample 6575:
-[0.03538881 0.9646111 ] with label0.0
-INFO:__main__:Prediction for sample 6637:
-[0.03362697 0.9663731 ] with label0.0
-INFO:__main__:Prediction for sample 6699:
-[0.04206226 0.9579376 ] with label0.0
-INFO:__main__:Prediction for sample 6761:
-[0.04093762 0.95906234] with label0.0
-INFO:__main__:Prediction for sample 6823:
-[0.03484241 0.9651576 ] with label0.0
-INFO:__main__:Prediction for sample 6885:
-[0.17465135 0.8253487 ] with label0.0
-INFO:__main__:Prediction for sample 6947:
-[0.06850065 0.93149936] with label0.0
-INFO:__main__:Prediction for sample 7009:
-[0.17169333 0.82830673] with label0.0
-INFO:__main__:Prediction for sample 7071:
-[0.09334274 0.9066573 ] with label0.0
-INFO:__main__:Prediction for sample 7133:
-[0.21553542 0.78446466] with label0.0
-INFO:__main__:Prediction for sample 7195:
-[0.14013591 0.8598642 ] with label0.0
-INFO:__main__:Prediction for sample 7257:
-[0.05098201 0.9490179 ] with label0.0
-INFO:__main__:Prediction for sample 7319:
-[0.08066967 0.9193303 ] with label0.0
-INFO:__main__:Prediction for sample 7381:
-[0.1034629 0.8965371] with label0.0
-INFO:__main__:Prediction for sample 7443:
-[0.15009384 0.8499062 ] with label0.0
-INFO:__main__:Prediction for sample 7505:
-[0.23305519 0.76694477] with label0.0
-INFO:__main__:Prediction for sample 7567:
-[0.23311636 0.7668836 ] with label0.0
-INFO:__main__:Prediction for sample 7629:
-[0.64006203 0.359938  ] with label0.0
-INFO:__main__:Prediction for sample 7691:
-[0.11103164 0.8889683 ] with label0.0
-INFO:__main__:Prediction for sample 7753:
-[0.23019785 0.7698021 ] with label0.0
-INFO:__main__:Prediction for sample 7815:
-[0.13539965 0.86460036] with label0.0
-INFO:__main__:Prediction for sample 7877:
-[0.12221447 0.8777855 ] with label0.0
-INFO:__main__:Prediction for sample 7939:
-[0.06734882 0.9326512 ] with label0.0
-INFO:__main__:Prediction for sample 8001:
-[0.76957417 0.23042578] with label0.0
-INFO:__main__:Prediction for sample 8063:
-[0.5108481  0.48915192] with label0.0
-INFO:__main__:Prediction for sample 8125:
-[0.08960662 0.91039336] with label0.0
-INFO:__main__:Prediction for sample 8187:
-[0.6600751  0.33992484] with label0.0
-INFO:__main__:Prediction for sample 8249:
-[0.08504598 0.91495395] with label0.0
-INFO:__main__:Prediction for sample 8311:
-[0.21216826 0.78783184] with label0.0
-INFO:__main__:Prediction for sample 8373:
-[0.31186584 0.6881342 ] with label0.0
-INFO:__main__:Prediction for sample 8435:
-[0.11289669 0.88710326] with label0.0
-INFO:__main__:Prediction for sample 8497:
-[0.24216238 0.75783765] with label0.0
-INFO:__main__:Prediction for sample 8559:
-[0.14649121 0.8535087 ] with label0.0
-INFO:__main__:Prediction for sample 8621:
-[0.10086696 0.89913297] with label0.0
-INFO:__main__:Prediction for sample 8683:
-[0.12778684 0.8722131 ] with label0.0
-INFO:__main__:Prediction for sample 8745:
-[0.05099608 0.94900393] with label0.0
-INFO:__main__:Prediction for sample 8807:
-[0.4537942  0.54620576] with label0.0
-INFO:__main__:Prediction for sample 8869:
-[0.35491714 0.64508283] with label0.0
-INFO:__main__:Prediction for sample 8931:
-[0.0764325 0.9235676] with label0.0
-INFO:__main__:Prediction for sample 8993:
-[0.12800683 0.8719931 ] with label0.0
-INFO:__main__:Prediction for sample 9055:
-[0.2284879  0.77151203] with label0.0
-INFO:__main__:Prediction for sample 9117:
-[0.28821453 0.71178555] with label0.0
-INFO:__main__:Prediction for sample 9179:
-[0.12187241 0.87812763] with label0.0
-INFO:__main__:Prediction for sample 9241:
-[0.05662816 0.9433719 ] with label0.0
-INFO:__main__:Prediction for sample 9303:
-[0.08000901 0.91999096] with label0.0
-INFO:__main__:Prediction for sample 9365:
-[0.20285639 0.79714364] with label0.0
-INFO:__main__:Prediction for sample 9427:
-[0.06085115 0.9391489 ] with label0.0
-INFO:__main__:Prediction for sample 9489:
-[0.21551767 0.78448224] with label0.0
-INFO:__main__:Prediction for sample 9551:
-[0.17549641 0.82450354] with label0.0
-INFO:__main__:Prediction for sample 9613:
-[0.12601219 0.8739878 ] with label0.0
-INFO:__main__:Prediction for sample 9675:
-[0.29362983 0.7063702 ] with label0.0
-INFO:__main__:Prediction for sample 9737:
-[0.16130315 0.83869684] with label0.0
-INFO:__main__:Prediction for sample 9799:
-[0.17278995 0.8272102 ] with label0.0
-INFO:__main__:Prediction for sample 9861:
-[0.15906328 0.8409367 ] with label0.0
-INFO:__main__:Prediction for sample 9923:
-[0.07883216 0.9211678 ] with label0.0
-INFO:__main__:Prediction for sample 9985:
-[0.08375286 0.9162472 ] with label0.0
-INFO:__main__:Prediction for sample 10047:
-[0.10210512 0.8978948 ] with label0.0
-INFO:__main__:Prediction for sample 10109:
-[0.11272    0.88728005] with label0.0
-INFO:__main__:Prediction for sample 10171:
-[0.11689875 0.8831013 ] with label0.0
-INFO:__main__:Prediction for sample 10233:
-[0.13850729 0.86149275] with label0.0
-INFO:__main__:Prediction for sample 10295:
-[0.15904018 0.8409598 ] with label0.0
-INFO:__main__:Prediction for sample 10357:
-[0.11562405 0.8843758 ] with label0.0
-INFO:__main__:Prediction for sample 10419:
-[0.21167895 0.7883211 ] with label0.0
-INFO:__main__:Prediction for sample 10481:
-[0.09287255 0.9071274 ] with label0.0
-INFO:__main__:Prediction for sample 10543:
-[0.28218216 0.71781784] with label0.0
-INFO:__main__:Prediction for sample 10605:
-[0.1386536 0.8613464] with label0.0
-INFO:__main__:Prediction for sample 10667:
-[0.08827101 0.911729  ] with label0.0
-INFO:__main__:Prediction for sample 10729:
-[0.39222553 0.60777456] with label2.0
-INFO:__main__:Prediction for sample 10791:
-[0.31916472 0.68083537] with label2.0
-INFO:__main__:Prediction for sample 10853:
-[0.32301304 0.6769869 ] with label2.0
-INFO:__main__:Prediction for sample 10915:
-[0.42381862 0.57618135] with label2.0
-INFO:bdonline.trainers:Trial has ended for class 2, from 19731 to 19999
+[0.615079   0.38492095] with label0.0
+INFO:__main__:Prediction for sample 3724:
+[0.54588544 0.45411456] with label0.0
+INFO:__main__:Prediction for sample 3849:
+[0.62955934 0.3704406 ] with label0.0
+INFO:__main__:Prediction for sample 3974:
+[0.67042226 0.32957777] with label0.0
+INFO:__main__:Prediction for sample 4099:
+[0.60922605 0.39077395] with label0.0
+INFO:__main__:Prediction for sample 4224:
+[0.6028087 0.3971913] with label0.0
+INFO:__main__:Prediction for sample 4349:
+[0.59258693 0.4074131 ] with label0.0
+INFO:__main__:Prediction for sample 4474:
+[0.6518836  0.34811643] with label0.0
+INFO:__main__:Prediction for sample 4599:
+[0.59762675 0.40237328] with label0.0
+INFO:__main__:Prediction for sample 4724:
+[0.6096323 0.3903677] with label0.0
+INFO:__main__:Prediction for sample 4849:
+[0.62634516 0.37365487] with label1.0
+INFO:__main__:Prediction for sample 4974:
+[0.6207609 0.3792392] with label1.0
+INFO:__main__:Prediction for sample 5099:
+[0.60627484 0.3937252 ] with label1.0
+INFO:bdonline.trainers:Trial has ended for class 1, from 19694 to 19993
 INFO:bdonline.trainers:Now 1 trials (including breaks)
-INFO:bdonline.trainers:Training model...
-INFO:bdonline.trainers:Time for training: 0.28s
-INFO:__main__:Prediction for sample 10977:
-[0.3755547  0.62444526] with label2.0
-INFO:__main__:Prediction for sample 11039:
-[0.3489223 0.6510778] with label2.0
-INFO:__main__:Prediction for sample 11101:
-[0.34027427 0.65972584] with label2.0
-INFO:__main__:Prediction for sample 11163:
-[0.33374998 0.66625   ] with label2.0
-INFO:__main__:Prediction for sample 11225:
-[0.3948844  0.60511565] with label2.0
-INFO:__main__:Prediction for sample 11287:
-[0.3338068  0.66619325] with label2.0
-INFO:__main__:Prediction for sample 11349:
-[0.32227796 0.67772204] with label2.0
-INFO:__main__:Prediction for sample 11411:
-[0.38152346 0.61847657] with label2.0
-INFO:__main__:Prediction for sample 11473:
-[0.3399525  0.66004753] with label0.0
-INFO:__main__:Prediction for sample 11535:
-[0.4441989  0.55580115] with label0.0
-INFO:__main__:Prediction for sample 11597:
-[0.37258103 0.6274189 ] with label0.0
-INFO:__main__:Prediction for sample 11659:
-[0.3037543  0.69624573] with label0.0
-INFO:__main__:Prediction for sample 11721:
-[0.31134376 0.6886562 ] with label0.0
-INFO:__main__:Prediction for sample 11783:
-[0.40443912 0.5955609 ] with label0.0
-INFO:__main__:Prediction for sample 11845:
-[0.29584906 0.7041509 ] with label0.0
-INFO:__main__:Prediction for sample 11907:
-[0.33152807 0.66847205] with label0.0
-INFO:__main__:Prediction for sample 11969:
-[0.38532573 0.6146744 ] with label0.0
-INFO:__main__:Prediction for sample 12031:
-[0.3458623  0.65413773] with label0.0
-INFO:__main__:Prediction for sample 12093:
-[0.31797007 0.6820299 ] with label0.0
-INFO:__main__:Prediction for sample 12155:
-[0.358619   0.64138097] with label0.0
-INFO:__main__:Prediction for sample 12217:
-[0.26253858 0.7374615 ] with label0.0
-INFO:__main__:Prediction for sample 12279:
-[0.3577122 0.6422878] with label0.0
-INFO:__main__:Prediction for sample 12341:
-[0.25643378 0.7435663 ] with label0.0
-INFO:__main__:Prediction for sample 12403:
-[0.28347737 0.71652263] with label0.0
-INFO:__main__:Prediction for sample 12465:
-[0.2694849 0.7305152] with label0.0
-INFO:__main__:Prediction for sample 12527:
-[0.3353781 0.6646219] with label0.0
-INFO:__main__:Prediction for sample 12589:
-[0.30144888 0.6985511 ] with label0.0
-INFO:__main__:Prediction for sample 12651:
-[0.22887592 0.771124  ] with label0.0
-INFO:__main__:Prediction for sample 12713:
-[0.20297958 0.7970204 ] with label0.0
-INFO:__main__:Prediction for sample 12775:
-[0.23654713 0.7634528 ] with label0.0
-INFO:__main__:Prediction for sample 12837:
-[0.25116792 0.7488321 ] with label0.0
-INFO:__main__:Prediction for sample 12899:
-[0.19646905 0.80353093] with label0.0
-INFO:__main__:Prediction for sample 12961:
-[0.27243996 0.7275601 ] with label0.0
-INFO:__main__:Prediction for sample 13023:
-[0.2872449  0.71275514] with label0.0
-INFO:__main__:Prediction for sample 13085:
-[0.25183347 0.7481666 ] with label1.0
-INFO:__main__:Prediction for sample 13147:
-[0.34833243 0.6516676 ] with label1.0
-INFO:__main__:Prediction for sample 13209:
-[0.24891998 0.75108   ] with label1.0
-INFO:__main__:Prediction for sample 13271:
-[0.26774004 0.73226   ] with label1.0
-INFO:__main__:Prediction for sample 13333:
-[0.3344618 0.6655382] with label1.0
-INFO:__main__:Prediction for sample 13395:
-[0.34113905 0.6588609 ] with label1.0
-INFO:__main__:Prediction for sample 13457:
-[0.24203326 0.7579668 ] with label1.0
-INFO:bdonline.trainers:Trial has ended for class 1, from 19567 to 19999
+INFO:bdonline.trainers:Not training model yet, only have 1 of 4 trials 
+INFO:bdonline.trainers:Time for training: 0.00s
+INFO:__main__:Prediction for sample 5224:
+[0.6164095  0.38359052] with label1.0
+INFO:__main__:Prediction for sample 5349:
+[0.53035986 0.46964014] with label1.0
+INFO:__main__:Prediction for sample 5474:
+[0.5970247  0.40297535] with label1.0
+INFO:__main__:Prediction for sample 5599:
+[0.56643575 0.43356425] with label1.0
+INFO:__main__:Prediction for sample 5724:
+[0.58508164 0.4149184 ] with label0.0
+INFO:__main__:Prediction for sample 5849:
+[0.6003076  0.39969248] with label0.0
+INFO:__main__:Prediction for sample 5974:
+[0.64203477 0.3579652 ] with label0.0
+INFO:__main__:Prediction for sample 6099:
+[0.6369782 0.3630217] with label0.0
+INFO:__main__:Prediction for sample 6224:
+[0.54902583 0.4509742 ] with label0.0
+INFO:__main__:Prediction for sample 6349:
+[0.5768078  0.42319217] with label0.0
+INFO:__main__:Prediction for sample 6474:
+[0.59305763 0.4069423 ] with label0.0
+INFO:__main__:Prediction for sample 6599:
+[0.5882527 0.4117473] with label0.0
+INFO:__main__:Prediction for sample 6724:
+[0.60459405 0.39540586] with label0.0
+INFO:__main__:Prediction for sample 6849:
+[0.62162644 0.3783737 ] with label0.0
+INFO:__main__:Prediction for sample 6974:
+[0.60899085 0.39100915] with label0.0
+INFO:__main__:Prediction for sample 7099:
+[0.63247085 0.3675292 ] with label0.0
+INFO:__main__:Prediction for sample 7224:
+[0.6325939 0.3674061] with label0.0
+INFO:__main__:Prediction for sample 7349:
+[0.6482809 0.3517191] with label1.0
+INFO:__main__:Prediction for sample 7474:
+[0.5985872  0.40141276] with label1.0
+INFO:__main__:Prediction for sample 7599:
+[0.5548582 0.4451418] with label1.0
+INFO:__main__:Prediction for sample 7724:
+[0.6344172  0.36558285] with label1.0
+INFO:__main__:Prediction for sample 7849:
+[0.5526928 0.4473072] with label1.0
+INFO:__main__:Prediction for sample 7974:
+[0.55193067 0.4480693 ] with label1.0
+INFO:__main__:Prediction for sample 8099:
+[0.54275095 0.45724902] with label1.0
+INFO:__main__:Prediction for sample 8224:
+[0.5524301  0.44756997] with label1.0
+INFO:__main__:Prediction for sample 8349:
+[0.6236521  0.37634784] with label1.0
+INFO:bdonline.trainers:Trial has ended for class 1, from 18896 to 19997
 INFO:bdonline.trainers:Now 2 trials (including breaks)
-INFO:bdonline.trainers:Training model...
-INFO:bdonline.trainers:Time for training: 0.27s
-INFO:__main__:Prediction for sample 13519:
-[0.43469337 0.56530666] with label1.0
-INFO:__main__:Prediction for sample 13581:
-[0.34920582 0.6507942 ] with label1.0
-INFO:__main__:Prediction for sample 13643:
-[0.32372013 0.67627984] with label1.0
-INFO:__main__:Prediction for sample 13705:
-[0.46563214 0.53436786] with label1.0
-INFO:__main__:Prediction for sample 13767:
-[0.45563567 0.54436433] with label1.0
-INFO:__main__:Prediction for sample 13829:
-[0.29182193 0.708178  ] with label1.0
-INFO:__main__:Prediction for sample 13891:
-[0.4047852  0.59521484] with label1.0
-INFO:__main__:Prediction for sample 13953:
-[0.47365814 0.52634186] with label1.0
-INFO:__main__:Prediction for sample 14015:
-[0.41601756 0.58398235] with label0.0
-INFO:__main__:Prediction for sample 14077:
-[0.3748868 0.6251133] with label0.0
-INFO:__main__:Prediction for sample 14139:
-[0.3515846 0.6484153] with label0.0
-INFO:__main__:Prediction for sample 14201:
-[0.43226594 0.56773406] with label0.0
-INFO:__main__:Prediction for sample 14263:
-[0.28637418 0.71362585] with label0.0
-INFO:__main__:Prediction for sample 14325:
-[0.3998683 0.6001317] with label0.0
-INFO:__main__:Prediction for sample 14387:
-[0.31407976 0.6859203 ] with label0.0
-INFO:__main__:Prediction for sample 14449:
-[0.35832694 0.64167297] with label0.0
-INFO:__main__:Prediction for sample 14511:
-[0.35721585 0.6427842 ] with label0.0
-INFO:__main__:Prediction for sample 14573:
-[0.37586734 0.62413275] with label0.0
-INFO:__main__:Prediction for sample 14635:
-[0.41673285 0.58326715] with label0.0
-INFO:__main__:Prediction for sample 14697:
-[0.3976097  0.60239035] with label0.0
-INFO:__main__:Prediction for sample 14759:
-[0.35929745 0.64070255] with label0.0
-INFO:__main__:Prediction for sample 14821:
-[0.31100914 0.6889909 ] with label0.0
-INFO:__main__:Prediction for sample 14883:
-[0.31933016 0.68066984] with label0.0
-INFO:__main__:Prediction for sample 14945:
-[0.3116619 0.6883381] with label0.0
-INFO:__main__:Prediction for sample 15007:
-[0.27764213 0.72235787] with label0.0
-INFO:__main__:Prediction for sample 15069:
-[0.31966498 0.68033504] with label0.0
-INFO:__main__:Prediction for sample 15131:
-[0.3206524 0.6793476] with label0.0
-INFO:__main__:Prediction for sample 15193:
-[0.27358422 0.72641575] with label0.0
-INFO:__main__:Prediction for sample 15255:
-[0.34759763 0.6524023 ] with label0.0
-INFO:__main__:Prediction for sample 15317:
-[0.24757828 0.75242174] with label0.0
-INFO:__main__:Prediction for sample 15379:
-[0.33463916 0.6653608 ] with label0.0
-INFO:__main__:Prediction for sample 15441:
-[0.3695894 0.6304106] with label0.0
-INFO:__main__:Prediction for sample 15503:
-[0.2918596 0.7081405] with label0.0
-INFO:__main__:Prediction for sample 15565:
-[0.34237033 0.6576297 ] with label0.0
-INFO:__main__:Prediction for sample 15627:
-[0.3282195  0.67178047] with label0.0
-INFO:__main__:Prediction for sample 15689:
-[0.2974261 0.7025739] with label2.0
-INFO:__main__:Prediction for sample 15751:
-[0.29937443 0.7006256 ] with label2.0
-INFO:__main__:Prediction for sample 15813:
-[0.25629315 0.7437069 ] with label2.0
-INFO:__main__:Prediction for sample 15875:
-[0.37625924 0.6237408 ] with label2.0
-INFO:__main__:Prediction for sample 15937:
-[0.30738586 0.69261414] with label2.0
-INFO:__main__:Prediction for sample 15999:
-[0.3259887  0.67401135] with label2.0
-INFO:__main__:Prediction for sample 16061:
-[0.29456183 0.705438  ] with label2.0
-INFO:__main__:Prediction for sample 16123:
-[0.3781496 0.6218504] with label2.0
-INFO:__main__:Prediction for sample 16185:
-[0.29454714 0.70545274] with label2.0
-INFO:__main__:Prediction for sample 16247:
-[0.30203897 0.69796103] with label2.0
-INFO:__main__:Prediction for sample 16309:
-[0.43193728 0.5680627 ] with label2.0
-INFO:__main__:Prediction for sample 16371:
-[0.4359783 0.5640217] with label2.0
-INFO:__main__:Prediction for sample 16433:
-[0.44681117 0.5531889 ] with label2.0
-INFO:__main__:Prediction for sample 16495:
-[0.46521765 0.53478235] with label2.0
-INFO:__main__:Prediction for sample 16557:
-[0.32941446 0.6705855 ] with label2.0
-INFO:__main__:Prediction for sample 16619:
-[0.26799768 0.7320023 ] with label2.0
-INFO:__main__:Prediction for sample 16681:
-[0.38888168 0.61111826] with label2.0
-INFO:__main__:Prediction for sample 16743:
-[0.2827068 0.7172932] with label2.0
-INFO:bdonline.trainers:Trial has ended for class 2, from 18850 to 19999
+INFO:bdonline.trainers:Not training model yet, only have 2 of 4 trials 
+INFO:bdonline.trainers:Time for training: 0.00s
+INFO:__main__:Prediction for sample 8474:
+[0.58247304 0.41752696] with label1.0
+INFO:__main__:Prediction for sample 8599:
+[0.58097625 0.41902378] with label1.0
+INFO:__main__:Prediction for sample 8724:
+[0.64823693 0.35176307] with label1.0
+INFO:__main__:Prediction for sample 8849:
+[0.6772472  0.32275283] with label1.0
+INFO:__main__:Prediction for sample 8974:
+[0.6036065  0.39639348] with label1.0
+INFO:__main__:Prediction for sample 9099:
+[0.662335  0.3376651] with label0.0
+INFO:__main__:Prediction for sample 9224:
+[0.6451206  0.35487932] with label0.0
+INFO:__main__:Prediction for sample 9349:
+[0.6580596  0.34194037] with label0.0
+INFO:__main__:Prediction for sample 9474:
+[0.6603113 0.3396886] with label0.0
+INFO:__main__:Prediction for sample 9599:
+[0.5723215  0.42767847] with label0.0
+INFO:__main__:Prediction for sample 9724:
+[0.61895525 0.3810448 ] with label0.0
+INFO:__main__:Prediction for sample 9849:
+[0.6618532 0.3381467] with label0.0
+INFO:__main__:Prediction for sample 9974:
+[0.6007667 0.3992333] with label0.0
+INFO:__main__:Prediction for sample 10099:
+[0.59132695 0.40867296] with label0.0
+INFO:__main__:Prediction for sample 10224:
+[0.59178156 0.40821832] with label0.0
+INFO:__main__:Prediction for sample 10349:
+[0.58019394 0.4198061 ] with label2.0
+INFO:__main__:Prediction for sample 10474:
+[0.55525243 0.44474763] with label2.0
+INFO:__main__:Prediction for sample 10599:
+[0.5628342  0.43716586] with label2.0
+INFO:__main__:Prediction for sample 10724:
+[0.6059109 0.3940892] with label2.0
+INFO:__main__:Prediction for sample 10849:
+[0.5595198  0.44048014] with label2.0
+INFO:__main__:Prediction for sample 10974:
+[0.58153    0.41846997] with label2.0
+INFO:bdonline.trainers:Trial has ended for class 2, from 19309 to 19992
 INFO:bdonline.trainers:Now 3 trials (including breaks)
+INFO:bdonline.trainers:Not training model yet, only have 3 of 4 trials 
+INFO:bdonline.trainers:Time for training: 0.00s
+INFO:__main__:Prediction for sample 11099:
+[0.5984     0.40160006] with label2.0
+INFO:__main__:Prediction for sample 11224:
+[0.58713096 0.41286907] with label2.0
+INFO:__main__:Prediction for sample 11349:
+[0.6255783 0.3744218] with label2.0
+INFO:__main__:Prediction for sample 11474:
+[0.58420396 0.41579607] with label2.0
+INFO:__main__:Prediction for sample 11599:
+[0.6158893  0.38411072] with label2.0
+INFO:__main__:Prediction for sample 11724:
+[0.6306583  0.36934164] with label0.0
+INFO:__main__:Prediction for sample 11849:
+[0.5747226 0.4252774] with label0.0
+INFO:__main__:Prediction for sample 11974:
+[0.6155652  0.38443488] with label0.0
+INFO:__main__:Prediction for sample 12099:
+[0.6559634  0.34403655] with label0.0
+INFO:__main__:Prediction for sample 12224:
+[0.6891472  0.31085274] with label0.0
+INFO:__main__:Prediction for sample 12349:
+[0.62893695 0.37106302] with label0.0
+INFO:__main__:Prediction for sample 12474:
+[0.6487305  0.35126948] with label0.0
+INFO:__main__:Prediction for sample 12599:
+[0.6085943  0.39140564] with label0.0
+INFO:__main__:Prediction for sample 12724:
+[0.6299184 0.3700816] with label0.0
+INFO:__main__:Prediction for sample 12849:
+[0.60726994 0.39273015] with label0.0
+INFO:__main__:Prediction for sample 12974:
+[0.58456117 0.41543883] with label1.0
+INFO:__main__:Prediction for sample 13099:
+[0.5932891  0.40671095] with label1.0
+INFO:__main__:Prediction for sample 13224:
+[0.5966082  0.40339184] with label1.0
+INFO:__main__:Prediction for sample 13349:
+[0.61872864 0.38127136] with label1.0
+INFO:bdonline.trainers:Trial has ended for class 1, from 19586 to 19991
+INFO:bdonline.trainers:Now 4 trials (including breaks)
 INFO:bdonline.trainers:Training model...
-INFO:bdonline.trainers:Time for training: 0.27s
-INFO:__main__:Prediction for sample 16805:
-[0.345161 0.654839] with label2.0
-INFO:__main__:Prediction for sample 16867:
-[0.3346157 0.6653844] with label2.0
-INFO:__main__:Prediction for sample 16929:
-[0.2374323 0.7625677] with label2.0
-INFO:__main__:Prediction for sample 16991:
-[0.40696424 0.5930358 ] with label2.0
-INFO:__main__:Prediction for sample 17053:
-[0.28376538 0.71623456] with label2.0
-INFO:__main__:Prediction for sample 17115:
-[0.34211457 0.6578855 ] with label2.0
-INFO:__main__:Prediction for sample 17177:
-[0.35306638 0.6469336 ] with label2.0
-INFO:__main__:Prediction for sample 17239:
-[0.28001088 0.71998906] with label2.0
-INFO:__main__:Prediction for sample 17301:
-[0.35824436 0.6417555 ] with label0.0
-INFO:__main__:Prediction for sample 17363:
-[0.3357404 0.6642597] with label0.0
-INFO:__main__:Prediction for sample 17425:
-[0.40054312 0.5994569 ] with label0.0
-INFO:__main__:Prediction for sample 17487:
-[0.33241624 0.66758376] with label0.0
-INFO:__main__:Prediction for sample 17549:
-[0.3270182  0.67298186] with label0.0
-INFO:__main__:Prediction for sample 17611:
-[0.34916723 0.65083283] with label0.0
-INFO:__main__:Prediction for sample 17673:
-[0.2725984 0.7274016] with label0.0
-INFO:__main__:Prediction for sample 17735:
-[0.35564595 0.644354  ] with label0.0
-INFO:__main__:Prediction for sample 17797:
-[0.36066243 0.6393376 ] with label0.0
-INFO:__main__:Prediction for sample 17859:
-[0.33814043 0.6618595 ] with label0.0
-INFO:__main__:Prediction for sample 17921:
-[0.42607525 0.5739248 ] with label0.0
-INFO:__main__:Prediction for sample 17983:
-[0.39804125 0.6019588 ] with label0.0
-INFO:__main__:Prediction for sample 18045:
-[0.38662073 0.6133793 ] with label0.0
-INFO:__main__:Prediction for sample 18107:
-[0.46107417 0.5389259 ] with label0.0
-INFO:__main__:Prediction for sample 18169:
-[0.2967296 0.7032704] with label0.0
-INFO:__main__:Prediction for sample 18231:
-[0.4046068  0.59539324] with label0.0
-INFO:__main__:Prediction for sample 18293:
-[0.3621175  0.63788253] with label0.0
-INFO:__main__:Prediction for sample 18355:
-[0.3283529 0.6716472] with label1.0
-INFO:__main__:Prediction for sample 18417:
-[0.3475503 0.6524497] with label1.0
-INFO:__main__:Prediction for sample 18479:
-[0.27678376 0.72321624] with label1.0
-INFO:__main__:Prediction for sample 18541:
-[0.31258923 0.6874108 ] with label1.0
+INFO:bdonline.trainers:Time for training: 0.61s
+INFO:__main__:Prediction for sample 13474:
+[0.6456605  0.35433948] with label1.0
+INFO:__main__:Prediction for sample 13599:
+[0.6547491  0.34525093] with label1.0
+INFO:__main__:Prediction for sample 13724:
+[0.6684582  0.33154175] with label1.0
+INFO:__main__:Prediction for sample 13849:
+[0.6368771  0.36312276] with label1.0
+INFO:__main__:Prediction for sample 13974:
+[0.6115271  0.38847288] with label0.0
+INFO:__main__:Prediction for sample 14099:
+[0.65960795 0.34039208] with label0.0
+INFO:__main__:Prediction for sample 14224:
+[0.71301657 0.2869835 ] with label0.0
+INFO:__main__:Prediction for sample 14349:
+[0.6521093  0.34789068] with label0.0
+INFO:__main__:Prediction for sample 14474:
+[0.5731     0.42690003] with label0.0
+INFO:__main__:Prediction for sample 14599:
+[0.6695748  0.33042523] with label0.0
+INFO:__main__:Prediction for sample 14724:
+[0.6567231  0.34327698] with label0.0
+INFO:__main__:Prediction for sample 14849:
+[0.64481366 0.35518622] with label0.0
+INFO:__main__:Prediction for sample 14974:
+[0.65264827 0.34735176] with label0.0
+INFO:__main__:Prediction for sample 15099:
+[0.6538653 0.3461347] with label0.0
+INFO:__main__:Prediction for sample 15224:
+[0.63681144 0.3631886 ] with label0.0
+INFO:__main__:Prediction for sample 15349:
+[0.65308243 0.34691757] with label0.0
+INFO:__main__:Prediction for sample 15474:
+[0.6786317  0.32136834] with label2.0
+INFO:__main__:Prediction for sample 15599:
+[0.649654   0.35034612] with label2.0
+INFO:__main__:Prediction for sample 15724:
+[0.64367014 0.3563299 ] with label2.0
+INFO:__main__:Prediction for sample 15849:
+[0.68267375 0.3173262 ] with label2.0
+INFO:__main__:Prediction for sample 15974:
+[0.6157419 0.384258 ] with label2.0

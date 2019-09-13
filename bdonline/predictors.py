@@ -68,7 +68,7 @@ class ModelPredictor(object):
         in_var = np_to_var(data.T[None,:,:,None], dtype=np.float32)
 
         #Save tensor for offline analysis        
-        torch.save(in_var, 'D:\\DLVRData\\Supercrops600\\Tensor_'+str(self.pred_count))
+        #torch.save(in_var, 'D:\\DLVRData\\Supercrops600\\Tensor_'+str(self.pred_count))
         self.pred_count += 1
 
         if self.cuda:

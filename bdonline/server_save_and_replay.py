@@ -142,14 +142,27 @@ from bdonline.processors import StandardizeProcessor
 from bdonline.trainers import NoTrainer
 from bdonline.trainers import BatchCntTrainer
 from braindevel_online.live_plot import LivePlot
-
+from braindecode.models.util import to_dense_prediction_model
+from braindecode.models import deep4
 TCP_SENDER_EEG_NCHANS = 65  # number of channels to send to braindecode-online, includes labels
 TCP_SENDER_EEG_NSAMPLES = 10
+CHAN_NAMES = ['Fp1', 'Fpz', 'Fp2', 'AF7',     # channel names send to braindecode-online
+                  'AF3', 'AF4', 'AF8', 'F7',
+                  'F5', 'F3', 'F1', 'Fz', 'F2', 'F4', 'F6', 'F8', 'FT7', 'FC5',
+                  'FC3',
+                  'FC1', 'FCz', 'FC2', 'FC4', 'FC6', 'FT8', 'M1', 'T7', 'C5',
+                  'C3',
+                  'C1', 'Cz', 'C2', 'C4', 'C6', 'T8', 'M2', 'TP7', 'CP5', 'CP3',
+                  'CP1', 'CPz', 'CP2', 'CP4', 'CP6', 'TP8', 'P7', 'P5', 'P3',
+                  'P1',
+                  'Pz', 'P2', 'P4', 'P6', 'P8', 'PO7', 'PO5', 'PO3', 'POz',
+                  'PO4',
+                  'PO6', 'PO8', 'O1', 'Oz', 'O2', 'marker']
 
 
-
-xdf_filenames=['D:\\DLVR\\Data\\subjH\\block1.xdf', 'D:\\DLVR\Data\\subjH\\block2.xdf', 'D:\\DLVR\\Data\\subjH\\block3.xdf'] #the data we want to replay
-DATA_AND_LABELS, CHAN_NAMES = xdf_to_bd.bd_data_from_xdf(xdf_filenames, 250) #Load in all data and labels
+path = '/home/matthias/Data/JoCoDLVR1/' #the data we want to replay
+files = ['data_5.xdf']
+DATA_AND_LABELS = xdf_to_bd.dlvr_braindecode(path, files, -1, 250) #Load in all data and labels
 
 
 class AsyncStdinReader(threading.Thread):
@@ -198,6 +211,8 @@ class PredictionSender(object):
     def send_prediction(self, i_sample, prediction, label):
         log.info("Prediction for sample {:d}:\n{:s} with label{:s}".format(
             i_sample, str(prediction), str(label)))
+        print("Prediction for sample {:d}:\n{:s} with label{:s}".format(
+            i_sample, str(prediction), str(label)))
         # +1 to convert 0-based to 1-based indexing
         self.socket.sendall("{:d}\n".format(i_sample + 1).encode('utf-8'))
         n_preds = len(prediction) # e.g. number of classes
@@ -209,21 +224,19 @@ class PredictionSender(object):
         self.socket.sendall(label_str.encode('utf-8'))
 
 
-
 class DataFromFile():       #mimick the receiving of data through LSL
     def __init__(self, socket):
         self.socket = socket
 
-
     def wait_for_data(self):
-        idx = self.socket.recv(4)
-        idx = np.frombuffer(idx, dtype='int32')
-
+        idx = self.socket.recv(128)
+        idx = np.frombuffer(idx, dtype='int64')
         array = DATA_AND_LABELS[:, idx]
-        data = array[:-1,:].T
-        markers = array[-1,:]
+        data = array[:-1, :].T
+        markers = array[-1, :]
 
         return data, markers
+
 
 def read_until_bytes_received(socket, n_bytes):
     array_parts = []
@@ -235,8 +248,7 @@ def read_until_bytes_received(socket, n_bytes):
     array = b"".join(array_parts)
     return array
         
-    
-    
+
 def read_until_bytes_received_or_enter_pressed(socket, n_bytes):
     '''
     Read bytes from socket until reaching given number of bytes, cancel
@@ -295,7 +307,6 @@ class PredictionServer(gevent.server.StreamServer):
         self.save_model_trainer_params = save_model_trainer_params
         super(PredictionServer, self).__init__(listener, handle=handle, spawn=spawn)
 
-
     def handle(self, in_socket, address):
         log.info('New connection from {:s}!'.format(str(address)))
         # Connect to out Server
@@ -332,13 +343,11 @@ class PredictionServer(gevent.server.StreamServer):
         self.print_results()
         self.stop()
 
-
     def connect_to_prediction_receiver(self):
         out_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         print("Out server connected at:", self.out_hostname, self.out_port)
         out_socket.connect((self.out_hostname, self.out_port))
         return PredictionSender(out_socket)
-
 
     def receive_header(self, in_socket):
         chan_names_line = '' + in_socket.recv(1).decode('utf-8')
@@ -562,11 +571,14 @@ def main(
     sender = None
     buffer = None
     # load model to correct gpu id
-    gpu_id = th.FloatTensor(1).cuda().get_device()
-    def inner_device_mapping(storage, location):
-        return storage.cuda(gpu_id)
-    model_name = os.path.join(base_name, 'deep_4_test')
-    model = th.load(model_name, map_location=inner_device_mapping)
+    model_name = os.path.join(base_name, 'deep4params.pkl')
+    model_dict = th.load(model_name)
+    final_conv_length = 2
+    model = deep4.Deep4Net(n_chans, 2, input_time_length, final_conv_length)
+    model = model.create_network()
+    model.load_state_dict(model_dict)
+    to_dense_prediction_model(model)
+    model.to('cuda')
 
     predictor = ModelPredictor(
         model, input_time_length=input_time_length, pred_gap=pred_gap,

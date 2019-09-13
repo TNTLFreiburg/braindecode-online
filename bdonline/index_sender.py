@@ -75,10 +75,12 @@ def main():
         sock.connect((TCP_RECEIVER_PREDS_HOSTNAME, TCP_SENDER_EEG_PORT))
         print('start sending')
         idx = np.array([0])
+        idx_array = np.arange(0, 10)
         while True:
-            sock.sendall(idx.tobytes())
-            idx +=1
-            wait(0.004)
+            idx_to_send = idx_array + idx * 10
+            sock.sendall(idx_to_send.tobytes())
+            idx += 1
+            wait(0.04)
 
 
 if __name__=='__main__':

@@ -29,7 +29,6 @@ sys.path.append('D:\\DLVR\\braindecode')
 from braindecode.models import deep4
 from braindecode.torch_ext.constraints import MaxNormDefaultConstraint
 from braindecode.torch_ext.losses import log_categorical_crossentropy
-from braindecode.models import deep4
 from braindecode.models.util import to_dense_prediction_model
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from bdonline.parsers import parse_command_line_arguments
