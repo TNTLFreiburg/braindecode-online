@@ -285,11 +285,12 @@ def forward_forever():
                     prob = np.max((0, (0.8 - prob) / 0.8))
                     max_class_prob = np.array([max_class, prob], dtype='float32')
                     lsl_outlet_predictions.push_sample(max_class_prob)
-
+                    print('max class', max_class, 'with prob', prob)
                     pred_counter += 1
 
                 else:
                     predictions = []
+
                 lsl_outlet_predictions.push_sample(np.array(parsed_predictions, dtype='float32'))
                 if DEBUG:
                     print('forwarding predictions done.')

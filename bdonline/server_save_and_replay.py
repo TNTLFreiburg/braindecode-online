@@ -231,12 +231,14 @@ class DataFromFile():       #mimick the receiving of data through LSL
     def wait_for_data(self):
         idx = self.socket.recv(128)
         idx = np.frombuffer(idx, dtype='int64')
-        array = DATA_AND_LABELS[:, idx]
-        data = array[:-1, :].T
-        markers = array[-1, :]
+        try:
+            array = DATA_AND_LABELS[:, idx]
+            data = array[:-1, :].T
+            markers = array[-1, :]
+            return data, markers
 
-        return data, markers
-
+        except IndexError:
+            return None
 
 def read_until_bytes_received(socket, n_bytes):
     array_parts = []
