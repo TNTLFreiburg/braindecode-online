@@ -4,6 +4,7 @@ import os.path
 import logging
 from copy import deepcopy
 import time
+import re
 import torch
 import numpy as np
 from numpy.random import RandomState
@@ -28,6 +29,26 @@ class NoTrainer(object):
         return
 
 
+batch_folder = "D:\\DLVR\\savegrad\\"
+all_batch_files = glob(batch_folder + "batch*")
+
+
+def my_key(file):
+    string_numbers = re.search(r'\d_\d(.*)', file).group()
+    split_string_numbers = string_numbers.split("-")
+    hour = split_string_numbers[0][2:]
+    minutes = split_string_numbers[1]
+    seconds =  split_string_numbers[2]
+    batch_number =  split_string_numbers[3]
+    return eval(hour) * 3600 + eval(minutes) * 60 + eval(seconds) +eval(batch_number)
+
+if len(all_batch_files):
+    saved_supercrops = True
+    all_batch_files = sorted(all_batch_files, key=my_key)
+    all_supercrops = (torch.load(file) for file in all_batch_files)
+    print("Using saved batch indices")
+else:
+    saved_supercrops = False
 class BatchCntTrainer(object):
     def __init__(self, model,
                  loss_function, model_loss_function, model_constraint,
@@ -429,6 +450,10 @@ class BatchCntTrainer(object):
             # Create mapping from super crop nr -> data batch nr, row nr
 
             n_rows_per_batch = [len(b) for b in self.data_batches]
+            now = datetime.datetime.now()
+            file_name = str(now.day) + '-' + str(now.month) + '-' + str(now.year) + '_' + \
+                        str(now.hour) + '-' + str(now.minute) + '-' + str(now.second)
+            torch.save(n_rows_per_batch, self.gradfolder + 'n_rows_per_batch' + file_name)
             n_total_supercrops = np.sum(n_rows_per_batch)
             assert n_total_supercrops == len(all_y_blocks)
             i_supercrop_to_batch_and_row = np.zeros((n_total_supercrops, 2),
@@ -447,7 +472,13 @@ class BatchCntTrainer(object):
             assert i_batch_row == n_rows_per_batch[-1]
 
             for _ in range(self.n_updates_per_break):
-                i_supercrops = self.rng.choice(n_total_supercrops,
+                if saved_supercrops:
+                    i_supercrops = all_supercrops.__next__()
+                    log.info(self.rng.choice(n_total_supercrops,
+                                               size=self.batch_size,
+                                               p=block_probs))
+                else:
+                    i_supercrops = self.rng.choice(n_total_supercrops,
                                                size=self.batch_size,
                                                p=block_probs)
                 # saving indices of the samples

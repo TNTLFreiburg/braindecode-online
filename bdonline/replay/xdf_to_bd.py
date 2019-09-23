@@ -1,6 +1,6 @@
 import sys
 import os
-sys.path.append('/home/matthias/xdf_mne_interface')
+sys.path.append('D:\\xdf_mne_interface')
 sys.path.append('D:\\DLVR\\braindecode')
 
 

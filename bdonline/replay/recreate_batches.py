@@ -1,11 +1,14 @@
 import datetime
 from glob import glob
 import os.path
+import glob
+import re
 import logging
 from copy import deepcopy
 import time
 import torch
 import numpy as np
+import xdf_to_bd
 from numpy.random import RandomState
 from torch.autograd import Variable
 from braindecode.models.util import to_dense_prediction_model
@@ -20,11 +23,11 @@ trial_start_offset = 500
 fs = 250
 ms_to_samples = fs / 1000.0
 
-base_name = '/home/matthias'
-model_name = os.path.join(base_name, 'deep4params.pkl')
+base_name = 'D:\\braindecode-online\\bdonline\\models\\best_model'
+model_name = os.path.join(base_name, 'deep_4_600')
 model_dict = torch.load(model_name)
 final_conv_length = 2
-input_time_length = 600
+input_time_length = 500
 n_chans =64
 n_classes=2
 model = deep4.Deep4Net(n_chans, n_classes, input_time_length, final_conv_length)
@@ -32,6 +35,25 @@ model = model.create_network()
 model.load_state_dict(model_dict)
 to_dense_prediction_model(model)
 model.cuda()
+
+batch_folder = "D:\\DLVR\\savegrad\\"
+all_batch_files = glob.glob(batch_folder + "batch*")
+
+
+def my_key(file):
+    string_numbers = re.search(r'\d_\d(.*)', file).group()
+    split_string_numbers = string_numbers.split("-")
+    hour = split_string_numbers[0][2:]
+    minutes = split_string_numbers[1]
+    seconds =  split_string_numbers[2]
+    batch_number =  split_string_numbers[3]
+    return eval(hour) * 3600 + eval(minutes) * 60 + eval(seconds) +eval(batch_number)
+
+all_batch_files = sorted(all_batch_files, key=my_key)
+all_supercrops = (torch.load(file) for file in all_batch_files)
+for supercrop in all_supercrops:
+    print(max(supercrop))
+all_supercrops = [torch.load(file) for file in all_batch_files]
 
 def set_n_chans(model, n_chans=64, input_time_length=600):
     test_input = np_to_var(
@@ -45,16 +67,16 @@ def set_n_chans(model, n_chans=64, input_time_length=600):
 
 
 class BatchCreator(object):
-    def __init__(self, data_file, input_time_length,  n_preds_per_input, n_classes,
+    def __init__(self, path, files, input_time_length,  n_preds_per_input, n_classes,
                  n_updates_per_break=5, batch_size=45,
-                 n_min_trials=1, trial_start_offset=500 * ms_to_samples, break_start_offset=1000 * ms_to_samples,
+                 n_min_trials=4, trial_start_offset=0 * ms_to_samples, break_start_offset=1000 * ms_to_samples,
                  break_stop_offset=-1000 * ms_to_samples,
                  min_break_samples=0, min_trial_samples=0,
                  add_breaks=False, savetimestamps=False):
         self.__dict__.update(locals())
         del self.self
         self.rng = RandomState(30948348)
-        self.data_labels = np.load(data_file)
+        self.data_labels = xdf_to_bd.dlvr_braindecode(path, files, -1, 250).T
         if savetimestamps:
             self.data_buffer = self.data_labels[:, :-2]
             self.marker_buffer = self.data_labels[:, -2]
@@ -75,6 +97,8 @@ class BatchCreator(object):
         self.add_breaks = add_breaks
         self.min_break_samples = min_break_samples
         self.min_trial_samples = min_trial_samples
+        self.n_min_trials = n_min_trials
+        self.supercrop_counter = 0
 
     def new_data_available(self):
         # Check for trials in the loaded data_buffer
@@ -396,6 +420,7 @@ class BatchCreator(object):
 
             n_rows_per_batch = [len(b) for b in self.data_batches]
             n_total_supercrops = np.sum(n_rows_per_batch)
+            print("we have this many supercrops", n_total_supercrops)
             assert n_total_supercrops == len(all_y_blocks)
             i_supercrop_to_batch_and_row = np.zeros((n_total_supercrops, 2),
                                                     dtype=np.int32)
@@ -413,9 +438,10 @@ class BatchCreator(object):
             assert i_batch_row == n_rows_per_batch[-1]
 
             for _ in range(self.n_updates_per_break):
-                i_supercrops = self.rng.choice(n_total_supercrops,
-                                               size=self.batch_size,
-                                               p=block_probs)
+                i_supercrops = all_supercrops[self.supercrop_counter]
+                random_crops = self.rng.choice(n_total_supercrops,size=self.batch_size,p=block_probs)
+                print("what we randomly got", random_crops, len(random_crops))
+                print("during the experiment", all_supercrops[self.supercrop_counter])
                 this_topo = np.zeros((len(i_supercrops),) +
                                      self.data_batches[0].shape[1:],
                                      dtype=np.float32)
@@ -428,7 +454,8 @@ class BatchCreator(object):
                 now = datetime.datetime.now()
                 file_name = str(now.day) + '-' + str(now.month) + '-' + str(now.year) + '_' + \
                             str(now.hour) + '-' + str(now.minute) + '-' + str(now.second) + str(_)
-                torch.save(this_topo, '/home/matthias/batched_data/' + 'batches' + file_name + '.pkl')
+                torch.save(this_topo, 'D:\\Data-replay\\batched_data\\' + 'batches' + file_name + '.pkl')
+                self.supercrop_counter += 1
         else:
             log.info(
                 "Not training model yet, only have {:d} of {:d} trials ".format(

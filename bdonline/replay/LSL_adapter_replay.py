@@ -236,7 +236,8 @@ def forward_forever():
     print('Start forwarding in both directions.')
     # the operations in this loop must not block too long, to ensure that everything stays in sync
     # and we don't fall back behind the data streams
-    predictions = []
+    monster_active = 0
+    predictions = np.zeros((PRED_WINDOW_SIZE, 1))
     last_two_labels = [0, 0]
     while True:
         forwarding_loopcounter += 1
@@ -284,14 +285,14 @@ def forward_forever():
                     prob = np.abs(prob)
                     prob = np.max((0, (0.8 - prob) / 0.8))
                     max_class_prob = np.array([max_class, prob], dtype='float32')
-                    lsl_outlet_predictions.push_sample(max_class_prob)
+                    #lsl_outlet_predictions.push_sample(max_class_prob)
                     print('max class', max_class, 'with prob', prob)
                     pred_counter += 1
 
                 else:
-                    predictions = []
+                    predictions = np.zeros((PRED_WINDOW_SIZE, 1))
 
-                lsl_outlet_predictions.push_sample(np.array(parsed_predictions, dtype='float32'))
+                #lsl_outlet_predictions.push_sample(np.array(parsed_predictions, dtype='float32'))
                 if DEBUG:
                     print('forwarding predictions done.')
                 eeg_forwarding_counter += 1

@@ -76,6 +76,7 @@ def main():
         print('start sending')
         idx = np.array([0])
         idx_array = np.arange(0, 10)
+        idx_array = idx_array.astype('int64')
         while True:
             idx_to_send = idx_array + idx * 10
             sock.sendall(idx_to_send.tobytes())
