@@ -19,12 +19,16 @@ import matplotlib
 import numpy as np
 import torch as th
 from torch.optim import Adam, SGD
+from braindecode.torch_ext.optimizers import AdamW
 from gevent import socket
 import gevent.select
 import gevent.server
 from scipy import interpolate
 import h5py
 sys.path.append('D:\\DLVR\\braindecode')
+
+import torch.nn.functional as F
+from braindecode.torch_ext.schedulers import ScheduledOptimizer, CosineAnnealing
 
 from braindecode.models import deep4
 from braindecode.torch_ext.constraints import MaxNormDefaultConstraint
@@ -401,10 +405,15 @@ def main(
         model, input_time_length=input_time_length, pred_gap=pred_gap,
         cuda=cuda)
     if adapt_model:
-        loss_function = log_categorical_crossentropy
+        loss_function = F.nll_loss #log_categorical_crossentropy
         model_loss_function = None
         model_constraint = MaxNormDefaultConstraint()
-        optimizer = Adam(model.parameters(), lr=learning_rate)
+        optimizer = AdamW(model.parameters(), lr=learning_rate, weight_decay=0.5*0.001)
+
+		scheduler = CosineAnnealing(n_updates_per_break)
+		# schedule_weight_decay must be True for AdamW
+		optimizer = ScheduledOptimizer(scheduler, optimizer, schedule_weight_decay=True)
+
         n_preds_per_input = None # set later
         n_classes = None # set later
         trainer = BatchCntTrainer(

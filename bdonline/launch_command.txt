@@ -1,6 +1,0 @@
-python server_save_and_replay.py --fs 250 --expfolder D:\braindecode-online\bdonline\models\best_model  --inputsamples 500 --predgap 250 --outhost localhost --nobreaktraining --trialstartoffsetms 0 --savegrad True --gradfolder D:\\DLVR\\savegrad\\ --mintrials 1
-
-python server.py --fs 250 --expfolder D:\braindecode-online\bdonline\models\\best_model --inputsamples 500 --predgap 250 --outhost localhost --nobreaktraining --trialstartoffsetms 0 --mintrials 1 --savegrad True --gradfolder D:\\DLVR\\savegrad\\
-
-Online: prediction only:
-python server.py --fs 250 --expfolder C:\Users\hader\Documents\bdMatthias\braindecode-online\bdonline\models\emg_model\ --inputsamples 600 --predgap 125 --outhost localhost --noadapt

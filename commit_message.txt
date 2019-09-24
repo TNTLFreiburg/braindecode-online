@@ -1,0 +1,11 @@
+Add replay and parameter saving to the bdonline server 
+
+server_save_and_replay.py is a rewritten version of the standard server 
+that loads in data and receives indexes
+from index_sender.py to step through the data and replay the experiment.
+Data_receiver class was adapted to this purpose. 
+xdf_to_bd.py transforms the xdf file
+into the format bdonline would recognise(nchannelsx time, labels last row).
+Launch_command.txt contains some parameters that can be used to start the server
+predictors.py summed up the log softmax predictions before exponentiating them
+which lead to predictions not summing to 1.

@@ -56,21 +56,13 @@ LSL_SENDER_PREDS_ID = 'braindecode preds'           # id of the lsl stream to pu
 TCP_RECEIVER_PREDS_HOSTNAME = 'localhost'           # hostname of this PC, used to receive predictions
 TCP_RECEIVER_PREDS_PORT = 30000                     # port on this PC, used to receive predictions
 
-EEG_CHANNELNAMES = ['Fp1', 'Fpz', 'Fp2', 'AF7',     # channel names send to braindecode-online
-                  'AF3', 'AF4', 'AF8', 'F7',
-                  'F5', 'F3', 'F1', 'Fz', 'F2', 'F4', 'F6', 'F8', 'FT7', 'FC5',
-                  'FC3',
-                  'FC1', 'FCz', 'FC2', 'FC4', 'FC6', 'FT8', 'M1', 'T7', 'C5',
-                  'C3',
-                  'C1', 'Cz', 'C2', 'C4', 'C6', 'T8', 'M2', 'TP7', 'CP5', 'CP3',
-                  'CP1', 'CPz', 'CP2', 'CP4', 'CP6', 'TP8', 'P7', 'P5', 'P3',
-                  'P1',
-                  'Pz', 'P2', 'P4', 'P6', 'P8', 'PO7', 'PO5', 'PO3', 'POz',
-                  'PO4',
-                  'PO6', 'PO8', 'O1', 'Oz', 'O2', 'marker']
+
 PREDICTION_NUM_CLASSES = 2
 TARGET_FS = 250
 DOWNSAMPLING_COEF = int(5000 / TARGET_FS)
+PRED_WINDOW_SIZE = 10
+PRED_THRESHOLD = 0.6
+ACTION_THRESHOLD = 0.8
 # Butter filter (highpass) for 1 Hz
 B_1, A_1 = butter(6, 1 / TARGET_FS, btype='high', output='ba')
 
@@ -244,7 +236,9 @@ def forward_forever():
     print('Start forwarding in both directions.')
     # the operations in this loop must not block too long, to ensure that everything stays in sync
     # and we don't fall back behind the data streams
-    predictions = []
+    monster_active = 0
+    predictions = np.zeros((PRED_WINDOW_SIZE, 1))
+    last_two_labels = [0, 0]
     while True:
         forwarding_loopcounter += 1
         wait(0.1)
@@ -257,7 +251,10 @@ def forward_forever():
             try:
                 i_sample, preds, pred_label = tcp_recv_socketreader_preds.readlines_string(timeout=0.001, num_lines=3)
                 pred_label = float(pred_label)
-
+                last_two_labels[eeg_forwarding_counter %2] = pred_label
+                if np.diff(last_two_labels) > 0:
+                    monster_active = 1
+                    pred_counter = 0
             except TimeoutError:
                 fallen_behind_predictions = False
                 if DEBUG:
@@ -271,25 +268,34 @@ def forward_forever():
                 splitted_predictions = preds.split(" ")
                 parsed_predictions = [float(i_sample)] + \
                                     [float(splitted_predictions[i]) for i in range(PREDICTION_NUM_CLASSES)]
-                if pred_label > 0.5 :
-                    print('prediction length', len(predictions))
-                    list_preds = [float(splitted_predictions[0]), float(splitted_predictions[1])]
-                    predictions.append(list_preds)
-                    all_preds = np.concatenate(predictions).reshape(-1, 2)
-                    meaned_preds = np.mean(all_preds, axis=0)
-                    max_class = np.argmax(meaned_preds)
-                    print(max_class, 'this is true', pred_label-1)
-                    if meaned_preds[max_class] > 0.05:
-                        t, prob = ttest_ind(all_preds[:, max_class], np.ones(all_preds.shape[0])*0.05)
-                        if prob < 0.20:
-                            action = max_class +1
-                            print('Action', action)
+                if monster_active:
+                    list_preds = np.array([float(splitted_predictions[0]), float(splitted_predictions[1])])
+                    if np.max(list_preds) > PRED_THRESHOLD:
+                        if np.argmax(list_preds) == 0:
+                            predictions[pred_counter % PRED_WINDOW_SIZE] = 1
+                        elif np.argmax(list_preds) == 1:
+                            predictions[pred_counter % PRED_WINDOW_SIZE] = -1
+                    else:
+                        predictions[pred_counter % PRED_WINDOW_SIZE] = 0
+                    prob = np.mean(predictions)
+                    if prob < 0:
+                        max_class = 2
+                    else:
+                        max_class = 1
+                    prob = np.abs(prob)
+                    prob = np.max((0, (0.8 - prob) / 0.8))
+                    max_class_prob = np.array([max_class, prob], dtype='float32')
+                    #lsl_outlet_predictions.push_sample(max_class_prob)
+                    print('max class', max_class, 'with prob', prob)
+                    pred_counter += 1
 
                 else:
-                    predictions = []
-                lsl_outlet_predictions.push_sample(np.array(parsed_predictions, dtype='float32'))
+                    predictions = np.zeros((PRED_WINDOW_SIZE, 1))
+
+                #lsl_outlet_predictions.push_sample(np.array(parsed_predictions, dtype='float32'))
                 if DEBUG:
                     print('forwarding predictions done.')
+                eeg_forwarding_counter += 1
     
     
 def send_random_data(socket, no_blocks=100):

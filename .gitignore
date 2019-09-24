@@ -1,5 +1,13 @@
 __pycache__
 data
-models
+
+bdonline/models
+
 param_ind_saving
+
+commit_message.txt
+
 .idea
+
+bdonline/*.txt
+

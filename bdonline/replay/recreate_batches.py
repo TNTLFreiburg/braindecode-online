@@ -1,186 +1,176 @@
 import datetime
 from glob import glob
 import os.path
+import glob
+import re
 import logging
 from copy import deepcopy
 import time
 import torch
 import numpy as np
+import xdf_to_bd
 from numpy.random import RandomState
 from torch.autograd import Variable
-
+from braindecode.models.util import to_dense_prediction_model
+from braindecode.models import deep4
 from braindecode.datautil.signalproc import exponential_running_standardize
 from braindecode.datautil.iterators import _get_start_stop_blocks_for_trial, \
     _create_batch_from_i_trial_start_stop_blocks
 from braindecode.torch_ext.util import var_to_np, np_to_var
 
 log = logging.getLogger(__name__)
+trial_start_offset = 500
+fs = 250
+ms_to_samples = fs / 1000.0
+
+base_name = 'D:\\braindecode-online\\bdonline\\models\\best_model'
+model_name = os.path.join(base_name, 'deep_4_600')
+model_dict = torch.load(model_name)
+final_conv_length = 2
+input_time_length = 500
+n_chans =64
+n_classes=2
+model = deep4.Deep4Net(n_chans, n_classes, input_time_length, final_conv_length)
+model = model.create_network()
+model.load_state_dict(model_dict)
+to_dense_prediction_model(model)
+model.cuda()
+
+batch_folder = "D:\\DLVR\\savegrad\\"
+all_batch_files = glob.glob(batch_folder + "batch*")
 
 
-class NoTrainer(object):
-    def new_data_available(self, buffer, marker_block):
-        return
+def my_key(file):
+    string_numbers = re.search(r'\d_\d(.*)', file).group()
+    split_string_numbers = string_numbers.split("-")
+    hour = split_string_numbers[0][2:]
+    minutes = split_string_numbers[1]
+    seconds =  split_string_numbers[2]
+    batch_number =  split_string_numbers[3]
+    return eval(hour) * 3600 + eval(minutes) * 60 + eval(seconds) +eval(batch_number)
 
-    def set_n_chans(self, n_chans):
-        return
+all_batch_files = sorted(all_batch_files, key=my_key)
+all_supercrops = (torch.load(file) for file in all_batch_files)
+for supercrop in all_supercrops:
+    print(max(supercrop))
+all_supercrops = [torch.load(file) for file in all_batch_files]
 
-    def add_data_from_today(self, data_processor):
-        return
+def set_n_chans(model, n_chans=64, input_time_length=600):
+    test_input = np_to_var(
+        np.ones((2, n_chans, input_time_length, 1),
+                dtype=np.float32))
+    test_input = test_input.cuda()
+    out = model(test_input)
+    n_preds_per_input = int(out.size()[2])
+    n_classes = int(out.size()[1])
+    return n_preds_per_input, n_classes
 
 
-class BatchCntTrainer(object):
-    def __init__(self, model,
-                 loss_function, model_loss_function, model_constraint,
-                 optimizer, input_time_length,
-                 n_preds_per_input,
-                 n_classes,
-                 n_updates_per_break, batch_size,
-                 n_min_trials, trial_start_offset, break_start_offset,
-                 break_stop_offset, gradfolder, add_breaks=True,
+class BatchCreator(object):
+    def __init__(self, path, files, input_time_length,  n_preds_per_input, n_classes,
+                 n_updates_per_break=5, batch_size=45,
+                 n_min_trials=4, trial_start_offset=0 * ms_to_samples, break_start_offset=1000 * ms_to_samples,
+                 break_stop_offset=-1000 * ms_to_samples,
                  min_break_samples=0, min_trial_samples=0,
-                 cuda=True, savegrad=False, savetimestamps=False):
+                 add_breaks=False, savetimestamps=False):
         self.__dict__.update(locals())
         del self.self
         self.rng = RandomState(30948348)
+        self.data_labels = xdf_to_bd.dlvr_braindecode(path, files, -1, 250).T
+        if savetimestamps:
+            self.data_buffer = self.data_labels[:, :-2]
+            self.marker_buffer = self.data_labels[:, -2]
+            self.timestamp_buffer = self.data_labels[:, -1]
+        else:
+            self.data_buffer = self.data_labels[:, :-1]
+            self.marker_buffer = self.data_labels[:, -1]
         self.data_batches = []
         self.y_batches = []
         self.savetimestamps = savetimestamps
         self.timestamp_batches = []
+        self.n_preds_per_input = n_preds_per_input
+        self.n_classes = n_classes
+        self.batch_size = batch_size
+        self.trial_start_offset = int(trial_start_offset)
+        self.break_start_offset = int(break_start_offset)
+        self.break_stop_offset = int(break_stop_offset)
+        self.add_breaks = add_breaks
+        self.min_break_samples = min_break_samples
+        self.min_trial_samples = min_trial_samples
+        self.n_min_trials = n_min_trials
+        self.supercrop_counter = 0
 
-    def set_n_chans(self, n_chans):
-        test_input = np_to_var(
-            np.ones((2, n_chans, self.input_time_length, 1),
-                    dtype=np.float32))
-        if self.cuda:
-            test_input = test_input.cuda()
-        out = self.model(test_input)
-        self.n_preds_per_input = int(out.size()[2])
-        self.n_classes = int(out.size()[1])
-        return
-
-    def add_data_from_today(self, factor_new, eps):
-        # Check if old data exists, if yes add it
-        now = datetime.datetime.now()
-        day_string = now.strftime('%Y-%m-%d')
-        data_folder = 'data/online/{:s}'.format(day_string)
-        # sort should sort timewise for our timeformat...
-        data_files = sorted(glob(os.path.join(data_folder, '*.npy')))
-        if len(data_files) > 0:
-            log.info("Loading {:d} data files for adaptation:\n{:s}".format(
-                len(data_files), str(data_files)))
-            for filename in data_files:
-                log.info("Add data from {:s}...".format(filename))
-                samples_markers = np.load(filename)
-                samples = samples_markers[:, :-1]
-                markers = np.int32(samples_markers[:, -1])
-                self.add_training_blocks_from_old_data(
-                    samples, markers, factor_new=factor_new,
-                    eps=eps)
-            log.info(
-                "Done loading, now have {:d} trials (including breaks)".format(
-                    len(self.data_batches)))
-        else:
-            log.info(
-                "No data files found to load for adaptation in {:s}".format(
-                    data_folder))
-
-    def add_training_blocks_from_old_data(self, old_samples,
-                                          old_markers, factor_new, eps):
-        # first standardize data
-        old_samples = exponential_running_standardize(old_samples,
-                                                      factor_new=factor_new,
-                                                      init_block_size=1000,
-                                                      eps=eps)
-        trial_starts, trial_stops = self.get_trial_start_stop_indices(
-            old_markers)
-        log.info("Adding {:d} trials".format(len(trial_starts)))
-        for trial_start, trial_stop in zip(trial_starts, trial_stops):
-            self.add_trial(trial_start, trial_stop,
-                           old_samples, old_markers)
-        # now lets add breaks
-        log.info("Adding {:d} breaks".format(len(trial_starts) - 1))
-        for break_start, break_stop in zip(trial_stops[:-1],
-                                           trial_starts[1:]):
-            self.add_break(break_start, break_stop, old_samples,
-                           old_markers)
-
-    def new_data_available(self, buffer, marker_block):
-        # Check if a trial has ended with last samples
+    def new_data_available(self):
+        # Check for trials in the loaded data_buffer
         # need marker samples with one overlap
         # so we do not miss trial boundaries inbetween two sample blocks
-        marker_buffer = buffer.marker_buffer
-        marker_samples_with_overlap = np.copy(
-            marker_buffer[-len(marker_block) - 1:])
         trial_has_ended = np.sum(
-            np.diff(marker_samples_with_overlap) < 0) > 0
+            np.diff(self.marker_buffer) < 0) > 0
         if trial_has_ended:
             trial_starts, trial_stops = self.get_trial_start_stop_indices(
-                marker_buffer)
-            trial_start = trial_starts[-1]
-            trial_stop = trial_stops[-1]
-            ## Logging and assertions
-            log.info("Trial has ended for class {}, from {} to {}".format(
-                int(marker_buffer[trial_start]), trial_start, trial_stop))
-            assert trial_start < trial_stop, ("trial start {} should be "
-                                              "before trial stop {}, markers: {}").format(
-                trial_start,
-                trial_stop, str(marker_samples_with_overlap))
-            assert marker_buffer[trial_start - 1] == 0, (
-                "Expect a 0 marker before trial start, instead {}".format(
-                    marker_buffer[trial_start - 1]))
-            assert marker_buffer[trial_start] != 0, (
-                "Expect a nonzero marker at trial start instead {}".format(
-                    marker_buffer[trial_start]))
-            assert marker_buffer[trial_stop - 1] != 0, (
-                "Expect a nonzero marker at trial end instead {}".format(
-                    marker_buffer[trial_stop]))
-            assert marker_buffer[trial_start] == marker_buffer[
-                trial_stop - 1], (
-                "Expect a same marker at trial start and end instead {} / {}".format(
-                    marker_buffer[trial_start],
-                    marker_buffer[trial_stop]))
-            if self.savetimestamps:
-                print(buffer.timestamp_buffer.shape)
-                self.add_trial(trial_start, trial_stop,
-                               buffer.data_buffer,
-                               marker_buffer, buffer.timestamp_buffer)
-            else:
-                self.add_trial(trial_start, trial_stop,
-                               buffer.data_buffer,
-                               marker_buffer)
-            log.info("Now {} trials (including breaks)".format(
-                len(self.data_batches)))
-            start_train_time = time.time()
-            self.train()
-            end_train_time = time.time()
-            log.info("Time for training: {:.2f}s".format(
-                end_train_time - start_train_time))
-
-        trial_has_started = np.sum(
-            np.diff(marker_samples_with_overlap) > 0) > 0
-        if trial_has_started:
-            trial_end_in_marker_buffer = np.sum(
-                np.diff(marker_buffer) < 0) > 0
-            if trial_end_in_marker_buffer:
-                # +1 necessary since diff removes one index
-                trial_start = \
-                    np.flatnonzero(np.diff(marker_buffer) > 0)[-1] + 1
-                trial_stop = \
-                    np.flatnonzero(np.diff(marker_buffer) < 0)[-1] + 1
-                assert trial_start > trial_stop, (
-                    "If trial has just started "
-                    "expect this to be after stop of last trial")
-                assert marker_buffer[trial_start - 1] == 0, (
-                    "Expect a 0 marker before trial start, instead {:d}".format(
-                        marker_buffer[trial_start - 1]))
-                assert marker_buffer[trial_start] != 0, (
-                    "Expect a nonzero marker at trial start instead {:d}".format(
-                        marker_buffer[trial_start]))
-                self.add_break(break_start=trial_stop,
-                               break_stop=trial_start,
-                               all_samples=buffer.data_buffer,
-                               all_markers=marker_buffer)
-                # log.info("Break added, now at {:d} batches".format(len(self.data_batches)))
+                self.marker_buffer)
+            for trial_start, trial_stop in zip(trial_starts, trial_stops):
+                ## Logging and assertions
+                log.info("Trial has ended for class {}, from {} to {}".format(
+                    int(self.marker_buffer[trial_start]), trial_start, trial_stop))
+                assert trial_start < trial_stop, ("trial start {} should be "
+                                                  "before trial stop {}, markers: {}").format(
+                    trial_start,
+                    trial_stop, str(self.marker_buffer))
+                assert self.marker_buffer[trial_start - 1] == 0, (
+                    "Expect a 0 marker before trial start, instead {}".format(
+                        self.marker_buffer[trial_start - 1]))
+                assert self.marker_buffer[trial_start] != 0, (
+                    "Expect a nonzero marker at trial start instead {}".format(
+                        self.marker_buffer[trial_start]))
+                assert self.marker_buffer[trial_stop - 1] != 0, (
+                    "Expect a nonzero marker at trial end instead {}".format(
+                        self.marker_buffer[trial_stop]))
+                assert self.marker_buffer[trial_start] == self.marker_buffer[
+                    trial_stop - 1], (
+                    "Expect a same marker at trial start and end instead {} / {}".format(
+                        self.marker_buffer[trial_start],
+                        self.marker_buffer[trial_stop]))
+                if self.savetimestamps:
+                    self.add_trial(trial_start, trial_stop,
+                                   self.data_buffer,
+                                   self.marker_buffer, self.timestamp_buffer)
+                else:                    self.add_trial(trial_start, trial_stop,
+                                   self.data_buffer,
+                                   self.marker_buffer)
+                log.info("Now {} trials (including breaks)".format(
+                    len(self.data_batches)))
+                start_train_time = time.time()
+                self.train()
+                end_train_time = time.time()
+                log.info("Time for training: {:.2f}s".format(
+                    end_train_time - start_train_time))
+            if self.add_breaks:
+                trial_has_started = np.sum(
+                    np.diff(self.marker_buffer) > 0) > 0
+                if trial_has_started:
+                    trial_end_in_marker_buffer = np.sum(
+                        np.diff(self.marker_buffer) < 0) > 0
+                    if trial_end_in_marker_buffer:
+                        # +1 necessary since diff removes one index
+                        trial_start = \
+                            np.flatnonzero(np.diff(self.marker_buffer) > 0)[-1] + 1
+                        trial_stop = \
+                            np.flatnonzero(np.diff(self.marker_buffer) < 0)[-1] + 1
+                        assert trial_start > trial_stop, (
+                            "If trial has just started "
+                            "expect this to be after stop of last trial{}")
+                        assert self.marker_buffer[trial_start - 1] == 0, (
+                            "Expect a 0 marker before trial start, instead {:d}".format(
+                                self.marker_buffer[trial_start - 1]))
+                        assert self.marker_buffer[trial_start] != 0, (
+                            "Expect a nonzero marker at trial start instead {:d}".format(
+                                self.marker_buffer[trial_start]))
+                        self.add_break(break_start=trial_stop,
+                                       break_stop=trial_start,
+                                       all_samples=self.data_buffer,
+                                       all_markers=self.marker_buffer)
+                        # log.info("Break added, now at {:d} batches".format(len(self.data_batches)))
 
     def add_trial(self, trial_start, trial_stop, all_samples, all_markers, all_time_stamps=np.array([])):
         # Add trial by determining needed signal/samples and markers
@@ -193,6 +183,7 @@ class BatchCntTrainer(object):
                 str(np.unique(all_markers[trial_start:trial_stop]))))
         # determine markers and in samples for default case
         pred_start = trial_start + self.trial_start_offset
+        print(pred_start)
         if (pred_start < trial_stop) and (
                         trial_stop - trial_start >= self.min_trial_samples):
             assert (
@@ -273,6 +264,7 @@ class BatchCntTrainer(object):
         # and pad with 0s (which will be converted to -1 (!) and
         # should not be used later, except
         # trial too small and we go into the if clause below)
+        print('len_markers, len_sample', len(all_markers), len(all_samples))
         assert len(all_markers) == len(all_samples)
         assert pred_stop < len(all_markers)
         needed_samples = all_samples[in_sample_start:pred_stop]
@@ -401,8 +393,6 @@ class BatchCntTrainer(object):
         if n_trials >= self.n_min_trials:
             log.info("Training model...")
             # Remember values as backup in case of NaNs
-            model_param_dict_before = deepcopy(self.model.state_dict())
-            optimizer_dict_before = deepcopy(self.optimizer.state_dict())
 
             all_y_blocks = np.concatenate(self.y_batches, axis=0)
             if self.savetimestamps:
@@ -430,6 +420,7 @@ class BatchCntTrainer(object):
 
             n_rows_per_batch = [len(b) for b in self.data_batches]
             n_total_supercrops = np.sum(n_rows_per_batch)
+            print("we have this many supercrops", n_total_supercrops)
             assert n_total_supercrops == len(all_y_blocks)
             i_supercrop_to_batch_and_row = np.zeros((n_total_supercrops, 2),
                                                     dtype=np.int32)
@@ -447,24 +438,10 @@ class BatchCntTrainer(object):
             assert i_batch_row == n_rows_per_batch[-1]
 
             for _ in range(self.n_updates_per_break):
-                i_supercrops = self.rng.choice(n_total_supercrops,
-                                               size=self.batch_size,
-                                               p=block_probs)
-                # saving indices of the samples
-                if self.savegrad:
-                    now = datetime.datetime.now()
-                    file_name = str(now.day) + '-' + str(now.month) + '-' + str(now.year) + '_' + \
-                                str(now.hour) + '-' + str(now.minute) + '-' + str(now.second) + '-' + str(_)
-                    torch.save(i_supercrops, self.gradfolder + 'batchInd_' + file_name)
-
-                this_y = np.asarray(all_y_blocks[i_supercrops])
-                if self.savetimestamps:
-                    this_timestamp = np.asarray(all_timestamps_blocks[i_supercrops])
-                    now = datetime.datetime.now()
-                    file_name = str(now.day) + '-' + str(now.month) + '-' + str(now.year) + '_' + \
-                                str(now.hour) + '-' + str(now.minute) + '-' + str(now.second)
-                    torch.save(this_timestamp, self.gradfolder + 'timestamps_' + file_name)
-
+                i_supercrops = all_supercrops[self.supercrop_counter]
+                random_crops = self.rng.choice(n_total_supercrops,size=self.batch_size,p=block_probs)
+                print("what we randomly got", random_crops, len(random_crops))
+                print("during the experiment", all_supercrops[self.supercrop_counter])
                 this_topo = np.zeros((len(i_supercrops),) +
                                      self.data_batches[0].shape[1:],
                                      dtype=np.float32)
@@ -474,68 +451,12 @@ class BatchCntTrainer(object):
                     supercrop_data = self.data_batches[i_global_batch][
                         i_global_row]
                     this_topo[i_batch_row] = supercrop_data
-                self.train_on_batch(this_topo, this_y)
-
-            any_nans = np.any([np.any(np.isnan(var_or_tensor_to_np(v)))
-                               for v in self.model.state_dict().values()])
-            if any_nans:
-                log.warning("Reset train parameters due to NaNs")
-                self.optimizer.load_state_dict(optimizer_dict_before)
-                self.model.load_state_dict(model_param_dict_before)
-            any_nans = np.any([np.any(np.isnan(var_or_tensor_to_np(v)))
-                               for v in self.model.state_dict().values()])
-            assert not any_nans
-
+                now = datetime.datetime.now()
+                file_name = str(now.day) + '-' + str(now.month) + '-' + str(now.year) + '_' + \
+                            str(now.hour) + '-' + str(now.minute) + '-' + str(now.second) + str(_)
+                torch.save(this_topo, 'D:\\Data-replay\\batched_data\\' + 'batches' + file_name + '.pkl')
+                self.supercrop_counter += 1
         else:
             log.info(
                 "Not training model yet, only have {:d} of {:d} trials ".format(
                     n_trials, self.n_min_trials))
-
-    def train_on_batch(self, inputs, targets):
-        self.model.train()
-        input_vars = np_to_var(inputs)
-        target_vars = np_to_var(targets)
-
-        if self.cuda:
-            input_vars = input_vars.cuda()
-            target_vars = target_vars.cuda()
-        self.optimizer.zero_grad()
-
-        if self.savegrad:
-            layer_names = list(dict(self.model.named_children()).keys())
-
-            gradients = {}
-            weights = {}
-            for l_nr, layer in enumerate(self.model):
-                if hasattr(layer, 'weight'):
-                    gradients[layer_names[l_nr] + '_weight_grad'] = layer.weight.grad
-                    weights[layer_names[l_nr] + '_weight'] = layer.weight
-                if hasattr(layer, 'bias'):
-                    if hasattr(layer.bias, 'grad'):
-                        gradients[layer_names[l_nr] + '_bias_grad'] = layer.bias.grad
-                        weights[layer_names[l_nr] + '_bias'] = layer.bias
-            now = datetime.datetime.now()
-            file_name = str(now.day) + '-' + str(now.month) + '-' + str(now.year) + '_' + \
-                        str(now.hour) + '-' + str(now.minute) + '-' + str(now.second)
-            torch.save(gradients, self.gradfolder + 'grad_' + file_name)
-            torch.save(self.optimizer.state_dict(), self.gradfolder + 'optimizer_' + file_name)
-            torch.save(weights, self.gradfolder + 'weights_' + file_name)
-
-
-        outputs = self.model(input_vars)
-        loss = self.loss_function(outputs, target_vars)
-        if self.model_loss_function is not None:
-            loss = loss + self.model_loss_function(self.model)
-        loss.backward()
-        self.optimizer.step()
-        if self.model_constraint is not None:
-            self.model_constraint.apply(self.model)
-
-
-def var_or_tensor_to_np(v):
-    try:
-        return var_to_np(v)
-    except RuntimeError:
-
-
-        return v.cpu().numpy()
