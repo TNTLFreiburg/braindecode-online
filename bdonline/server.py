@@ -410,9 +410,9 @@ def main(
         model_constraint = MaxNormDefaultConstraint()
         optimizer = AdamW(model.parameters(), lr=learning_rate, weight_decay=0.5*0.001)
 
-		scheduler = CosineAnnealing(n_updates_per_break)
+        scheduler = CosineAnnealing(n_updates_per_break)
 		# schedule_weight_decay must be True for AdamW
-		optimizer = ScheduledOptimizer(scheduler, optimizer, schedule_weight_decay=True)
+        optimizer = ScheduledOptimizer(scheduler, optimizer, schedule_weight_decay=True)
 
         n_preds_per_input = None # set later
         n_classes = None # set later

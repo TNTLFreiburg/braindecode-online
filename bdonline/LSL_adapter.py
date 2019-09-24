@@ -102,7 +102,7 @@ ACTION_THRESHOLD = 0.8
 B_1, A_1 = butter(5, 1, btype='high', output='ba', fs = 5000)
 
 # Butter filter (lowpass) for 30 Hz
-B_40, A_40 = butter(6, 40, btype='low', output='ba', fs = 5000) #TODO: Set back to 40
+B_40, A_40 = butter(6, 120, btype='low', output='ba', fs = 5000) #TODO: Set back to 40
 
 # Notch filter with 50 HZ
 F0 = 50.0
@@ -395,8 +395,8 @@ def forward_forever(savetimestamps):
                 print('got new eeg sample. eeg_sample_counter:', eeg_sample_counter)
             
             #Hack EMG onto C3/C4 TODO: Remove    
-            #eeg_sample[14] = eeg_sample[33] #C3 = EMG_LH
-            #eeg_sample[16] = eeg_sample[32] #C4 = EMG_RH
+            eeg_sample[14] = eeg_sample[33] #C3 = EMG_LH
+            eeg_sample[16] = eeg_sample[32] #C4 = EMG_RH
             
             
             #Only use EEG channels
