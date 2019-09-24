@@ -11,7 +11,7 @@ def applyfilters_downsample(filter1freq, filter2freq, target_fs, eeg_time_series
         b_50, a_50 = iirnotch(f0, Q, target_fs)
         eeg_time_series = filtfilt(b_50, a_50, eeg_time_series)
         eeg_time_series = filtfilt(b_30, a_30, eeg_time_series)
-        eeg_time_series = filtfilt(b_1, a_1, eeg_time_series)
+        #eeg_time_series = filtfilt(b_1, a_1, eeg_time_series)
         eeg_time_series = eeg_time_series[:, ::20]
         return eeg_time_series
 
@@ -81,7 +81,12 @@ def bd_data_from_xdf(xdf_file_names, target_fs):
         monster_side, monster_side_times, monster_destroyed_times = monster_status(file, game_idx)
         eeg_time_series = applyfilters_downsample(1, 30, target_fs, eeg_time_series)
         labels = label_maker(eeg_time_stamps, monster_side, monster_side_times, monster_destroyed_times)
-        eeg_time_series = np.concatenate([eeg_time_series[:34], eeg_time_series[42:-3]])
+
+        #EMG Hack TODO: Remove
+        eeg_time_series[14] = eeg_time_series[33] #C3 = EMG_LH
+        eeg_time_series[16] = eeg_time_series[32] #C4 = EMG_RH
+
+        eeg_time_series = np.concatenate([eeg_time_series[:32], eeg_time_series[40:-3]])
         eeg_time_series = np.concatenate([eeg_time_series, labels])
         total_experiment.append(eeg_time_series)
 

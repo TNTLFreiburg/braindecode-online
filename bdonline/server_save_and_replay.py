@@ -130,8 +130,10 @@ import gevent.server
 from scipy import interpolate
 import h5py
 
+from braindecode.models import deep4
 from braindecode.torch_ext.constraints import MaxNormDefaultConstraint
 from braindecode.torch_ext.losses import log_categorical_crossentropy
+from braindecode.models.util import to_dense_prediction_model
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from bdonline.datasuppliers import ArraySupplier
@@ -148,7 +150,7 @@ TCP_SENDER_EEG_NSAMPLES = 10
 
 
 
-xdf_filenames=['D:\\DLVR\\Data\\subjH\\block1.xdf', 'D:\\DLVR\Data\\subjH\\block2.xdf', 'D:\\DLVR\\Data\\subjH\\block3.xdf'] #the data we want to replay
+xdf_filenames=['D:\\DLVRData\\HeBoEMGVR3\\data_1.xdf'] #the data we want to replay
 DATA_AND_LABELS, CHAN_NAMES = xdf_to_bd.bd_data_from_xdf(xdf_filenames, 250) #Load in all data and labels
 
 
@@ -562,11 +564,14 @@ def main(
     sender = None
     buffer = None
     # load model to correct gpu id
-    gpu_id = th.FloatTensor(1).cuda().get_device()
-    def inner_device_mapping(storage, location):
-        return storage.cuda(gpu_id)
-    model_name = os.path.join(base_name, 'deep_4_test')
-    model = th.load(model_name, map_location=inner_device_mapping)
+    model_name = os.path.join(base_name, 'deep_4_params')
+    model_dict = th.load(model_name)
+    final_conv_length = 2
+    model = deep4.Deep4Net(n_chans, 2, input_time_length, final_conv_length)
+    model = model.create_network()
+    model.load_state_dict(model_dict)
+    to_dense_prediction_model(model)
+    model.cuda()
 
     predictor = ModelPredictor(
         model, input_time_length=input_time_length, pred_gap=pred_gap,
