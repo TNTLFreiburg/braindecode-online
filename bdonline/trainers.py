@@ -9,6 +9,8 @@ import numpy as np
 from numpy.random import RandomState
 from torch.autograd import Variable
 
+from braindecode.torch_ext.schedulers import ScheduledOptimizer
+
 from braindecode.datautil.signalproc import exponential_running_standardize
 from braindecode.datautil.iterators import _get_start_stop_blocks_for_trial, \
     _create_batch_from_i_trial_start_stop_blocks
@@ -38,7 +40,7 @@ class BatchCntTrainer(object):
                  n_min_trials, trial_start_offset, break_start_offset,
                  break_stop_offset, gradfolder, add_breaks=True,
                  min_break_samples=0, min_trial_samples=0,
-                 cuda=True, savegrad=False, savetimestamps=False):
+                 cuda=True, savegrad=False, savetimestamps=False, scheduler = None):
         self.__dict__.update(locals())
         del self.self
         self.rng = RandomState(30948348)
@@ -445,6 +447,10 @@ class BatchCntTrainer(object):
 
             assert i_batch == len(n_rows_per_batch) - 1
             assert i_batch_row == n_rows_per_batch[-1]
+			
+			if self.scheduler != None:
+				schedule_weight_decay = 'weight_decay' in optimizer.defaults
+				optimizer = ScheduledOptimizer(scheduler, optimizer, schedule_weight_decay=schedule_weight_decay)
 
             for _ in range(self.n_updates_per_break):
                 i_supercrops = self.rng.choice(n_total_supercrops,

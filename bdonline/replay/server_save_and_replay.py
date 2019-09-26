@@ -49,8 +49,10 @@ import gevent.server
 from scipy import interpolate
 import h5py
 
+from braindecode.models import deep4
 from braindecode.torch_ext.constraints import MaxNormDefaultConstraint
 from braindecode.torch_ext.losses import log_categorical_crossentropy
+from braindecode.models.util import to_dense_prediction_model
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from bdonline.datasuppliers import ArraySupplier
@@ -65,6 +67,40 @@ from braindecode.models.util import to_dense_prediction_model
 from braindecode.models import deep4
 from bdonline.read import read_until_bytes_received, AsyncStdinReader, my_async_stdin_reader
 
+TCP_SENDER_EEG_NCHANS = 65  # number of channels to send to braindecode-online, includes labels
+TCP_SENDER_EEG_NSAMPLES = 10
+
+
+
+xdf_filenames=['D:\\DLVRData\\HeBoEMGVR3\\data_1.xdf'] #the data we want to replay
+DATA_AND_LABELS, CHAN_NAMES = xdf_to_bd.bd_data_from_xdf(xdf_filenames, 250) #Load in all data and labels
+
+
+class AsyncStdinReader(threading.Thread):
+    
+    # override for threading.Thread
+    def __init__(self):
+        self.active = False
+        self.input_string = None
+        super(AsyncStdinReader, self).__init__()
+    
+    # override for threading.Thread
+    def run(self):
+        print('AsyncStdinReader: reading until enter:')
+        self.input_string = input()
+        self.active = False
+    
+    def input_async(self):
+        if self.active:
+            return None
+        elif self.input_string is None:
+            self.active = True
+            self.start()
+            return None
+        else:
+            returnstring = self.input_string
+            self.input_string = None
+            return returnstring
 
 LOG_FILENAME = 'stored_experiment.txt'
 logging.basicConfig(filename=LOG_FILENAME, filemode='w', level=logging.INFO)
@@ -412,14 +448,14 @@ def main(
     sender = None
     buffer = None
     # load model to correct gpu id
-    model_name = os.path.join(base_name, 'deep_4_600')
+    model_name = os.path.join(base_name, 'deep_4_params')
     model_dict = th.load(model_name)
     final_conv_length = 2
     model = deep4.Deep4Net(n_chans, 2, input_time_length, final_conv_length)
     model = model.create_network()
     model.load_state_dict(model_dict)
     to_dense_prediction_model(model)
-    model.to('cuda')
+    model.cuda()
 
     predictor = ModelPredictor(
         model, input_time_length=input_time_length, pred_gap=pred_gap,
