@@ -1,19 +1,19 @@
 #!/usr/bin/env python
 
 '''
-Server application that takes in a stream of data and labels.
-It makes predictions for all data at regular intervals and can train on data if labels are available.
-This server has been hardwired to load the data and labels itself and then step throigh them to allow replay
- of previous experiments.
+Server application that allows for recreation of experiments. The server is hardwired to take the recordings of a
+specific experiment and to replay them. The trainer that is used should be fed with the indexes of the supercrops
+saved during the training. The results of the simulation will be stored in the file LOG_FILENAME
+This application should be run in parallel with the LSL-Adapter replay and the index sender
 '''
 
 #
 # imports
 #
 import sys
-sys.path.append('D:\\DLVR\\xdf_mne_interface')
-sys.path.append('D:\\DLVR\\braindecode')
-sys.path.append('D:\\braindecode-online')
+sys.path.append('D:\\DLVR\\xdf_mne_interface') #path to the xdf_mne_interface package
+sys.path.append('D:\\DLVR\\braindecode') #path to the braindecode package
+sys.path.append('D:\\braindecode-online')  #path to the braindecode-online package
 
 import os
 import os.path
@@ -59,7 +59,7 @@ from bdonline.buffer import DataMarkerBuffer
 from bdonline.predictors import DummyPredictor, ModelPredictor
 from bdonline.processors import StandardizeProcessor
 from bdonline.trainers import NoTrainer
-from bdonline.trainers_replay import BatchCntTrainer
+from bdonline.replay.trainers_replay import BatchCntTrainer
 from braindevel_online.live_plot import LivePlot
 from braindecode.models.util import to_dense_prediction_model
 from braindecode.models import deep4
@@ -108,7 +108,10 @@ class PredictionSender(object):
         self.socket.sendall(label_str.encode('utf-8'))
 
 
-class DataFromFile():       #mimick the receiving of data through LSL
+class DataFromFile():
+    """ mimick the receiving of data through LSL, it pulls indexes from a stream
+        which is created by the index sender
+    """
     def __init__(self, socket):
         self.socket = socket
 

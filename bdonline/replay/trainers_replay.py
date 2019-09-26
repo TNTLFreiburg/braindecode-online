@@ -1,3 +1,6 @@
+"""
+This file contains different training loops for online adaptivity. It is set up in such a way that it will look
+for saved batch indices in a savegrad folder so it can recreate the training that happened during an online experiment"""
 import datetime
 from glob import glob
 import os.path

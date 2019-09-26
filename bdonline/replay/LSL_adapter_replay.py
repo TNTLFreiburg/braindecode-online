@@ -1,7 +1,5 @@
 """
-Receive EEG-data from NeurOne and labels from the Unity game both via lsl.
-Pass EEG-data and labels to braindecode-online via TCP/IP.
-Simultaniously receive predictions from braindecode-online and publish them on lsl.
+Receives predictions from braindecode-replay and produces action decisions according to the same scheme as LSL-adapter
 """
 
 
