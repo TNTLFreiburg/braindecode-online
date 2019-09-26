@@ -28,7 +28,7 @@ import h5py
 sys.path.append('D:\\DLVR\\braindecode')
 
 import torch.nn.functional as F
-from braindecode.torch_ext.schedulers import ScheduledOptimizer, CosineAnnealing
+from braindecode.torch_ext.schedulers import CosineAnnealing
 
 from braindecode.models import deep4
 from braindecode.torch_ext.constraints import MaxNormDefaultConstraint
@@ -413,7 +413,6 @@ def main(
 
 		scheduler = CosineAnnealing(n_updates_per_break)
 		# schedule_weight_decay must be True for AdamW
-		optimizer = ScheduledOptimizer(scheduler, optimizer, schedule_weight_decay=True)
 
         n_preds_per_input = None # set later
         n_classes = None # set later
@@ -431,7 +430,8 @@ def main(
             min_break_samples=min_break_samples,
             min_trial_samples=min_trial_samples,
             cuda=cuda,
-            savegrad=savegrad, gradfolder=gradfolder, savetimestamps=savetimestamps)
+            savegrad=savegrad, gradfolder=gradfolder, savetimestamps=savetimestamps,
+			scheduler = scheduler)
         trainer.set_n_chans(n_chans)
     else:
         trainer = NoTrainer()
