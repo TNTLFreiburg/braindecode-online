@@ -33,7 +33,6 @@ from braindecode.torch_ext.schedulers import CosineAnnealing
 from braindecode.models import deep4
 from braindecode.torch_ext.constraints import MaxNormDefaultConstraint
 from braindecode.torch_ext.losses import log_categorical_crossentropy
-from braindecode.models import deep4
 from braindecode.models.util import to_dense_prediction_model
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from bdonline.parsers import parse_command_line_arguments
@@ -405,14 +404,16 @@ def main(
     predictor = ModelPredictor(
         model, input_time_length=input_time_length, pred_gap=pred_gap,
         cuda=cuda)
+            
     if adapt_model:
         loss_function = F.nll_loss #log_categorical_crossentropy
         model_loss_function = None
         model_constraint = MaxNormDefaultConstraint()
-        optimizer = AdamW(model.parameters(), lr=learning_rate, weight_decay=0.5*0.001)
+        #model_constraint = None
+        optimizer = AdamW(model.parameters(), lr=learning_rate, weight_decay=0.5*0.0001)
+        #optimizer = Adam(model.parameters(), lr=learning_rate)
+        scheduler = CosineAnnealing(n_updates_per_break)
 
-		scheduler = CosineAnnealing(n_updates_per_break)
-		# schedule_weight_decay must be True for AdamW
 
         n_preds_per_input = None # set later
         n_classes = None # set later
@@ -459,6 +460,9 @@ def main(
         elif adapt_model:
             log.warn("No train/adam params found, starting optimization params "
                      "from scratch (model params will be loaded anyways).")
+
+
+    
     processor = StandardizeProcessor()
     #processor = NoProcessor()
     if adapt_model and load_old_data:

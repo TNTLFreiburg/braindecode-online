@@ -61,7 +61,7 @@ class ModelPredictor(object):
         #plt.suptitle("50 Notch, 120 Low, StandardizeProcessor")
         #plt.savefig('D:\\DLVRData\\test.png')
         #plt.close()
-        #self.model.eval()
+        self.model.eval()
         # data is time x channels
         #print("data = ", data.shape)
         #print("np_to_var input = ", data.T[None,:,:,None].shape)

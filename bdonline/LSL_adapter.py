@@ -95,8 +95,8 @@ EEG_CHANNELNAMES = ['Fp1', 'Fpz', 'Fp2', 'F7', 'F3', 'Fz', 'F4', 'F8', 'FC5', 'F
 PREDICTION_NUM_CLASSES = 2
 TARGET_FS = 250
 DOWNSAMPLING_COEF = int(5000 / TARGET_FS)
-PRED_WINDOW_SIZE = 10
-PRED_THRESHOLD = 0.6
+PRED_WINDOW_SIZE = 6
+PRED_THRESHOLD = 0.55
 ACTION_THRESHOLD = 0.8
 # Butter filter (highpass) for 1 Hz
 B_1, A_1 = butter(5, 1, btype='high', output='ba', fs = 5000)
@@ -365,13 +365,13 @@ def forward_forever(savetimestamps):
                 # eeg_sample_label = 1
             elif eeg_sample_label_unchecked == 'Monster right':
                 print('new game state:', eeg_sample_label_unchecked)
-                eeg_sample_label = 1
+                eeg_sample_label = 2
                 predictions = np.zeros((PRED_WINDOW_SIZE, 1))
                 pred_counter = 0
                 sample_start = time.time()
             elif eeg_sample_label_unchecked == 'Monster left':
                 print('new game state:', eeg_sample_label_unchecked)
-                eeg_sample_label = 2
+                eeg_sample_label = 1
                 predictions = np.zeros((PRED_WINDOW_SIZE, 1))
                 sample_start = time.time()
                 pred_counter = 0
