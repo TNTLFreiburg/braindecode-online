@@ -397,6 +397,9 @@ def forward_forever(savetimestamps):
             #Hack EMG onto C3/C4 TODO: Remove    
             eeg_sample[14] = eeg_sample[33] #C3 = EMG_LH
             eeg_sample[16] = eeg_sample[32] #C4 = EMG_RH
+			
+			eeg_sample[47] = eeg_sample[35] #CP3 = EMG_LF
+			eeg_sample[49] = eeg_sample[34] #CP4 = EMG_RF
             
             
             #Only use EEG channels
