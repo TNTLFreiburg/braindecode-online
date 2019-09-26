@@ -404,15 +404,17 @@ def main(
     predictor = ModelPredictor(
         model, input_time_length=input_time_length, pred_gap=pred_gap,
         cuda=cuda)
+            
     if adapt_model:
         loss_function = F.nll_loss #log_categorical_crossentropy
         model_loss_function = None
         model_constraint = MaxNormDefaultConstraint()
-        optimizer = AdamW(model.parameters(), lr=learning_rate, weight_decay=0.5*0.001)
-
-        scheduler = CosineAnnealing(n_updates_per_break)
+        #model_constraint = None
+        optimizer = AdamW(model.parameters(), lr=learning_rate, weight_decay=0.5*0.0001)
+        #optimizer = Adam(model.parameters(), lr=learning_rate)
+        #scheduler = CosineAnnealing(n_updates_per_break)
 		# schedule_weight_decay must be True for AdamW
-        optimizer = ScheduledOptimizer(scheduler, optimizer, schedule_weight_decay=True)
+        #optimizer = ScheduledOptimizer(scheduler, optimizer, schedule_weight_decay=True)
 
         n_preds_per_input = None # set later
         n_classes = None # set later
@@ -458,6 +460,9 @@ def main(
         elif adapt_model:
             log.warn("No train/adam params found, starting optimization params "
                      "from scratch (model params will be loaded anyways).")
+
+
+    
     processor = StandardizeProcessor()
     #processor = NoProcessor()
     if adapt_model and load_old_data:
