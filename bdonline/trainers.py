@@ -448,9 +448,9 @@ class BatchCntTrainer(object):
             assert i_batch == len(n_rows_per_batch) - 1
             assert i_batch_row == n_rows_per_batch[-1]
 			
-			if self.scheduler != None:
-				schedule_weight_decay = 'weight_decay' in optimizer.defaults
-				optimizer = ScheduledOptimizer(scheduler, optimizer, schedule_weight_decay=schedule_weight_decay)
+            if self.scheduler != None:
+                schedule_weight_decay = 'weight_decay' in optimizer.defaults
+                optimizer = ScheduledOptimizer(scheduler, optimizer, schedule_weight_decay=schedule_weight_decay)
 
             for _ in range(self.n_updates_per_break):
                 i_supercrops = self.rng.choice(n_total_supercrops,
