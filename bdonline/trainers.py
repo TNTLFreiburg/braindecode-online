@@ -452,23 +452,27 @@ class BatchCntTrainer(object):
 				schedule_weight_decay = 'weight_decay' in optimizer.defaults
 				optimizer = ScheduledOptimizer(scheduler, optimizer, schedule_weight_decay=schedule_weight_decay)
 
-            for _ in range(self.n_updates_per_break):
+			file_name = ''
+
+            for epoch_counter in range(self.n_updates_per_break):
                 i_supercrops = self.rng.choice(n_total_supercrops,
                                                size=self.batch_size,
                                                p=block_probs)
                 # saving indices of the samples
                 if self.savegrad:
                     now = datetime.datetime.now()
-                    file_name = str(now.day) + '-' + str(now.month) + '-' + str(now.year) + '_' + \
-                                str(now.hour) + '-' + str(now.minute) + '-' + str(now.second) + '-' + str(_)
+                    file_name = 'Trial-'+str(n_trials)+'_Epoch-'+ str(epoch_counter)+ '-' + str(_)
+					#str(now.day) + '-' + str(now.month) + '-' + str(now.year) + '_' + \
+                                #str(now.hour) + '-' + str(now.minute) + '-' + str(now.second) + '-' + str(_)
                     torch.save(i_supercrops, self.gradfolder + 'batchInd_' + file_name)
 
                 this_y = np.asarray(all_y_blocks[i_supercrops])
                 if self.savetimestamps:
                     this_timestamp = np.asarray(all_timestamps_blocks[i_supercrops])
                     now = datetime.datetime.now()
-                    file_name = str(now.day) + '-' + str(now.month) + '-' + str(now.year) + '_' + \
-                                str(now.hour) + '-' + str(now.minute) + '-' + str(now.second)
+					file_name = 'Trial-'+str(n_trials)+'_Epoch-'+ str(epoch_counter)+ '-' + str(_)
+                    #file_name = str(now.day) + '-' + str(now.month) + '-' + str(now.year) + '_' + \
+                    #            str(now.hour) + '-' + str(now.minute) + '-' + str(now.second)
                     torch.save(this_timestamp, self.gradfolder + 'timestamps_' + file_name)
 
                 this_topo = np.zeros((len(i_supercrops),) +
@@ -480,7 +484,7 @@ class BatchCntTrainer(object):
                     supercrop_data = self.data_batches[i_global_batch][
                         i_global_row]
                     this_topo[i_batch_row] = supercrop_data
-                self.train_on_batch(this_topo, this_y)
+                self.train_on_batch(this_topo, this_y, file_name=file_name)
 
             any_nans = np.any([np.any(np.isnan(var_or_tensor_to_np(v)))
                                for v in self.model.state_dict().values()])
@@ -497,7 +501,7 @@ class BatchCntTrainer(object):
                 "Not training model yet, only have {:d} of {:d} trials ".format(
                     n_trials, self.n_min_trials))
 
-    def train_on_batch(self, inputs, targets):
+    def train_on_batch(self, inputs, targets, file_name = ''):
         self.model.train()
         input_vars = np_to_var(inputs)
         target_vars = np_to_var(targets)
@@ -521,8 +525,8 @@ class BatchCntTrainer(object):
                         gradients[layer_names[l_nr] + '_bias_grad'] = layer.bias.grad
                         weights[layer_names[l_nr] + '_bias'] = layer.bias
             now = datetime.datetime.now()
-            file_name = str(now.day) + '-' + str(now.month) + '-' + str(now.year) + '_' + \
-                        str(now.hour) + '-' + str(now.minute) + '-' + str(now.second)
+            #file_name = str(now.day) + '-' + str(now.month) + '-' + str(now.year) + '_' + \
+            #            str(now.hour) + '-' + str(now.minute) + '-' + str(now.second)
             torch.save(gradients, self.gradfolder + 'grad_' + file_name)
             torch.save(self.optimizer.state_dict(), self.gradfolder + 'optimizer_' + file_name)
             torch.save(weights, self.gradfolder + 'weights_' + file_name)
