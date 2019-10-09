@@ -448,9 +448,11 @@ class BatchCntTrainer(object):
             assert i_batch == len(n_rows_per_batch) - 1
             assert i_batch_row == n_rows_per_batch[-1]
 			
-			if self.scheduler != None:
-				schedule_weight_decay = 'weight_decay' in optimizer.defaults
-				optimizer = ScheduledOptimizer(scheduler, optimizer, schedule_weight_decay=schedule_weight_decay)
+            if self.scheduler != None:
+                if type(self.optimizer) is ScheduledOptimizer:
+                    self.optimizer = self.optimizer.optimizer
+                schedule_weight_decay = 'weight_decay' in self.optimizer.defaults
+                self.optimizer = ScheduledOptimizer(self.scheduler, self.optimizer, schedule_weight_decay=schedule_weight_decay)
 
 			file_name = ''
 

@@ -1,6 +1,6 @@
 
-''' This module has as a goal to send indexes to the braindecode server to mimick the arrival of real data
-
+'''
+This module has as  goal to send indexes to the braindecode server to mimick the arrival of real data
 '''
 import sys
 import numpy as np

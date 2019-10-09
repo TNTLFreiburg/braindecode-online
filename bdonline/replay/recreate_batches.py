@@ -1,5 +1,8 @@
+"""The Batch creator class can recreate the batches used for training during an online experiment.
+For this it needs an xdf file and the batch indices saved for that experiment.
+It saves the batches via the torch save functionality in SAVE_LOCATION"""
 import datetime
-from glob import glob
+import sys
 import os.path
 import glob
 import re
@@ -11,6 +14,8 @@ import numpy as np
 import xdf_to_bd
 from numpy.random import RandomState
 from torch.autograd import Variable
+sys.path.append('D:\\DLVR\\braindecode') #path to the braindecode package
+sys.path.append('D:\\braindecode-online')  #path to the braindecode-online package
 from braindecode.models.util import to_dense_prediction_model
 from braindecode.models import deep4
 from braindecode.datautil.signalproc import exponential_running_standardize
@@ -22,7 +27,9 @@ log = logging.getLogger(__name__)
 trial_start_offset = 500
 fs = 250
 ms_to_samples = fs / 1000.0
+SAVE_LOCATION = 'D:\\Data-replay\\batched_data\\'
 
+#Model used for prediction during the online experiment, specific weights don't matter, only parameters
 base_name = 'D:\\braindecode-online\\bdonline\\models\\best_model'
 model_name = os.path.join(base_name, 'deep_4_600')
 model_dict = torch.load(model_name)
@@ -454,7 +461,7 @@ class BatchCreator(object):
                 now = datetime.datetime.now()
                 file_name = str(now.day) + '-' + str(now.month) + '-' + str(now.year) + '_' + \
                             str(now.hour) + '-' + str(now.minute) + '-' + str(now.second) + str(_)
-                torch.save(this_topo, 'D:\\Data-replay\\batched_data\\' + 'batches' + file_name + '.pkl')
+                torch.save(this_topo, SAVE_LOCATION + 'batches' + file_name + '.pkl')
                 self.supercrop_counter += 1
         else:
             log.info(

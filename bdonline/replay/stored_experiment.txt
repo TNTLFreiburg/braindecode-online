@@ -1,13 +1,7 @@
-INFO:bdonline.trainers_replay:Loading 1 data files for adaptation:
-['data/online/2019-09-18\\2019-09-18_16-08-45.npy']
-INFO:bdonline.trainers_replay:Add data from data/online/2019-09-18\2019-09-18_16-08-45.npy...
-INFO:bdonline.trainers_replay:Adding 18 trials
-WARNING:bdonline.trainers_replay:Trial/break has only 61 predicted samples from 44055 to 44116 in it, less than the 79 concurrently processed samples of the model! Will add padding that should be masked during training.
-INFO:bdonline.trainers_replay:Adding 17 breaks
-INFO:bdonline.trainers_replay:Done loading, now have 18 trials (including breaks)
+INFO:bdonline.replay.trainers_replay:No data files found to load for adaptation in data/online/2019-09-26
 INFO:__main__:Starting server on port 7987
 INFO:__main__:Started server
-INFO:__main__:New connection from ('127.0.0.1', 57371)!
+INFO:__main__:New connection from ('127.0.0.1', 51598)!
 INFO:__main__:Connected to out Server
 INFO:__main__:Numbers in total:  650
 INFO:__main__:Before checking plot
@@ -240,955 +234,1286 @@ INFO:__main__:Prediction for sample 14599:
 [0.56889975 0.43110028] with label0.0
 INFO:__main__:Prediction for sample 14724:
 [0.56755304 0.43244693] with label2.0
-INFO:bdonline.trainers_replay:Trial has ended for class 2, from 19896 to 19996
-INFO:bdonline.trainers_replay:Now 19 trials (including breaks)
-INFO:bdonline.trainers_replay:Training model...
-INFO:bdonline.trainers_replay:[117  98  78  43  18  49  85  26  12  52  38  65 115 112  84 101  56  85
- 117  65  54  28  30  36 105  24  62 105  43   8  63  84   4  62  71  29
-  47 111 111  86  92  33   2 115  20]
-INFO:bdonline.trainers_replay:[ 32  70  96  88  74   8  66 102  15  35  14  25 118  25 108  23  49  50
-  97  84  34   5  47  31  94  43   2  26  25  91  11 115  18   2  70   3
-  56  70 111  45  70  29  96  40  90]
-INFO:bdonline.trainers_replay:[ 85  56  12  88  34  55 107  13  28  57  38  91  90  87  59 100  70  97
-  70  83  80  30   2  43  49  70  47 113   5  64  58  29  65  65  48  62
-  56  88   2  80 117   0   1  32  46]
-INFO:bdonline.trainers_replay:[114  98  50  41  80  69  71  98 115  83   1  98  88   4  35  41  82  19
- 116 108   4  47  28  95  53 105  89  87 100 110  37  22  36   5  87 109
-  14  18 102   6  51 102  74  51  17]
-INFO:bdonline.trainers_replay:[ 62  99  68  34  41 116  91 118  94   1  64   7  25  24 113  35  26  18
-   3 109  26  11 107 112   6 104  57  93  57  37  56  48 117  52  38  20
-  28  12  63  51  82  89  47  72  25]
-INFO:bdonline.trainers_replay:Time for training: 0.29s
+INFO:bdonline.replay.trainers_replay:Trial has ended for class 2, from 19896 to 19996
+INFO:bdonline.replay.trainers_replay:Now 1 trials (including breaks)
+INFO:bdonline.replay.trainers_replay:Not training model yet, only have 1 of 4 trials 
+INFO:bdonline.replay.trainers_replay:Time for training: 0.00s
 INFO:__main__:Prediction for sample 14849:
-[0.6173199  0.38268012] with label2.0
+[0.5206097 0.4793904] with label2.0
 INFO:__main__:Prediction for sample 14974:
-[0.6209571 0.379043 ] with label2.0
+[0.54534185 0.45465812] with label2.0
 INFO:__main__:Prediction for sample 15099:
-[0.6045061 0.3954939] with label2.0
+[0.57100004 0.429     ] with label2.0
 INFO:__main__:Prediction for sample 15224:
-[0.580552   0.41944802] with label2.0
+[0.5939771 0.4060229] with label2.0
 INFO:__main__:Prediction for sample 15349:
-[0.6306866  0.36931336] with label2.0
+[0.49407646 0.50592357] with label2.0
 INFO:__main__:Prediction for sample 15474:
-[0.6041367  0.39586326] with label0.0
+[0.5106243  0.48937568] with label0.0
 INFO:__main__:Prediction for sample 15599:
-[0.58276486 0.4172351 ] with label0.0
+[0.5499555 0.4500445] with label0.0
 INFO:__main__:Prediction for sample 15724:
-[0.59689015 0.4031099 ] with label0.0
+[0.5268138  0.47318625] with label0.0
 INFO:__main__:Prediction for sample 15849:
-[0.5997359  0.40026402] with label0.0
+[0.53429466 0.46570534] with label0.0
 INFO:__main__:Prediction for sample 15974:
-[0.615618   0.38438198] with label0.0
+[0.57834756 0.42165244] with label0.0
 INFO:__main__:Prediction for sample 16099:
-[0.61356926 0.3864308 ] with label0.0
+[0.5816506  0.41834936] with label0.0
 INFO:__main__:Prediction for sample 16224:
-[0.5947369 0.4052631] with label0.0
+[0.5734189  0.42658108] with label0.0
 INFO:__main__:Prediction for sample 16349:
-[0.60895073 0.3910492 ] with label0.0
+[0.63551646 0.36448357] with label0.0
 INFO:__main__:Prediction for sample 16474:
-[0.5778563  0.42214367] with label0.0
+[0.602854   0.39714605] with label0.0
 INFO:__main__:Prediction for sample 16599:
-[0.5982202  0.40177974] with label0.0
+[0.5830635  0.41693652] with label0.0
 INFO:__main__:Prediction for sample 16724:
-[0.6144777  0.38552234] with label0.0
+[0.5608443  0.43915567] with label0.0
 INFO:__main__:Prediction for sample 16849:
-[0.55989105 0.44010895] with label0.0
+[0.5464723  0.45352772] with label0.0
 INFO:__main__:Prediction for sample 16974:
-[0.5951264 0.4048736] with label0.0
+[0.5961155  0.40388444] with label0.0
 INFO:__main__:Prediction for sample 17099:
-[0.6276979 0.3723022] with label0.0
+[0.568789   0.43121105] with label0.0
 INFO:__main__:Prediction for sample 17224:
-[0.6440352  0.35596466] with label0.0
+[0.5772462  0.42275387] with label0.0
 INFO:__main__:Prediction for sample 17349:
-[0.5460992  0.45390084] with label0.0
+[0.49087018 0.5091298 ] with label0.0
 INFO:__main__:Prediction for sample 17474:
-[0.5990134  0.40098664] with label0.0
+[0.57683337 0.42316663] with label0.0
 INFO:__main__:Prediction for sample 17599:
-[0.5887778 0.4112221] with label0.0
+[0.594649   0.40535095] with label0.0
 INFO:__main__:Prediction for sample 17724:
-[0.6324824  0.36751756] with label0.0
+[0.56150794 0.438492  ] with label0.0
 INFO:__main__:Prediction for sample 17849:
-[0.5962128 0.4037872] with label0.0
+[0.5209119  0.47908813] with label0.0
 INFO:__main__:Prediction for sample 17974:
-[0.58345807 0.4165419 ] with label0.0
+[0.5254978  0.47450218] with label0.0
 INFO:__main__:Prediction for sample 18099:
-[0.59576696 0.40423307] with label0.0
+[0.56046396 0.4395361 ] with label0.0
 INFO:__main__:Prediction for sample 18224:
-[0.5846981  0.41530195] with label0.0
+[0.514246   0.48575398] with label0.0
 INFO:__main__:Prediction for sample 18349:
-[0.6300016 0.3699984] with label0.0
+[0.5089318 0.4910682] with label0.0
 INFO:__main__:Prediction for sample 18474:
-[0.60718906 0.392811  ] with label0.0
+[0.5460098  0.45399022] with label0.0
 INFO:__main__:Prediction for sample 18599:
-[0.60776263 0.3922373 ] with label0.0
+[0.5562444  0.44375572] with label0.0
 INFO:__main__:Prediction for sample 18724:
-[0.5867598  0.41324016] with label0.0
+[0.5539379  0.44606206] with label0.0
 INFO:__main__:Prediction for sample 18849:
-[0.5981343  0.40186572] with label0.0
+[0.5877118 0.4122882] with label0.0
 INFO:__main__:Prediction for sample 18974:
-[0.6106479  0.38935214] with label2.0
+[0.5956408 0.4043591] with label2.0
 INFO:__main__:Prediction for sample 19099:
-[0.6059917  0.39400828] with label2.0
+[0.58686763 0.4131324 ] with label2.0
 INFO:__main__:Prediction for sample 19224:
-[0.61554307 0.38445702] with label2.0
+[0.59142244 0.40857753] with label2.0
 INFO:__main__:Prediction for sample 19349:
-[0.5891406 0.4108594] with label2.0
-INFO:bdonline.trainers_replay:Trial has ended for class 2, from 19510 to 19993
-INFO:bdonline.trainers_replay:Now 20 trials (including breaks)
-INFO:bdonline.trainers_replay:Training model...
-INFO:bdonline.trainers_replay:[ 11 117  33 102  24  79  42  85  15  61  92  96  99  39 102  23  47  71
- 110  45  34 114  73  87 115  90 126  23 115  71  21 110  57  56  71  48
-  24  26  51 124  81  12  69  26  99]
-INFO:bdonline.trainers_replay:[ 30 100  29  64  42 106   4   5  15  28  44  67  83  75 110 117  14   4
- 122 112 117  37  14  26  17  25 100 125   7 107  33  98  89  17 124  62
-  99  96 108  77  61  91 117 104  79]
-INFO:bdonline.trainers_replay:[ 79  23  44  99  46  17  74  59  19  26  20  38  53  64  75   6  24  90
- 105  41  84  50  69  83  36 101  64  86  60  77  21  55  32  49  12  14
-  76  13   9 115 115  21  36  35   5]
-INFO:bdonline.trainers_replay:[ 89  62  33  27  68  62  55  99   5  89 104 107  71  33 103  24  55 108
-  92  42  82 100  84  22  35  86  99  51  83  28  88  72 115  42   2 110
- 122  95 115  46 100  51  17  65  67]
-INFO:bdonline.trainers_replay:[ 23  87  35  47  88  81  48 126 117  32  25  14  59  28  45  21 125 106
-  16  75  21  57  54  52  54  15 104  48  82   6 123 122 101 120  45  31
-  17 113 114  85  22  22  32  85  90]
-INFO:bdonline.trainers_replay:Time for training: 0.30s
+[0.53967863 0.46032137] with label2.0
+INFO:bdonline.replay.trainers_replay:Trial has ended for class 2, from 19510 to 19993
+INFO:bdonline.replay.trainers_replay:Now 2 trials (including breaks)
+INFO:bdonline.replay.trainers_replay:Not training model yet, only have 2 of 4 trials 
+INFO:bdonline.replay.trainers_replay:Time for training: 0.00s
 INFO:__main__:Prediction for sample 19474:
-[0.56468034 0.43531963] with label2.0
+[0.53801006 0.46198997] with label2.0
 INFO:__main__:Prediction for sample 19599:
-[0.5211415  0.47885847] with label2.0
+[0.5680719 0.4319282] with label2.0
 INFO:__main__:Prediction for sample 19724:
-[0.5784688 0.4215312] with label2.0
+[0.5915752  0.40842476] with label2.0
 INFO:__main__:Prediction for sample 19849:
-[0.5780486  0.42195138] with label2.0
+[0.5306243  0.46937576] with label2.0
 INFO:__main__:Prediction for sample 19974:
-[0.5627466  0.43725336] with label2.0
+[0.5561694 0.4438306] with label2.0
 INFO:__main__:Prediction for sample 20099:
-[0.52070373 0.47929624] with label0.0
+[0.6008861  0.39911392] with label0.0
 INFO:__main__:Prediction for sample 20224:
-[0.5934639 0.4065362] with label0.0
+[0.56883484 0.4311652 ] with label0.0
 INFO:__main__:Prediction for sample 20349:
-[0.5428715 0.4571285] with label0.0
+[0.6120635  0.38793644] with label0.0
 INFO:__main__:Prediction for sample 20474:
-[0.5210051  0.47899494] with label0.0
+[0.6140843 0.3859157] with label0.0
 INFO:__main__:Prediction for sample 20599:
-[0.5675022  0.43249783] with label0.0
+[0.6253267 0.3746734] with label0.0
 INFO:__main__:Prediction for sample 20724:
-[0.52135074 0.47864932] with label2.0
+[0.58311707 0.41688296] with label2.0
 INFO:__main__:Prediction for sample 20849:
-[0.5627087 0.4372912] with label2.0
+[0.57998025 0.42001975] with label2.0
 INFO:__main__:Prediction for sample 20974:
-[0.5891146 0.4108853] with label2.0
+[0.5473095  0.45269057] with label2.0
 INFO:__main__:Prediction for sample 21099:
-[0.55294204 0.447058  ] with label2.0
+[0.5394765 0.4605235] with label2.0
 INFO:__main__:Prediction for sample 21224:
-[0.5079245  0.49207553] with label2.0
-INFO:bdonline.trainers_replay:Trial has ended for class 2, from 19359 to 19992
-INFO:bdonline.trainers_replay:Now 21 trials (including breaks)
-INFO:bdonline.trainers_replay:Training model...
-INFO:bdonline.trainers_replay:[  4 134 124  29  71   2  78   4  48 135  47 107 130  11 102  34   8  58
- 116  40  57   9 101 104 124  90  20  96  26 124  43  29  52  75 117 101
- 118  55  51  36  11  85 103  24 104]
-INFO:bdonline.trainers_replay:[ 60 106   9  99  74  98 122  86  16 119  96  60  40  78 106 114  93  39
-  54  27  42 116  22 134  50  99 131  33 109  45 102  23 130  65  21  51
-  87  47  68 120  31 102  53  52  25]
-INFO:bdonline.trainers_replay:[ 35  50  83  10   6  57  43  83  79  89 116 102 120 113  21 111  22  92
-  87  90  85 120  51  90  26  23 120  31  28  54  33 114  90  47  92 106
- 101  72  19  29  55 116 105  99  19]
-INFO:bdonline.trainers_replay:[ 93  29   4  86  49  45  27  68  13  84  55  85  71  28  24  26  37  22
-  75  70 105   2  79 131 130 119  61  66 111  70  28  58  29  96  36  96
- 134  96  21 103  47  83  24  34   1]
-INFO:bdonline.trainers_replay:[ 54  65  26  91  74  87  98 106   8  59   7  87  91  20 118  27 117 109
- 123 117  16  22  96   7  92  76 124  24  70  13 100  82 109  42  95  25
- 108  46   8  38 107  43  12 111  97]
-INFO:bdonline.trainers_replay:Time for training: 0.29s
+[0.6095755 0.3904245] with label2.0
+INFO:bdonline.replay.trainers_replay:Trial has ended for class 2, from 19359 to 19992
+INFO:bdonline.replay.trainers_replay:Now 3 trials (including breaks)
+INFO:bdonline.replay.trainers_replay:Not training model yet, only have 3 of 4 trials 
+INFO:bdonline.replay.trainers_replay:Time for training: 0.00s
 INFO:__main__:Prediction for sample 21349:
-[0.50530165 0.49469835] with label2.0
+[0.5873536 0.4126464] with label2.0
 INFO:__main__:Prediction for sample 21474:
-[0.5171166 0.4828834] with label2.0
+[0.5539771  0.44602287] with label2.0
 INFO:__main__:Prediction for sample 21599:
-[0.5020349  0.49796513] with label2.0
+[0.5783673 0.4216327] with label2.0
 INFO:__main__:Prediction for sample 21724:
-[0.5415289 0.4584711] with label2.0
+[0.54626304 0.45373693] with label2.0
 INFO:__main__:Prediction for sample 21849:
-[0.50199115 0.49800888] with label0.0
+[0.5082571  0.49174297] with label0.0
 INFO:__main__:Prediction for sample 21974:
-[0.4924666 0.5075334] with label0.0
+[0.5478505 0.4521495] with label0.0
 INFO:__main__:Prediction for sample 22099:
-[0.45867905 0.5413209 ] with label0.0
+[0.59214777 0.40785226] with label0.0
 INFO:__main__:Prediction for sample 22224:
-[0.5565744  0.44342563] with label0.0
+[0.60905635 0.3909437 ] with label0.0
 INFO:__main__:Prediction for sample 22349:
-[0.5175734 0.4824266] with label0.0
+[0.55049235 0.44950774] with label0.0
 INFO:__main__:Prediction for sample 22474:
-[0.5302854  0.46971458] with label0.0
+[0.5795414  0.42045859] with label0.0
 INFO:__main__:Prediction for sample 22599:
-[0.53894496 0.46105498] with label0.0
+[0.6222511  0.37774882] with label0.0
 INFO:__main__:Prediction for sample 22724:
-[0.5262453  0.47375464] with label0.0
+[0.619467   0.38053298] with label0.0
 INFO:__main__:Prediction for sample 22849:
-[0.499171   0.50082904] with label0.0
+[0.6340249 0.365975 ] with label0.0
 INFO:__main__:Prediction for sample 22974:
-[0.4630871 0.5369129] with label0.0
+[0.662942 0.337058] with label0.0
 INFO:__main__:Prediction for sample 23099:
-[0.5224195 0.4775805] with label0.0
+[0.643037   0.35696298] with label0.0
 INFO:__main__:Prediction for sample 23224:
-[0.5006029 0.4993971] with label1.0
+[0.5882409  0.41175905] with label1.0
 INFO:__main__:Prediction for sample 23349:
-[0.53635496 0.463645  ] with label1.0
+[0.5653472  0.43465278] with label1.0
 INFO:__main__:Prediction for sample 23474:
-[0.47882098 0.521179  ] with label1.0
+[0.56576467 0.43423533] with label1.0
 INFO:__main__:Prediction for sample 23599:
-[0.55801636 0.44198367] with label1.0
-INFO:bdonline.trainers_replay:Trial has ended for class 1, from 19550 to 19994
-INFO:bdonline.trainers_replay:Now 22 trials (including breaks)
-INFO:bdonline.trainers_replay:Training model...
-INFO:bdonline.trainers_replay:[105  42 103  57  42  41  58 107 134  12  93  75   6   7  60  88  50 131
- 100   4   3 128  74  39  60  91 104 114  59   0  62  33 112  48 138  50
- 107  89  85  22 105 132 134   0 121]
-INFO:bdonline.trainers_replay:[120 110 117 141  69  29   8  69  97  92  84   6  88 118  15 123  35  66
-  55 125 103 113  11 101 140  72  58  28  85  79  41  19   9  48 141  36
-  48  10  71  66  73   9  61 102 104]
-INFO:bdonline.trainers_replay:[119   9  74 116 132  57  43  59  21   0 136  72 113  45 106  20 140  40
-  72  83 130  80  56  49  99  94 110  75  17  65 105  41  24  51   9   2
-  26 130 127 114 112  86  68  96 108]
-INFO:bdonline.trainers_replay:[116 133  63  72  72  69 105   9  20  90  48  75 119  69 139  39  12  39
-   8 120  25 109  91 139  78 102 133  44  93  44  66 109  81  41  24  21
-  97  42  23 122  82  65  71 134  70]
-INFO:bdonline.trainers_replay:[ 79  19  97  49  41  11  22  42  25  97  73  85   0   2  55  36 136 103
-  53  12 103  71 105  63 121  75 124  18  22  79  96 133  68 112  46  72
-  57  77  68  38 106 130 110  88 133]
-INFO:bdonline.trainers_replay:Time for training: 0.29s
+[0.49842188 0.50157815] with label1.0
+INFO:bdonline.replay.trainers_replay:Trial has ended for class 1, from 19550 to 19994
+INFO:bdonline.replay.trainers_replay:Now 4 trials (including breaks)
+INFO:bdonline.replay.trainers_replay:Training model...
+INFO:bdonline.replay.trainers_replay:[23 21 19 13  5 14 20  7  3 15 11 18 23 23 20 22 16 20 23 18 16  8  9 10
+ 22  7 18 22 12  2 18 20  1 18 19  8 14 23 23 20 21 10  0 23  5]
+INFO:bdonline.replay.trainers_replay:[ 9 19 21 20 19  2 18 22  4 10  4  7 23  7 22  6 14 15 21 20 10  1 14  9
+ 21 12  0  7  7 21  3 23  5  0 19  0 16 19 23 13 19  8 21 11 21]
+INFO:bdonline.replay.trainers_replay:[20 16  3 20 10 16 22  3  8 17 11 21 21 20 17 21 19 21 19 20 19  9  0 13
+ 14 19 14 23  1 18 17  8 18 18 14 18 16 20  0 20 23  0  0  9 13]
+INFO:bdonline.replay.trainers_replay:[23 21 15 12 20 18 19 21 23 20  0 21 20  1 10 12 20  5 23 22  1 14  8 21
+ 16 22 20 20 21 23 11  6 10  1 20 22  4  5 22  1 15 22 19 15  5]
+INFO:bdonline.replay.trainers_replay:[18 21 18 10 12 23 21 23 21  0 18  2  7  7 23 10  7  5  0 22  7  3 22 23
+  1 22 17 21 17 11 16 14 23 15 11  6  8  3 18 15 20 20 14 19  7]
+INFO:bdonline.replay.trainers_replay:Time for training: 0.35s
 INFO:__main__:Prediction for sample 23724:
-[0.3981671 0.601833 ] with label1.0
+[0.5820482 0.4179518] with label1.0
 INFO:__main__:Prediction for sample 23849:
-[0.5484905 0.4515095] with label1.0
+[0.58870065 0.4112994 ] with label1.0
 INFO:__main__:Prediction for sample 23974:
-[0.5208374  0.47916257] with label1.0
+[0.5857464  0.41425356] with label1.0
 INFO:__main__:Prediction for sample 24099:
-[0.49948665 0.5005133 ] with label1.0
+[0.63892394 0.3610761 ] with label1.0
 INFO:__main__:Prediction for sample 24224:
-[0.50809413 0.49190584] with label0.0
+[0.63093835 0.36906168] with label0.0
 INFO:__main__:Prediction for sample 24349:
-[0.43844575 0.5615543 ] with label0.0
+[0.5767692 0.4232308] with label0.0
 INFO:__main__:Prediction for sample 24474:
-[0.52450705 0.47549298] with label0.0
+[0.57761496 0.42238507] with label0.0
 INFO:__main__:Prediction for sample 24599:
-[0.39798233 0.6020176 ] with label0.0
+[0.57170725 0.42829278] with label0.0
 INFO:__main__:Prediction for sample 24724:
-[0.4797356 0.5202644] with label0.0
+[0.6136937  0.38630632] with label0.0
 INFO:__main__:Prediction for sample 24849:
-[0.4641185  0.53588146] with label0.0
+[0.56315607 0.43684396] with label0.0
 INFO:__main__:Prediction for sample 24974:
-[0.5160907 0.4839093] with label0.0
+[0.6180986  0.38190147] with label0.0
 INFO:__main__:Prediction for sample 25099:
-[0.47661933 0.52338064] with label0.0
+[0.61410666 0.38589334] with label0.0
 INFO:__main__:Prediction for sample 25224:
-[0.55193484 0.44806516] with label0.0
+[0.61018646 0.3898135 ] with label0.0
 INFO:__main__:Prediction for sample 25349:
-[0.48096722 0.5190327 ] with label0.0
+[0.55547196 0.444528  ] with label0.0
 INFO:__main__:Prediction for sample 25474:
-[0.47844058 0.5215594 ] with label0.0
+[0.60404426 0.39595562] with label0.0
 INFO:__main__:Prediction for sample 25599:
-[0.5063669  0.49363312] with label0.0
+[0.6131424 0.3868577] with label0.0
 INFO:__main__:Prediction for sample 25724:
-[0.50810504 0.49189493] with label0.0
+[0.59047145 0.40952855] with label0.0
 INFO:__main__:Prediction for sample 25849:
-[0.48795786 0.5120421 ] with label0.0
+[0.6031041  0.39689592] with label0.0
 INFO:__main__:Prediction for sample 25974:
-[0.5247466  0.47525343] with label0.0
+[0.6276285  0.37237146] with label0.0
 INFO:__main__:Prediction for sample 26099:
-[0.47402173 0.52597827] with label0.0
+[0.5884628  0.41153723] with label0.0
 INFO:__main__:Prediction for sample 26224:
-[0.57567346 0.42432663] with label0.0
+[0.6246527  0.37534726] with label0.0
 INFO:__main__:Prediction for sample 26349:
-[0.4133282 0.5866718] with label0.0
+[0.56930345 0.43069655] with label0.0
 INFO:__main__:Prediction for sample 26474:
-[0.5373248  0.46267515] with label0.0
+[0.5974239 0.402576 ] with label0.0
 INFO:__main__:Prediction for sample 26599:
-[0.5036024 0.4963976] with label1.0
+[0.6050624  0.39493752] with label1.0
 INFO:__main__:Prediction for sample 26724:
-[0.50779957 0.49220043] with label1.0
+[0.60061485 0.39938506] with label1.0
 INFO:__main__:Prediction for sample 26849:
-[0.45609742 0.5439026 ] with label1.0
-INFO:bdonline.trainers_replay:Trial has ended for class 1, from 19555 to 19996
-INFO:bdonline.trainers_replay:Now 23 trials (including breaks)
-INFO:bdonline.trainers_replay:Training model...
-INFO:bdonline.trainers_replay:[ 34  61 122  84 146  58   9  63  73 121  11  15 107  72 110 112 119 130
-  19 147  45   8 104  81 126  38  51   1 126  81  78  29  93  10  96  53
-  26 143  68 131 106 130 140 130  16]
-INFO:bdonline.trainers_replay:[ 67 110   3  46 138  56  33  39  35   1  59  52  51  10 122   4  39  46
- 107   7  70  15  42   5  40  79 121   8  56 111  25 114 103 111  25 110
-   3  66  49 119  62  29 101  87 120]
-INFO:bdonline.trainers_replay:[ 56  12 111 118  92  87  79  90  63 123 127  73  18 135  86  57  55   1
-  60  22  85 137  44  45  56  82  38 135  23 127  99  25  66  77 147 136
-  36  51   8  43 105  91  43  30 128]
-INFO:bdonline.trainers_replay:[ 75  73 100 134 114  91  83  53 100  46 114  68  95  90  43  23  69 113
-  45  23  94  44 143  26  52 142  34  87  28  12 102  88  57  16   0 125
- 110  34  85  94  21  93  40 106  88]
-INFO:bdonline.trainers_replay:[ 90 113  69  63  19 121 100 132  27 143   4  51  29  35  11  88 130  31
-  80  19  61 128  47  68 132  49  25 112  75  64 147 114  84  63  21  53
-  43 114 104  13 119  19  20  44 147]
-INFO:bdonline.trainers_replay:Time for training: 0.30s
+[0.5652465  0.43475342] with label1.0
+INFO:bdonline.replay.trainers_replay:Trial has ended for class 1, from 19555 to 19996
+INFO:bdonline.replay.trainers_replay:Now 5 trials (including breaks)
+INFO:bdonline.replay.trainers_replay:Training model...
+INFO:bdonline.replay.trainers_replay:[ 2 28  9 25  6 21 11 21  4 17 23 24 24 10 25  6 13 19 26 12  9 27 19 22
+ 27 23 29  6 27 19  5 26 16 16 19 13  6  7 14 29 21  3 19  7 24]
+INFO:bdonline.replay.trainers_replay:[ 8 24  8 18 11 26  1  1  3  7 12 18 21 20 26 28  3  1 29 27 28 10  3  7
+  4  6 24 29  1 26  9 24 22  4 29 17 24 24 26 20 17 23 28 25 20]
+INFO:bdonline.replay.trainers_replay:[21  6 12 24 12  4 20 16  5  7  5 10 15 18 20  1  6 22 25 11 21 14 19 21
+ 10 25 18 22 16 20  5 15  9 14  3  3 20  3  2 27 27  5 10  9  1]
+INFO:bdonline.replay.trainers_replay:[22 17  9  7 18 17 15 24  1 22 25 26 19  9 25  6 15 26 23 11 21 24 21  5
+  9 22 24 14 21  8 22 19 27 11  0 26 29 23 27 13 24 14  4 18 18]
+INFO:bdonline.replay.trainers_replay:[ 6 22  9 13 22 21 13 29 28  9  7  3 16  7 12  5 29 26  4 20  5 16 15 14
+ 15  4 25 13 21  1 29 29 25 28 12  8  4 27 27 21  6  5  9 22 23]
+INFO:bdonline.replay.trainers_replay:Time for training: 0.32s
 INFO:__main__:Prediction for sample 26974:
-[0.587575   0.41242492] with label1.0
+[0.57673025 0.42326972] with label1.0
 INFO:__main__:Prediction for sample 27099:
-[0.4465743 0.5534257] with label1.0
+[0.5104313  0.48956874] with label1.0
 INFO:__main__:Prediction for sample 27224:
-[0.487913 0.512087] with label1.0
+[0.5611768  0.43882325] with label1.0
 INFO:__main__:Prediction for sample 27349:
-[0.49082202 0.509178  ] with label1.0
+[0.52518255 0.47481745] with label1.0
 INFO:__main__:Prediction for sample 27474:
-[0.5369403  0.46305972] with label1.0
+[0.58161235 0.41838765] with label1.0
 INFO:__main__:Prediction for sample 27599:
-[0.5372894  0.46271062] with label0.0
+[0.5459352  0.45406482] with label0.0
 INFO:__main__:Prediction for sample 27724:
-[0.47442645 0.5255735 ] with label0.0
+[0.58267206 0.41732803] with label0.0
 INFO:__main__:Prediction for sample 27849:
-[0.4866703 0.5133297] with label0.0
+[0.527527   0.47247308] with label0.0
 INFO:__main__:Prediction for sample 27974:
-[0.49910355 0.50089645] with label0.0
+[0.51915395 0.48084608] with label0.0
 INFO:__main__:Prediction for sample 28099:
-[0.5768226  0.42317736] with label0.0
+[0.563578 0.436422] with label0.0
 INFO:__main__:Prediction for sample 28224:
-[0.4414564  0.55854356] with label0.0
+[0.55110306 0.44889697] with label0.0
 INFO:__main__:Prediction for sample 28349:
-[0.47873253 0.5212675 ] with label0.0
+[0.55934536 0.44065467] with label0.0
 INFO:__main__:Prediction for sample 28474:
-[0.41767952 0.58232045] with label0.0
+[0.48965463 0.51034534] with label0.0
 INFO:__main__:Prediction for sample 28599:
-[0.5346915  0.46530843] with label0.0
+[0.55338883 0.44661114] with label0.0
 INFO:__main__:Prediction for sample 28724:
-[0.43673575 0.56326425] with label0.0
+[0.5423766  0.45762345] with label0.0
 INFO:__main__:Prediction for sample 28849:
-[0.49135634 0.5086437 ] with label0.0
+[0.55172807 0.44827193] with label0.0
 INFO:__main__:Prediction for sample 28974:
-[0.47367072 0.5263293 ] with label0.0
+[0.53119415 0.46880582] with label0.0
 INFO:__main__:Prediction for sample 29099:
-[0.5265988 0.4734012] with label0.0
+[0.57398117 0.42601877] with label0.0
 INFO:__main__:Prediction for sample 29224:
-[0.4832879  0.51671207] with label0.0
+[0.5194368 0.4805632] with label0.0
 INFO:__main__:Prediction for sample 29349:
-[0.51478577 0.48521423] with label0.0
+[0.573212   0.42678794] with label0.0
 INFO:__main__:Prediction for sample 29474:
-[0.4512431  0.54875696] with label0.0
+[0.5111722  0.48882782] with label0.0
 INFO:__main__:Prediction for sample 29599:
-[0.50265354 0.49734646] with label2.0
+[0.5695686  0.43043137] with label2.0
 INFO:__main__:Prediction for sample 29724:
-[0.49952152 0.5004785 ] with label2.0
+[0.52781004 0.47219   ] with label2.0
 INFO:__main__:Prediction for sample 29849:
-[0.48620722 0.5137928 ] with label2.0
+[0.5475108  0.45248917] with label2.0
 INFO:__main__:Prediction for sample 29974:
-[0.50419676 0.49580327] with label2.0
+[0.57082033 0.4291797 ] with label2.0
 INFO:__main__:Prediction for sample 30099:
-[0.48613402 0.513866  ] with label2.0
+[0.52284455 0.47715548] with label2.0
 INFO:__main__:Prediction for sample 30224:
-[0.5001917 0.4998083] with label2.0
-INFO:bdonline.trainers_replay:Trial has ended for class 2, from 19272 to 19997
-INFO:bdonline.trainers_replay:Now 24 trials (including breaks)
-INFO:bdonline.trainers_replay:Training model...
-INFO:bdonline.trainers_replay:[110 145 156  62 116  42  52  38  79  45  42 108  15  64 102  46  46  14
-  91  72 122  67 146   1  66  17  82 121 104  39  14  21  90  31 135  58
-  77  85  96 118  41  86 136   7  95]
-INFO:bdonline.trainers_replay:[  0  83  67  34 111  85  15 157 124  89  96  66 123  62  69  62 131 104
-  85   1  79 116 127 116  95 122  73  88  51 136  34 100  82  52  42   3
-  40  43  74  59  54 104  11  93  61]
-INFO:bdonline.trainers_replay:[113 143  20  57  53 126  67 115  47 140 156  90  63  87 105  74  70  60
-  31 103  82 153  12  40 107  94  93  19  33 113  67  79 142  92  70  87
-   6  18 138  60  69 157 141  83 141]
-INFO:bdonline.trainers_replay:[ 37 115  53   0  42   0   4  24 114  83   8  33 101  40  32 114  78  35
- 107  10  85 123 119 116  69  72  12  29  69 156 119   8  55 155 114  82
- 135 119  35 109  59 152  32 122  97]
-INFO:bdonline.trainers_replay:[142   8  10  17  44  47 127  92 139 148 143  36 130  43 110  43 108 142
-  19  84  20   5  50  42  50 142 128 141 118  14 101  35 157  13  60 127
- 149 123 126 100  92  67  37  48  94]
-INFO:bdonline.trainers_replay:Time for training: 0.30s
+[0.57256454 0.4274355 ] with label2.0
+INFO:bdonline.replay.trainers_replay:Trial has ended for class 2, from 19272 to 19997
+INFO:bdonline.replay.trainers_replay:Now 6 trials (including breaks)
+INFO:bdonline.replay.trainers_replay:Training model...
+INFO:bdonline.replay.trainers_replay:[ 1 39 35 12 23  0 24  1 18 39 18 29 37  4 28 13  3 20 32 16 20  3 28 28
+ 35 26  7 27 10 35 17 11 19 23 33 28 33 20 19 14  4 25 28  9 28]
+INFO:bdonline.replay.trainers_replay:[20 29  3 27 23 27 35 25  5 34 27 20 16 24 29 32 26 15 20 11 17 32  8 39
+ 19 27 38 13 29 18 28  9 38 21  8 19 25 18 22 34 12 28 19 19 10]
+INFO:bdonline.replay.trainers_replay:[14 19 24  3  2 20 17 24 24 26 33 28 34 31  8 30  8 26 25 26 25 34 19 26
+ 10  8 34 12 11 20 13 31 26 18 26 29 28 23  7 11 20 33 29 27  7]
+INFO:bdonline.replay.trainers_replay:[26 12  1 25 19 18 11 22  4 25 20 25 22 11  9 10 15  8 23 22 29  1 24 38
+ 38 34 21 22 30 22 11 20 11 27 14 27 39 27  8 28 18 24  9 13  0]
+INFO:bdonline.replay.trainers_replay:[20 21 10 26 23 25 27 29  3 20  2 25 26  7 33 11 33 29 35 33  5  8 27  2
+ 26 23 35  9 22  4 27 24 29 17 27 10 29 18  3 15 29 17  4 30 27]
+INFO:bdonline.replay.trainers_replay:Time for training: 0.32s
 INFO:__main__:Prediction for sample 30349:
-[0.41770786 0.58229214] with label2.0
+[0.4408384 0.5591617] with label2.0
 INFO:__main__:Prediction for sample 30474:
-[0.5254633  0.47453672] with label2.0
+[0.5166005 0.4833995] with label2.0
 INFO:__main__:Prediction for sample 30599:
-[0.45485783 0.5451422 ] with label2.0
+[0.49144706 0.50855297] with label2.0
 INFO:__main__:Prediction for sample 30724:
-[0.5574986 0.4425014] with label2.0
+[0.55349267 0.44650728] with label2.0
 INFO:__main__:Prediction for sample 30849:
-[0.5759543  0.42404562] with label2.0
+[0.5796637  0.42033637] with label2.0
 INFO:__main__:Prediction for sample 30974:
-[0.45689508 0.54310495] with label0.0
+[0.4697075 0.5302925] with label0.0
 INFO:__main__:Prediction for sample 31099:
-[0.5006764  0.49932358] with label0.0
+[0.48826936 0.5117306 ] with label0.0
 INFO:__main__:Prediction for sample 31224:
-[0.53856826 0.4614317 ] with label0.0
+[0.5454651  0.45453495] with label0.0
 INFO:__main__:Prediction for sample 31349:
-[0.42368856 0.5763114 ] with label0.0
+[0.48097503 0.51902497] with label0.0
 INFO:__main__:Prediction for sample 31474:
-[0.55590606 0.4440939 ] with label0.0
+[0.5021939  0.49780607] with label0.0
 INFO:__main__:Prediction for sample 31599:
-[0.50796103 0.49203897] with label0.0
+[0.5196434  0.48035657] with label0.0
 INFO:__main__:Prediction for sample 31724:
-[0.5639768  0.43602318] with label0.0
+[0.5511214  0.44887856] with label0.0
 INFO:__main__:Prediction for sample 31849:
-[0.5047833 0.4952167] with label0.0
+[0.49603286 0.50396717] with label0.0
 INFO:__main__:Prediction for sample 31974:
-[0.5209861 0.4790139] with label0.0
+[0.51966995 0.48033008] with label0.0
 INFO:__main__:Prediction for sample 32099:
-[0.46361205 0.53638804] with label0.0
+[0.5135715  0.48642862] with label0.0
 INFO:__main__:Prediction for sample 32224:
-[0.52873814 0.47126186] with label0.0
+[0.5309476 0.4690523] with label0.0
 INFO:__main__:Prediction for sample 32349:
-[0.5195271 0.4804729] with label0.0
+[0.5105477  0.48945227] with label0.0
 INFO:__main__:Prediction for sample 32474:
-[0.52041763 0.4795824 ] with label0.0
+[0.5098467 0.4901533] with label0.0
 INFO:__main__:Prediction for sample 32599:
-[0.4921126  0.50788736] with label0.0
+[0.49206287 0.50793725] with label0.0
 INFO:__main__:Prediction for sample 32724:
-[0.4771236 0.5228764] with label0.0
+[0.5137656 0.4862344] with label0.0
 INFO:__main__:Prediction for sample 32849:
-[0.56528836 0.43471164] with label1.0
+[0.47845718 0.5215428 ] with label1.0
 INFO:__main__:Prediction for sample 32974:
-[0.48203146 0.51796854] with label1.0
+[0.538352   0.46164805] with label1.0
 INFO:__main__:Prediction for sample 33099:
-[0.5647426 0.4352574] with label1.0
+[0.5551934 0.4448066] with label1.0
 INFO:__main__:Prediction for sample 33224:
-[0.47676116 0.52323884] with label1.0
-INFO:bdonline.trainers_replay:Trial has ended for class 1, from 19486 to 19991
-INFO:bdonline.trainers_replay:Now 25 trials (including breaks)
-INFO:bdonline.trainers_replay:Training model...
-INFO:bdonline.trainers_replay:[ 54  38   5  48  37  71 130  51   8  41  23 106  47  20 104  20 118  62
-  25  66 112 120  80  24   1  32 125 106  56  69  89  10 104  81   4 124
-  87  47 117   1 137  46 114  98  46]
-INFO:bdonline.trainers_replay:[ 81  46  33 126 113  25 130 148  46 144 145 134  73 109 110 149  12  17
-  24 126  85  50  44  50 153 130 132  10 105  48 138  17 142  42 148  85
-  70  90 123 126  88 136 122   7 136]
-INFO:bdonline.trainers_replay:[141  28 103  21 119  59  51 120  81  75  85  71  52 112  77  68  42 107
- 125  79  83 106  92  30  32  54 133 102  11  65 133  26 132  28  74  50
- 145 132  54  62  29 148 121 137  27]
-INFO:bdonline.trainers_replay:[ 95  44  68  35 121  21 153  51  32 156  10 144 102 141  69  91  49  17
-  84  11  78   9  40  58  89   8 114  30  21  60  44  17  22   1  42 116
- 117  48 123 149 133  30  74  29  74]
-INFO:bdonline.trainers_replay:[ 88  38  34 131 124  50 132  33  51  45 104 110 121 104  27  71 162   8
- 163 143 120 119  58  70  34  75 126 141 131  51  60  84  21  41   2  78
-  42 164  36  39  61  48  49 160  31]
-INFO:bdonline.trainers_replay:Time for training: 0.30s
+[0.47417653 0.5258235 ] with label1.0
+INFO:bdonline.replay.trainers_replay:Trial has ended for class 1, from 19486 to 19991
+INFO:bdonline.replay.trainers_replay:Now 7 trials (including breaks)
+INFO:bdonline.replay.trainers_replay:Training model...
+INFO:bdonline.replay.trainers_replay:[35 16 35 21 16 15 21 36 44  4 30 25  2  2 21 29 19 44 33  1  1 43 25 15
+ 21 30 35 39 21  0 22 13 38 18 46 19 36 29 28  8 35 44 44  0 41]
+INFO:bdonline.replay.trainers_replay:[41 37 40 46 24 11  3 24 32 30 28  2 29 41  5 42 13 23 20 42 35 39  4 34
+ 46 25 21 11 28 27 16  7  3 18 46 13 18  3 24 23 25  3 21 34 35]
+INFO:bdonline.replay.trainers_replay:[41  3 25 40 44 21 16 21  7  0 45 25 39 17 36  7 46 15 25 28 43 27 20 18
+ 33 31 38 26  6 23 36 16  9 19  3  1 10 43 43 39 38 28 24 32 37]
+INFO:bdonline.replay.trainers_replay:[40 44 22 25 25 24 35  3  7 29 18 26 41 24 46 15  4 15  2 41  9 37 30 46
+ 26 34 44 17 31 17 23 37 27 16  9  7 32 16  8 41 27 23 24 44 24]
+INFO:bdonline.replay.trainers_replay:[27  7 32 18 16  3  8 16  9 32 25 28  0  0 20 13 45 35 20  4 34 25 35 22
+ 41 25 42  6  8 27 32 44 24 38 17 25 21 26 24 14 36 43 38 29 44]
+INFO:bdonline.replay.trainers_replay:Time for training: 0.33s
 INFO:__main__:Prediction for sample 33349:
-[0.544037   0.45596305] with label1.0
+[0.509966   0.49003398] with label1.0
 INFO:__main__:Prediction for sample 33474:
-[0.49536693 0.50463307] with label1.0
+[0.46098578 0.5390142 ] with label1.0
 INFO:__main__:Prediction for sample 33599:
-[0.514739   0.48526102] with label1.0
+[0.5142984  0.48570165] with label1.0
 INFO:__main__:Prediction for sample 33724:
-[0.4223442  0.57765585] with label1.0
+[0.47698817 0.52301186] with label1.0
 INFO:__main__:Prediction for sample 33849:
-[0.58006996 0.41993007] with label0.0
+[0.57369775 0.4263023 ] with label0.0
 INFO:__main__:Prediction for sample 33974:
-[0.42160463 0.5783953 ] with label0.0
+[0.41436315 0.5856369 ] with label0.0
 INFO:__main__:Prediction for sample 34099:
-[0.59661984 0.40338022] with label0.0
+[0.5828316  0.41716838] with label0.0
 INFO:__main__:Prediction for sample 34224:
-[0.45777193 0.54222804] with label0.0
+[0.44638565 0.5536144 ] with label0.0
 INFO:__main__:Prediction for sample 34349:
-[0.42212808 0.57787204] with label0.0
+[0.49512997 0.50487006] with label0.0
 INFO:__main__:Prediction for sample 34474:
-[0.5943424  0.40565765] with label0.0
+[0.5374824  0.46251762] with label0.0
 INFO:__main__:Prediction for sample 34599:
-[0.44988164 0.5501184 ] with label0.0
+[0.45061797 0.54938203] with label0.0
 INFO:__main__:Prediction for sample 34724:
-[0.5722337  0.42776623] with label0.0
+[0.5538756 0.4461244] with label0.0
 INFO:__main__:Prediction for sample 34849:
-[0.44464362 0.5553564 ] with label0.0
+[0.45931774 0.5406823 ] with label0.0
 INFO:__main__:Prediction for sample 34974:
-[0.53590256 0.4640974 ] with label0.0
+[0.49860632 0.5013937 ] with label0.0
 INFO:__main__:Prediction for sample 35099:
-[0.4807666 0.5192334] with label0.0
+[0.45113108 0.54886895] with label0.0
 INFO:__main__:Prediction for sample 35224:
-[0.4884194 0.5115806] with label0.0
+[0.49997097 0.500029  ] with label0.0
 INFO:__main__:Prediction for sample 35349:
-[0.52496684 0.4750332 ] with label0.0
+[0.4877015  0.51229846] with label0.0
 INFO:__main__:Prediction for sample 35474:
-[0.5384601  0.46153998] with label0.0
+[0.5238265 0.4761735] with label0.0
 INFO:__main__:Prediction for sample 35599:
-[0.5570439 0.4429561] with label0.0
+[0.5527292  0.44727078] with label0.0
 INFO:__main__:Prediction for sample 35724:
-[0.44729188 0.5527081 ] with label0.0
+[0.4738448 0.5261553] with label0.0
 INFO:__main__:Prediction for sample 35849:
-[0.51995313 0.4800469 ] with label0.0
+[0.5480747  0.45192525] with label0.0
 INFO:__main__:Prediction for sample 35974:
-[0.48384032 0.5161597 ] with label1.0
+[0.4241081  0.57589185] with label1.0
 INFO:__main__:Prediction for sample 36099:
-[0.5645431 0.4354569] with label1.0
+[0.5415068 0.4584932] with label1.0
 INFO:__main__:Prediction for sample 36224:
-[0.52986556 0.47013444] with label1.0
-INFO:bdonline.trainers_replay:Trial has ended for class 1, from 19575 to 19994
-INFO:bdonline.trainers_replay:Now 26 trials (including breaks)
-INFO:bdonline.trainers_replay:Training model...
-INFO:bdonline.trainers_replay:[ 19 154  28   0 139  11 104  46 144  40 140  77  86 130  28  37 152  69
- 151 113 115  15  21 150  13 145  68  70  32  15  26  47  13  55 101  48
- 133  47 149  88 169  75  69 148  75]
-INFO:bdonline.trainers_replay:[ 49  19   2  50  19  67 117   2 105 157  90  85  75 108 148  62   5  64
-  12 142  50 163  18  67  80 121 122   4  57 125  57  20   5 126  34  17
- 117 109  86  85 157  65   9 137 141]
-INFO:bdonline.trainers_replay:[  5  24 147  46 107 120  79 112  20 153  33  50  65   8  16   8  92  69
-  34   4   3 125 125  33 142 152 129 150  35 133  83  25  88  42 148   2
- 154 160  84  71  15  82  81  34  93]
-INFO:bdonline.trainers_replay:[ 21  33 141  21 169 123  54  62 135 105  74  23 117 134  47 126 143 160
-  64 113  91  47 146 121 148  47  40 146 134  51   0 136  38  16  18 108
-  60 107 102  87  18  64 106  44 162]
-INFO:bdonline.trainers_replay:[ 24 165  19   4  55 152 108  40 132  69 142   7  11 102 152  46 144 151
- 122  33 102  72 167  71 147  37  86 145 111  57 117  95  18 150 118 109
- 157 131   0 148  62  95  32 165 134]
-INFO:bdonline.trainers_replay:Time for training: 0.32s
+[0.52336794 0.4766321 ] with label1.0
+INFO:bdonline.replay.trainers_replay:Trial has ended for class 1, from 19575 to 19994
+INFO:bdonline.replay.trainers_replay:Now 8 trials (including breaks)
+INFO:bdonline.replay.trainers_replay:Training model...
+INFO:bdonline.replay.trainers_replay:[12 22 44 30 52 21  3 23 26 44  4  5 39 26 40 40 43 46  7 52 17  3 38 29
+ 45 14 19  0 45 29 28 10 33  3 35 19  9 51 25 47 38 47 50 46  5]
+INFO:bdonline.replay.trainers_replay:[24 40  1 17 49 20 12 14 13  0 22 19 19  3 44  1 14 17 39  2 25  5 15  1
+ 14 28 44  2 21 40  9 41 37 40  9 40  1 24 18 43 22 11 36 31 43]
+INFO:bdonline.replay.trainers_replay:[21  4 40 43 33 31 28 32 23 44 45 26  6 48 30 21 20  0 22  8 30 49 16 16
+ 20 29 14 48  8 45 35  9 24 28 52 48 13 19  2 16 38 33 16 11 46]
+INFO:bdonline.replay.trainers_replay:[27 26 36 48 41 33 29 19 36 17 41 24 34 32 16  8 25 41 17  8 34 16 51  9
+ 19 51 12 31 10  4 37 31 21  5  0 45 40 12 30 34  7 33 15 38 31]
+INFO:bdonline.replay.trainers_replay:[32 41 25 23  7 43 36 47 10 51  1 19 11 13  4 32 46 11 28  7 22 46 17 24
+ 47 18  9 41 27 23 52 41 30 23  7 19 16 41 37  4 43  7  7 16 52]
+INFO:bdonline.replay.trainers_replay:Time for training: 0.32s
 INFO:__main__:Prediction for sample 36349:
-[0.4959542  0.50404584] with label1.0
+[0.5246732  0.47532672] with label1.0
 INFO:__main__:Prediction for sample 36474:
-[0.4466524 0.5533476] with label1.0
+[0.47576287 0.5242372 ] with label1.0
 INFO:__main__:Prediction for sample 36599:
-[0.44490442 0.55509555] with label1.0
+[0.46635056 0.53364944] with label1.0
 INFO:__main__:Prediction for sample 36724:
-[0.5643508  0.43564916] with label1.0
+[0.5603167  0.43968326] with label1.0
 INFO:__main__:Prediction for sample 36849:
-[0.46686593 0.5331341 ] with label1.0
+[0.4830844 0.5169157] with label1.0
 INFO:__main__:Prediction for sample 36974:
-[0.44942108 0.55057895] with label0.0
+[0.48378396 0.51621604] with label0.0
 INFO:__main__:Prediction for sample 37099:
-[0.49116713 0.5088329 ] with label0.0
+[0.5100109  0.48998898] with label0.0
 INFO:__main__:Prediction for sample 37224:
-[0.5345076  0.46549243] with label0.0
+[0.5288704 0.4711296] with label0.0
 INFO:__main__:Prediction for sample 37349:
-[0.45196798 0.548032  ] with label0.0
+[0.4943818 0.5056183] with label0.0
 INFO:__main__:Prediction for sample 37474:
-[0.4698245  0.53017557] with label0.0
+[0.45585096 0.54414904] with label0.0
 INFO:__main__:Prediction for sample 37599:
-[0.47911322 0.5208868 ] with label0.0
+[0.5627431  0.43725687] with label0.0
 INFO:__main__:Prediction for sample 37724:
-[0.4655751 0.5344249] with label0.0
+[0.38224518 0.6177548 ] with label0.0
 INFO:__main__:Prediction for sample 37849:
-[0.46375367 0.53624636] with label0.0
+[0.5048301  0.49516988] with label0.0
 INFO:__main__:Prediction for sample 37974:
-[0.47817042 0.5218296 ] with label0.0
+[0.49402636 0.50597364] with label0.0
 INFO:__main__:Prediction for sample 38099:
-[0.50040126 0.49959874] with label2.0
+[0.49957588 0.5004241 ] with label2.0
 INFO:__main__:Prediction for sample 38224:
-[0.5685007  0.43149933] with label2.0
+[0.5019454  0.49805465] with label2.0
 INFO:__main__:Prediction for sample 38349:
-[0.36936536 0.63063467] with label2.0
+[0.4485352 0.5514648] with label2.0
 INFO:__main__:Prediction for sample 38474:
-[0.6183482  0.38165188] with label2.0
+[0.5158189  0.48418108] with label2.0
 INFO:__main__:Prediction for sample 38599:
-[0.4605091 0.5394909] with label2.0
+[0.5083773  0.49162275] with label2.0
 INFO:__main__:Prediction for sample 38724:
-[0.5020437  0.49795628] with label2.0
+[0.46435454 0.5356455 ] with label2.0
 INFO:__main__:Prediction for sample 38849:
-[0.44477183 0.5552282 ] with label2.0
-INFO:bdonline.trainers_replay:Trial has ended for class 2, from 19184 to 19994
-INFO:bdonline.trainers_replay:Now 27 trials (including breaks)
-INFO:bdonline.trainers_replay:Training model...
-INFO:bdonline.trainers_replay:[168  39 177 158 172  34  33  46 114  14 177  32  13  66 134  47 153 105
-   1  73 158 143  80 118 121  39  94   3 137  83 142  85  64  15 115 147
- 164 131  53 108   6  13   4  95 138]
-INFO:bdonline.trainers_replay:[ 43  82 135 152   9 160  76 112 113  49 118 116  50  74 112   2 166  58
- 104  28  48  63  52  98  64  44 149 113  64  40  68 174  87 136 146 145
-  40  34  58  20 128 174  27   0 172]
-INFO:bdonline.trainers_replay:[110   3  87  46 113  83  33  13  32 109  32 110  26  54  40 173  28   5
-  90 155 162   8  77 175 124 145 164 145  41 153  57 167  44 165 167  66
- 139  94  28   2 132  24 154 101  97]
-INFO:bdonline.trainers_replay:[ 81  22  71  86  60  14  59 138 136 166   5 127  35  48  93  85  86  86
-  13 116  13 176   6 113  70  80  82  24  60  66  72  37  38 137  69 141
-  95   5 137 138  98 167  84 173  12]
-INFO:bdonline.trainers_replay:[ 83 104   1 164 101 103  90  97 114  52   5 155  69 119  33 165 175 104
-  70  95 122 154 118 153 115  77  48 108 130  55  72 176 113 133   1 123
-  75 148   0 142  71  81 164 135  10]
-INFO:bdonline.trainers_replay:Time for training: 0.32s
+[0.52665716 0.47334275] with label2.0
+INFO:bdonline.replay.trainers_replay:Trial has ended for class 2, from 19184 to 19994
+INFO:bdonline.replay.trainers_replay:Now 9 trials (including breaks)
+INFO:bdonline.replay.trainers_replay:Training model...
+INFO:bdonline.replay.trainers_replay:[45 58 63 26 47 19 23 18 32 20 19 44  6 26 42 21 20  6 38 29 49 27 58  0
+ 27  7 33 48 43 18  6  9 37 15 52 24 31 35 40 47 19 35 52  3 40]
+INFO:bdonline.replay.trainers_replay:[ 0 34 27 16 45 34  6 63 49 37 40 27 49 26 28 26 51 43 35  0 32 47 50 47
+ 40 49 29 36 22 53 16 41 33 23 19  1 18 20 30 25 23 43  5 39 25]
+INFO:bdonline.replay.trainers_replay:[46 56  9 24 23 50 27 46 21 55 63 38 26 36 43 30 28 25 15 42 33 62  5 18
+ 44 40 39  8 16 46 27 32 56 38 28 36  2  8 54 25 28 63 56 34 56]
+INFO:bdonline.replay.trainers_replay:[18 47 23  0 19  0  2 11 46 34  3 16 42 18 15 46 31 17 44  4 35 49 48 47
+ 28 29  5 14 28 63 48  3 23 63 46 33 52 48 17 44 25 61 15 49 40]
+INFO:bdonline.replay.trainers_replay:[56  3  4  7 20 21 50 39 55 59 57 17 51 20 45 20 44 56  8 34  9  2 22 19
+ 22 56 50 56 48  6 41 16 63  6 25 50 60 49 50 41 39 27 17 21 40]
+INFO:bdonline.replay.trainers_replay:Time for training: 0.31s
 INFO:__main__:Prediction for sample 38974:
-[0.53131706 0.46868283] with label2.0
+[0.52536273 0.47463733] with label2.0
 INFO:__main__:Prediction for sample 39099:
-[0.49120286 0.5087971 ] with label2.0
+[0.48177525 0.5182247 ] with label2.0
 INFO:__main__:Prediction for sample 39224:
-[0.5366701  0.46332988] with label2.0
+[0.55273414 0.44726586] with label2.0
 INFO:__main__:Prediction for sample 39349:
-[0.38144073 0.6185593 ] with label2.0
+[0.44920176 0.5507983 ] with label2.0
 INFO:__main__:Prediction for sample 39474:
-[0.60615134 0.3938486 ] with label2.0
+[0.546137   0.45386302] with label2.0
 INFO:__main__:Prediction for sample 39599:
-[0.56122893 0.43877107] with label0.0
+[0.5551358  0.44486424] with label0.0
 INFO:__main__:Prediction for sample 39724:
-[0.42351145 0.5764886 ] with label0.0
+[0.49154678 0.5084532 ] with label0.0
 INFO:__main__:Prediction for sample 39849:
-[0.51273006 0.48726997] with label0.0
+[0.5400793 0.4599207] with label0.0
 INFO:__main__:Prediction for sample 39974:
-[0.49956176 0.5004383 ] with label0.0
+[0.47553682 0.5244632 ] with label0.0
 INFO:__main__:Prediction for sample 40099:
-[0.4898073  0.51019275] with label0.0
+[0.52435195 0.47564805] with label0.0
 INFO:__main__:Prediction for sample 40224:
-[0.46344984 0.53655016] with label0.0
+[0.50170857 0.49829146] with label0.0
 INFO:__main__:Prediction for sample 40349:
-[0.5013583  0.49864173] with label0.0
+[0.4477583 0.5522418] with label0.0
 INFO:__main__:Prediction for sample 40474:
-[0.43051398 0.56948596] with label0.0
+[0.4974967  0.50250334] with label0.0
 INFO:__main__:Prediction for sample 40599:
-[0.58700985 0.41299   ] with label0.0
+[0.53195596 0.46804404] with label0.0
 INFO:__main__:Prediction for sample 40724:
-[0.44103363 0.55896634] with label0.0
+[0.5205932 0.4794068] with label0.0
 INFO:__main__:Prediction for sample 40849:
-[0.4010165  0.59898347] with label0.0
+[0.47724837 0.5227516 ] with label0.0
 INFO:__main__:Prediction for sample 40974:
-[0.6505471 0.3494529] with label0.0
+[0.6030062 0.3969938] with label0.0
 INFO:__main__:Prediction for sample 41099:
-[0.42781284 0.57218724] with label0.0
+[0.4848784 0.5151216] with label0.0
 INFO:__main__:Prediction for sample 41224:
-[0.48395848 0.5160415 ] with label0.0
+[0.47511795 0.5248821 ] with label0.0
 INFO:__main__:Prediction for sample 41349:
-[0.4995304 0.5004696] with label0.0
+[0.54246265 0.45753735] with label0.0
 INFO:__main__:Prediction for sample 41474:
-[0.44503605 0.55496395] with label0.0
+[0.51378196 0.48621804] with label0.0
 INFO:__main__:Prediction for sample 41599:
-[0.4972953  0.50270474] with label0.0
+[0.50711477 0.4928852 ] with label0.0
 INFO:__main__:Prediction for sample 41724:
-[0.4737657 0.5262343] with label1.0
+[0.49203014 0.50796986] with label1.0
 INFO:__main__:Prediction for sample 41849:
-[0.48910594 0.51089406] with label1.0
+[0.5113212 0.4886788] with label1.0
 INFO:__main__:Prediction for sample 41974:
-[0.5208274  0.47917262] with label1.0
+[0.49168366 0.50831634] with label1.0
 INFO:__main__:Prediction for sample 42099:
-[0.49932614 0.50067383] with label1.0
+[0.52199143 0.47800857] with label1.0
 INFO:__main__:Prediction for sample 42224:
-[0.4903116  0.50968844] with label1.0
+[0.45161635 0.54838365] with label1.0
 INFO:__main__:Prediction for sample 42349:
-[0.51133525 0.48866475] with label1.0
-INFO:bdonline.trainers_replay:Trial has ended for class 1, from 19223 to 19998
-INFO:bdonline.trainers_replay:Now 28 trials (including breaks)
-INFO:bdonline.trainers_replay:Training model...
-INFO:bdonline.trainers_replay:[ 66 159  38  47 117  31  60 110 137  44  48  94  89  79  30 122  72  10
-  67  88   8  52  11  85 188 179 129 167  84  66  96  44  50  80 169  50
-  96  46 101  14  48  89 104  95  65]
-INFO:bdonline.trainers_replay:[179  96  88 125  57  82  69  55  51 124 173 139  42  46  51 162 168 104
- 109 106 101 153  20 151 157 104 177 161 185 126 164 143 158  82 119 145
-  61  98 175  49  94 119 112 165  45]
-INFO:bdonline.trainers_replay:[ 10 168  87 170 152 118 143 163  26 124 167  24  37 155  83  81 138  95
-  76  15  76  65 182  95  29 164 101  23 128   2 125 182  70 118  82 103
- 107  72  15  26 190 160 152 142 190]
-INFO:bdonline.trainers_replay:[186  95 156  46  96  71  10  54 112 161  12 145 104 117 111 146  74   3
- 147  63  62 180  77  28 190 152  60 161  71 191 112  69 122  71  85   5
-  98  54  77  15 144  79 122  37  32]
-INFO:bdonline.trainers_replay:[ 97 191  25 117  86  20  92  86  73 186 139  40 136 117  58 190 169  61
- 126  22 168 133 120  35  93 145  52  47 101 114 161  60  65  15 109  49
-  14 179  20 111 177  79  23  60 115]
-INFO:bdonline.trainers_replay:Time for training: 0.30s
+[0.5455887 0.4544114] with label1.0
+INFO:bdonline.replay.trainers_replay:Trial has ended for class 1, from 19223 to 19998
+INFO:bdonline.replay.trainers_replay:Now 10 trials (including breaks)
+INFO:bdonline.replay.trainers_replay:Training model...
+INFO:bdonline.replay.trainers_replay:[25 17  2 22 17 32 58 23  3 19 10 47 21  9 47  9 53 28 11 29 50 54 36 11
+  0 15 56 48 25 31 40  4 47 37  2 55 39 21 53  0 61 21 51 44 21]
+INFO:bdonline.replay.trainers_replay:[37 21 15 56 51 11 58 66 21 65 65 60 33 49 49 67  5  7 11 56 39 23 20 23
+ 69 58 59  4 47 22 62  7 64 19 67 38 31 41 55 56 40 61 55  3 61]
+INFO:bdonline.replay.trainers_replay:[63 13 46  9 53 27 23 54 36 34 38 32 24 50 35 30 19 48 56 36 37 47 41 14
+ 15 24 59 46  5 29 60 12 59 13 33 23 65 59 24 27 13 67 54 61 12]
+INFO:bdonline.replay.trainers_replay:[43 20 30 16 54  9 69 23 15 70  4 65 46 63 31 41 22  7 38  5 35  4 18 26
+ 40  3 51 14  9 27 20  7 10  0 19 52 52 22 55 67 59 14 33 13 33]
+INFO:bdonline.replay.trainers_replay:[40 17 16 58 55 23 59 15 23 20 46 49 54 46 12 32 72  3 73 64 54 53 26 31
+ 16 34 57 64 58 23 27 38  9 18  1 35 19 73 16 18 27 22 22 71 14]
+INFO:bdonline.replay.trainers_replay:Time for training: 0.30s
 INFO:__main__:Prediction for sample 42474:
-[0.45401338 0.5459866 ] with label1.0
+[0.47931096 0.520689  ] with label1.0
 INFO:__main__:Prediction for sample 42599:
-[0.4629065 0.5370935] with label1.0
+[0.45470095 0.545299  ] with label1.0
 INFO:__main__:Prediction for sample 42724:
-[0.5739154  0.42608458] with label1.0
+[0.5603232  0.43967685] with label1.0
 INFO:__main__:Prediction for sample 42849:
-[0.49990293 0.50009704] with label1.0
+[0.5240406  0.47595948] with label1.0
 INFO:__main__:Prediction for sample 42974:
-[0.51913416 0.48086587] with label1.0
+[0.5580563  0.44194368] with label1.0
 INFO:__main__:Prediction for sample 43099:
-[0.56431484 0.43568516] with label0.0
+[0.47014135 0.52985865] with label0.0
 INFO:__main__:Prediction for sample 43224:
-[0.5144837 0.4855163] with label0.0
+[0.5001804  0.49981955] with label0.0
 INFO:__main__:Prediction for sample 43349:
-[0.4249244 0.5750756] with label0.0
+[0.39235237 0.60764766] with label0.0
 INFO:__main__:Prediction for sample 43474:
-[0.62195724 0.37804276] with label0.0
+[0.6505459  0.34945405] with label0.0
 INFO:__main__:Prediction for sample 43599:
-[0.4521072 0.5478928] with label0.0
+[0.46151212 0.5384879 ] with label0.0
 INFO:__main__:Prediction for sample 43724:
-[0.49317488 0.50682515] with label0.0
+[0.49107736 0.50892264] with label0.0
 INFO:__main__:Prediction for sample 43849:
-[0.42914948 0.5708505 ] with label0.0
+[0.42721993 0.5727801 ] with label0.0
 INFO:__main__:Prediction for sample 43974:
-[0.58998924 0.4100108 ] with label0.0
+[0.594291 0.405709] with label0.0
 INFO:__main__:Prediction for sample 44099:
-[0.3745057 0.6254943] with label2.0
-INFO:bdonline.trainers_replay:Trial has ended for class 2, from 19935 to 19996
-WARNING:bdonline.trainers_replay:Trial/break has only 61 predicted samples from 19935 to 19996 in it, less than the 79 concurrently processed samples of the model! Will add padding that should be masked during training.
-INFO:bdonline.trainers_replay:Now 29 trials (including breaks)
-INFO:bdonline.trainers_replay:Training model...
-INFO:bdonline.trainers_replay:[122  97 170   7 154  41 141 121 169  94   8 188 189 106  62 138 128 129
-  89  66  13  41  41  81  30  86  73 169 124  65 133 101 175 115   6 133
- 162 134  22 187  63 148  40 181  85]
-INFO:bdonline.trainers_replay:[ 42  77  83  40  21  53 117  91 191   6  94 105  30 182  41 185  71 105
-  31   8  61 111  17  68  49  88  44  92  64 120  21  48 127  79  53  71
- 139  57  85  39  82  44  63  84  60]
-INFO:bdonline.trainers_replay:[113  33 181 126  54   4 123  74  56 110  87 147  40 160  70 168 149 113
-  57  46 173 112 139 112 123   3  96  55  99 182  37 140 117  48 124  25
- 116 111 131 116  75 127 129  12 121]
-INFO:bdonline.trainers_replay:[126 109  58 114  55 108  76  19  70   8 128  10  62  45 182  21 174  95
-  12 137 146 189  40 118 125  89  95  67  14  57 119  77 137 177 166  67
- 170 164  24  28  74 116  95 165 145]
-INFO:bdonline.trainers_replay:[ 40 164 148 100 104 148  50 106  10  58  89  68  14  12 137  84  13  81
- 157   3  74  50   9  34   7  44  13 123  48 165  56   9  59 160  77 130
-  73  87   5  82 120   2  63 171  67]
-INFO:bdonline.trainers_replay:Time for training: 0.29s
+[0.41433126 0.5856688 ] with label2.0
+INFO:bdonline.replay.trainers_replay:Trial has ended for class 2, from 19935 to 19996
+WARNING:bdonline.replay.trainers_replay:Trial/break has only 61 predicted samples from 19935 to 19996 in it, less than the 79 concurrently processed samples of the model! Will add padding that should be masked during training.
+INFO:bdonline.replay.trainers_replay:Now 11 trials (including breaks)
+INFO:bdonline.replay.trainers_replay:Training model...
+INFO:bdonline.replay.trainers_replay:[ 8 68 13  0 61  5 45 21 64 18 61 34 38 57 13 17 67 30 66 50 50  7  9 66
+  6 64 30 31 15  6 12 21  6 24 44 21 58 21 66 39 74 33 30 65 33]
+INFO:bdonline.replay.trainers_replay:[22  8  1 23  9 29 51  0 46 69 40 37 33 47 65 27  2 28  5 62 22 71  8 29
+ 35 53 53  2 25 54 25  9  2 55 16  7 51 48 38 38 69 28  4 60 62]
+INFO:bdonline.replay.trainers_replay:[ 2 11 65 21 47 52 35 49  9 67 15 23 29  3  7  3 41 30 16  1  1 55 55 15
+ 63 67 56 66 16 58 37 11 39 19 65  0 68 70 37 31  7 36 36 15 41]
+INFO:bdonline.replay.trainers_replay:[10 15 62  9 74 53 24 27 59 46 33 10 51 59 21 55 63 70 28 50 40 21 64 53
+ 65 21 18 64 58 23  0 59 17  7  8 48 26 47 45 39  8 28 46 20 71]
+INFO:bdonline.replay.trainers_replay:[11 72  8  2 24 67 47 18 58 30 62  3  5 45 67 21 63 66 53 15 45 32 73 31
+ 65 17 38 64 48 25 51 42  8 66 52 48 69 57  0 65 27 42 15 72 59]
+INFO:bdonline.replay.trainers_replay:Time for training: 0.32s
 INFO:__main__:Prediction for sample 44224:
-[0.60048723 0.39951277] with label2.0
+[0.49387088 0.5061291 ] with label2.0
 INFO:__main__:Prediction for sample 44349:
-[0.45047823 0.54952174] with label2.0
+[0.40352055 0.5964794 ] with label2.0
 INFO:__main__:Prediction for sample 44474:
-[0.6137921 0.3862079] with label2.0
+[0.614169   0.38583094] with label2.0
 INFO:__main__:Prediction for sample 44599:
-[0.35694894 0.643051  ] with label2.0
+[0.41786826 0.5821317 ] with label2.0
 INFO:__main__:Prediction for sample 44724:
-[0.6755185  0.32448143] with label0.0
+[0.58712935 0.41287062] with label0.0
 INFO:__main__:Prediction for sample 44849:
-[0.32870084 0.67129916] with label0.0
+[0.38567728 0.6143228 ] with label0.0
 INFO:__main__:Prediction for sample 44974:
-[0.6397124  0.36028776] with label0.0
+[0.5538842  0.44611576] with label0.0
 INFO:__main__:Prediction for sample 45099:
-[0.672849  0.3271509] with label0.0
+[0.5935684  0.40643153] with label0.0
 INFO:__main__:Prediction for sample 45224:
-[0.3659055 0.6340945] with label0.0
+[0.34287894 0.65712106] with label0.0
 INFO:__main__:Prediction for sample 45349:
-[0.5049131 0.4950869] with label0.0
+[0.48038274 0.5196172 ] with label0.0
 INFO:__main__:Prediction for sample 45474:
-[0.5764701 0.42353  ] with label0.0
+[0.5611171  0.43888295] with label0.0
 INFO:__main__:Prediction for sample 45599:
-[0.46747532 0.53252465] with label0.0
+[0.4723748 0.5276252] with label0.0
 INFO:__main__:Prediction for sample 45724:
-[0.6173021  0.38269788] with label0.0
+[0.5611077  0.43889236] with label0.0
 INFO:__main__:Prediction for sample 45849:
-[0.4010033 0.5989968] with label0.0
+[0.40091452 0.59908545] with label0.0
 INFO:__main__:Prediction for sample 45974:
-[0.5209287  0.47907132] with label2.0
+[0.4873142 0.5126858] with label2.0
 INFO:__main__:Prediction for sample 46099:
-[0.59740233 0.40259764] with label2.0
+[0.5627337 0.4372663] with label2.0
 INFO:__main__:Prediction for sample 46224:
-[0.3993742 0.6006259] with label2.0
+[0.37127766 0.62872225] with label2.0
 INFO:__main__:Prediction for sample 46349:
-[0.61323905 0.386761  ] with label2.0
+[0.5891084  0.41089156] with label2.0
 INFO:__main__:Prediction for sample 46474:
-[0.5073752 0.4926248] with label2.0
+[0.4067107  0.59328926] with label2.0
 INFO:__main__:Prediction for sample 46599:
-[0.48332286 0.51667714] with label2.0
-INFO:bdonline.trainers_replay:Trial has ended for class 2, from 19233 to 19994
-INFO:bdonline.trainers_replay:Now 30 trials (including breaks)
-INFO:bdonline.trainers_replay:Training model...
-INFO:bdonline.trainers_replay:[199  58 105 180  99  46  11  45  20 160  41  19 157 123  65  89 117  63
- 109 126  17  30 181 173 148  47  18 100 120 161  73  72 121  46 120 125
- 113  10  56 184 111  93  79  18  72]
-INFO:bdonline.trainers_replay:[104 182  37 112 166   5 109  85  61 128  99 123  12 159  75 182  30  26
-  73   0 183 198  72  34 122 118  11  63  51 184  31 118  82 186 124 193
-  62  60  69  49 187 135 123  86 142]
-INFO:bdonline.trainers_replay:[  2   6 144 111 193 183 120 125  48  84 149 175  65 189 178  63  70 133
- 179  79  80 113 111 112 181  61  92  22 132  75  36 162 124 179 123  88
-   2 131 141  56 163  90  35 108  56]
-INFO:bdonline.trainers_replay:[ 60  28 182 184 146  84  35  55  29 155  58 131 133 147 190 103 184  24
-  74  67  72 105 160  63  60  61 170 172  55 113  57 167  52  52   1  12
-  49 131  88 163 105 159  66 126  11]
-INFO:bdonline.trainers_replay:[176 138  92 108   7 123 118  17 115 103  65   9 195 179  37  61 164 147
-  45 121 181 163  49  74  54  28 187  86 143 147 178 104  58 187  24 178
- 106  62  13  66  50 134 152 154  93]
-INFO:bdonline.trainers_replay:Time for training: 0.32s
+[0.4770698 0.5229302] with label2.0
+INFO:bdonline.replay.trainers_replay:Trial has ended for class 2, from 19233 to 19994
+INFO:bdonline.replay.trainers_replay:Now 12 trials (including breaks)
+INFO:bdonline.replay.trainers_replay:Training model...
+INFO:bdonline.replay.trainers_replay:[77 20 82 72 80 18 18 23 52  7 82 17  6 30 62 23 70 48  0 35 72 66 38 54
+ 56 20 44  1 64 40 66 41 29  8 52 68 75 61 26 50  3  7  2 44 64]
+INFO:bdonline.replay.trainers_replay:[21 40 63 70  4 73 36 51 52 24 54 53 24 36 51  1 76 27 48 15 24 29 25 46
+ 30 22 69 52 29 20 32 81 41 63 68 67 20 18 27 10 59 81 14  0 80]
+INFO:bdonline.replay.trainers_replay:[51  1 41 22 52 40 18  6 17 50 17 50 14 26 20 80 15  2 43 71 74  4 37 81
+ 57 67 75 67 21 70 27 77 22 75 77 30 65 44 15  1 61 13 71 47 45]
+INFO:bdonline.replay.trainers_replay:[39 11 34 41 28  7 27 64 63 76  2 59 18 23 44 41 41 41  6 53  6 82  3 52
+ 33 39 39 13 28 30 35 19 19 64 33 66 45  2 64 64 45 77 40 80  6]
+INFO:bdonline.replay.trainers_replay:[40 48  0 75 47 48 43 45 52 25  2 71 32 55 18 76 81 48 33 45 56 71 55 70
+ 53 37 23 50 60 26 34 82 51 62  0 57 36 69  0 66 34 39 75 63  5]
+INFO:bdonline.replay.trainers_replay:Time for training: 0.30s
 INFO:__main__:Prediction for sample 46724:
-[0.56292224 0.4370778 ] with label2.0
+[0.55745655 0.4425435 ] with label2.0
 INFO:__main__:Prediction for sample 46849:
-[0.56016374 0.43983617] with label2.0
+[0.5042383  0.49576172] with label2.0
 INFO:__main__:Prediction for sample 46974:
-[0.36478683 0.6352131 ] with label2.0
+[0.3917781  0.60822195] with label2.0
 INFO:__main__:Prediction for sample 47099:
-[0.6394247  0.36057532] with label2.0
+[0.6410529  0.35894716] with label2.0
 INFO:__main__:Prediction for sample 47224:
-[0.4875271 0.5124729] with label2.0
+[0.4563403 0.5436597] with label2.0
 INFO:__main__:Prediction for sample 47349:
-[0.58767617 0.41232377] with label0.0
+[0.55185676 0.44814324] with label0.0
 INFO:__main__:Prediction for sample 47474:
-[0.38027686 0.61972314] with label0.0
+[0.3890452 0.6109547] with label0.0
 INFO:__main__:Prediction for sample 47599:
-[0.5972738 0.4027261] with label0.0
+[0.5962545  0.40374547] with label0.0
 INFO:__main__:Prediction for sample 47724:
-[0.49758053 0.5024195 ] with label0.0
+[0.51852745 0.48147255] with label0.0
 INFO:__main__:Prediction for sample 47849:
-[0.57300675 0.42699325] with label0.0
+[0.5155794 0.4844206] with label0.0
 INFO:__main__:Prediction for sample 47974:
-[0.51644635 0.48355353] with label0.0
+[0.50770926 0.49229074] with label0.0
 INFO:__main__:Prediction for sample 48099:
-[0.49064642 0.5093535 ] with label0.0
+[0.4283276  0.57167244] with label0.0
 INFO:__main__:Prediction for sample 48224:
-[0.5378203 0.4621797] with label0.0
+[0.53491884 0.4650812 ] with label0.0
 INFO:__main__:Prediction for sample 48349:
-[0.3949751  0.60502493] with label0.0
+[0.43198758 0.56801236] with label0.0
 INFO:__main__:Prediction for sample 48474:
-[0.57564133 0.42435867] with label1.0
+[0.5116919  0.48830804] with label1.0
 INFO:__main__:Prediction for sample 48599:
-[0.4750696  0.52493036] with label1.0
+[0.46544972 0.5345503 ] with label1.0
 INFO:__main__:Prediction for sample 48724:
-[0.5207893  0.47921067] with label1.0
+[0.448414   0.55158603] with label1.0
 INFO:__main__:Prediction for sample 48849:
-[0.50300187 0.49699813] with label1.0
-INFO:bdonline.trainers_replay:Trial has ended for class 1, from 19551 to 19992
-INFO:bdonline.trainers_replay:Now 31 trials (including breaks)
-INFO:bdonline.trainers_replay:Training model...
-INFO:bdonline.trainers_replay:[157  11 100  74  79 101  89  75  64  89  10 155 208 131  84  69 197 135
-  55   6 146 171 128 124 190  46  67  23 157  94  43  33  72  19 145  43
- 108 149  25 184 168 192   2 130   4]
-INFO:bdonline.trainers_replay:[ 19 199  45  26 190  71  30 202  17  74  67 165 189   6 196  83 200 192
- 208   1 203 171 174  55 153 118  72 119  83 119 111  71  10  93  59 117
- 174 165 130  58 197 181 181 178 136]
-INFO:bdonline.trainers_replay:[156  16  63 194  41  24 173 103  80  38  30 117 171  73  37  50 146  40
-  68  69  24 162  48  69 104   7  99  49  44 132 163 147   7 170  12  53
-  61  16 196  61  72 163 180  65 112]
-INFO:bdonline.trainers_replay:[129 160 151  21 102  74  37 170 190 170  87 205 172 191 174 195 158 107
- 148 191  95  10  78 182  61  43  24  48   7 156 172  32   1 116  67 141
-   1 193 125  64  64  84 150  23  68]
-INFO:bdonline.trainers_replay:[ 31  44  90  79 119 185 155 187   0 188  28 109  87 142 160 124  97 152
-  55  31  51  64   5  86  98 151 165 118  95 135  66  65 107  43  72 100
-  33 142  31 187 204 179  92 141 201]
-INFO:bdonline.trainers_replay:Time for training: 0.30s
+[0.503087   0.49691305] with label1.0
+INFO:bdonline.replay.trainers_replay:Trial has ended for class 1, from 19551 to 19992
+INFO:bdonline.replay.trainers_replay:Now 13 trials (including breaks)
+INFO:bdonline.replay.trainers_replay:Training model...
+INFO:bdonline.replay.trainers_replay:[31 75 19 23 55 16 28 52 65 22 23 45 43 38 15 58 34  5 32 42  4 25  5 41
+ 89 85 61 79 40 31 46 21 24 39 80 24 46 23 48  7 23 42 49 45 31]
+INFO:bdonline.replay.trainers_replay:[85 46 42 59 27 40 33 27 25 59 82 66 21 22 25 76 80 49 51 50 48 72 10 71
+ 74 49 84 76 88 60 77 68 74 39 56 68 29 47 83 24 45 56 52 78 22]
+INFO:bdonline.replay.trainers_replay:[ 5 80 42 80 71 56 68 77 13 59 79 12 18 73 40 39 66 45 37  7 37 31 86 45
+ 15 77 48 11 61  1 59 86 34 56 40 49 50 35  7 13 90 75 72 67 90]
+INFO:bdonline.replay.trainers_replay:[88 45 73 22 46 34  5 26 53 76  6 68 49 55 52 69 35  1 69 30 29 85 37 14
+ 90 71 28 76 34 90 53 33 58 34 41  2 46 26 37  7 68 38 58 19 16]
+INFO:bdonline.replay.trainers_replay:[46 90 13 55 41 10 44 41 35 88 66 20 65 55 28 90 80 29 60 11 80 63 57 18
+ 44 69 25 23 48 54 76 28 31  7 51 24  7 85 10 52 84 38 12 28 54]
+INFO:bdonline.replay.trainers_replay:Time for training: 0.32s
 INFO:__main__:Prediction for sample 48974:
-[0.5996413  0.40035874] with label1.0
+[0.52101445 0.47898555] with label1.0
 INFO:__main__:Prediction for sample 49099:
-[0.4848018 0.5151983] with label1.0
+[0.45765412 0.54234594] with label1.0
 INFO:__main__:Prediction for sample 49224:
-[0.54708606 0.45291394] with label1.0
+[0.53918344 0.46081653] with label1.0
 INFO:__main__:Prediction for sample 49349:
-[0.4779526 0.5220474] with label1.0
+[0.4267304  0.57326967] with label1.0
 INFO:__main__:Prediction for sample 49474:
-[0.59988016 0.40011978] with label1.0
+[0.63386416 0.3661358 ] with label1.0
 INFO:__main__:Prediction for sample 49599:
-[0.52904737 0.47095263] with label0.0
+[0.4710915  0.52890855] with label0.0
 INFO:__main__:Prediction for sample 49724:
-[0.52123374 0.47876623] with label0.0
+[0.5162303 0.4837697] with label0.0
 INFO:__main__:Prediction for sample 49849:
-[0.44887078 0.5511292 ] with label0.0
+[0.4480864 0.5519136] with label0.0
 INFO:__main__:Prediction for sample 49974:
-[0.58060426 0.41939574] with label0.0
+[0.51871157 0.48128843] with label0.0
 INFO:__main__:Prediction for sample 50099:
-[0.5231071 0.4768929] with label0.0
+[0.5135287 0.4864713] with label0.0
 INFO:__main__:Prediction for sample 50224:
-[0.37635285 0.6236472 ] with label0.0
+[0.40980077 0.5901992 ] with label0.0
 INFO:__main__:Prediction for sample 50349:
-[0.6722439 0.3277561] with label0.0
+[0.6166786 0.3833214] with label0.0
 INFO:__main__:Prediction for sample 50474:
-[0.47778887 0.52221113] with label0.0
+[0.41827425 0.5817258 ] with label0.0
 INFO:__main__:Prediction for sample 50599:
-[0.4600296 0.5399704] with label0.0
+[0.45259127 0.5474087 ] with label0.0
 INFO:__main__:Prediction for sample 50724:
-[0.5965997  0.40340024] with label0.0
+[0.59981847 0.40018156] with label0.0
 INFO:__main__:Prediction for sample 50849:
-[0.5447254  0.45527446] with label0.0
+[0.538146   0.46185395] with label0.0
 INFO:__main__:Prediction for sample 50974:
-[0.5787734  0.42122665] with label0.0
+[0.5289187  0.47108132] with label0.0
 INFO:__main__:Prediction for sample 51099:
-[0.49737313 0.5026269 ] with label0.0
+[0.467169 0.532831] with label0.0
 INFO:__main__:Prediction for sample 51224:
-[0.40123957 0.5987605 ] with label0.0
+[0.41962287 0.58037716] with label0.0
 INFO:__main__:Prediction for sample 51349:
-[0.63006985 0.36993006] with label0.0
+[0.5195573  0.48044273] with label0.0
 INFO:__main__:Prediction for sample 51474:
-[0.5748217 0.4251783] with label2.0
+[0.5203429  0.47965708] with label2.0
 INFO:__main__:Prediction for sample 51599:
-[0.50217426 0.4978257 ] with label2.0
+[0.4855817  0.51441836] with label2.0
 INFO:__main__:Prediction for sample 51724:
-[0.5063734 0.4936267] with label2.0
-INFO:bdonline.trainers_replay:Trial has ended for class 2, from 19626 to 19992
-INFO:bdonline.trainers_replay:Now 32 trials (including breaks)
-INFO:bdonline.trainers_replay:Training model...
-INFO:bdonline.trainers_replay:[188 180 211  77 158  22  68 186 130   5 136 122 163 104 124 167  26  53
-  23 109  62 211 196 146  51  40  94  68 174  19  73 192 157  80 161 105
-  63 102 169  71 115  89  72 159 113]
-INFO:bdonline.trainers_replay:[117  87 206 200  69 205 108  25  34  92 119 202 195 125 113  26  91  24
- 200 116   1 169 213 162   9  75 186  30  60 212 129  41 167 158  26  68
-   2 175  81  66 207 205  22 187 148]
-INFO:bdonline.trainers_replay:[ 73 180 144 129 152 131  64 195 145 164  83  14 205  91  79 204  42 173
- 183  68 109   3 103  20 101  24 185  86 192  99 109 197 149  88  32 162
-  73 120 157  33  65   7 112 211  55]
-INFO:bdonline.trainers_replay:[186 107  90 129  63  56 166 185 183 201   8  62  69 168 114  79 171  20
-  28 144 116  53  78 213 171  11  34 182 159  24 190 167  62 147  64 162
- 147 139 187  11  68  99  91   2  36]
-INFO:bdonline.trainers_replay:[ 54  48 168  31  68 189  16  73 135 197  70  82  16   9  45 185  89 200
- 115 166 146 145 176 207 105  93 130 105  23  50  60 189 192 110  78 143
- 202  24  18 125  77  31 205 107  82]
-INFO:bdonline.trainers_replay:Time for training: 0.31s
+[0.55589426 0.44410574] with label2.0
+INFO:bdonline.replay.trainers_replay:Trial has ended for class 2, from 19626 to 19992
+INFO:bdonline.replay.trainers_replay:Now 14 trials (including breaks)
+INFO:bdonline.replay.trainers_replay:Training model...
+INFO:bdonline.replay.trainers_replay:[61 48 85  4 75 22 69 60 84 47  4 93 94 52 31 68 64 64 45 33  7 22 21 41
+ 17 43 37 84 62 33 66 49 87 57  3 66 80 67 12 92 31 72 21 89 43]
+INFO:bdonline.replay.trainers_replay:[22 39 42 21 11 27 58 45 95  3 47 51 17 90 22 91 36 52 18  4 31 55  9 34
+ 25 44 23 46 32 60 11 24 63 40 27 36 69 28 43 21 42 23 32 42 30]
+INFO:bdonline.replay.trainers_replay:[56 18 89 63 27  2 61 38 28 54 44 72 21 79 36 84 73 55 29 24 86 55 68 55
+ 61  1 48 28 49 90 20 69 58 25 62 14 57 55 65 57 39 63 64  6 60]
+INFO:bdonline.replay.trainers_replay:[63 54 29 56 28 53 39 10 35  4 64  5 31 23 90 12 86 47  6 68 72 94 21 58
+ 62 44 47 34  7 28 59 40 68 88 83 34 85 81 13 16 38 58 47 82 71]
+INFO:bdonline.replay.trainers_replay:[21 81 73 49 51 72 25 52  5 29 45 34  8  6 68 42  7 41 77  1 38 25  5 19
+  4 23  7 61 25 82 28  5 29 79 39 65 37 44  3 42 60  1 32 85 34]
+INFO:bdonline.replay.trainers_replay:Time for training: 0.32s
 INFO:__main__:Prediction for sample 51849:
-[0.58069944 0.41930053] with label2.0
+[0.590826 0.409174] with label2.0
 INFO:__main__:Prediction for sample 51974:
-[0.42484757 0.57515234] with label2.0
+[0.417364 0.582636] with label2.0
 INFO:__main__:Prediction for sample 52099:
-[0.4541611 0.5458389] with label2.0
+[0.60505563 0.3949443 ] with label2.0
 INFO:__main__:Prediction for sample 52224:
-[0.4748753 0.5251247] with label2.0
+[0.45628148 0.5437185 ] with label2.0
 INFO:__main__:Prediction for sample 52349:
-[0.5921796 0.4078204] with label0.0
+[0.57990354 0.42009643] with label0.0
 INFO:__main__:Prediction for sample 52474:
-[0.5842087  0.41579118] with label0.0
+[0.5761142  0.42388582] with label0.0
 INFO:__main__:Prediction for sample 52599:
-[0.4311437  0.56885624] with label0.0
+[0.45692676 0.54307324] with label0.0
 INFO:__main__:Prediction for sample 52724:
-[0.5244376  0.47556242] with label0.0
+[0.5873043  0.41269562] with label0.0
 INFO:__main__:Prediction for sample 52849:
-[0.4635655  0.53643453] with label0.0
+[0.5517854  0.44821456] with label0.0
 INFO:__main__:Prediction for sample 52974:
-[0.4983943  0.50160563] with label0.0
+[0.51614535 0.48385465] with label0.0
 INFO:__main__:Prediction for sample 53099:
-[0.39720556 0.60279447] with label0.0
+[0.51020116 0.48979887] with label0.0
 INFO:__main__:Prediction for sample 53224:
-[0.57362086 0.42637914] with label0.0
+[0.54175293 0.45824707] with label0.0
 INFO:__main__:Prediction for sample 53349:
-[0.47784674 0.5221533 ] with label0.0
+[0.5150105  0.48498955] with label0.0
 INFO:__main__:Prediction for sample 53474:
-[0.49270877 0.50729126] with label0.0
+[0.49965185 0.50034815] with label0.0
 INFO:__main__:Prediction for sample 53599:
-[0.4442257  0.55577433] with label0.0
+[0.48429435 0.51570565] with label0.0
 INFO:__main__:Prediction for sample 53724:
-[0.5879096  0.41209045] with label0.0
+[0.5724677  0.42753235] with label0.0
 INFO:__main__:Prediction for sample 53849:
-[0.5103006  0.48969936] with label0.0
+[0.5551324  0.44486764] with label0.0
 INFO:__main__:Prediction for sample 53974:
-[0.5206817 0.4793183] with label0.0
+[0.4902592 0.5097408] with label0.0
 INFO:__main__:Prediction for sample 54099:
-[0.64490324 0.3550966 ] with label0.0
+[0.6566634  0.34333664] with label0.0
 INFO:__main__:Prediction for sample 54224:
-[0.38679796 0.6132021 ] with label0.0
+[0.45603383 0.54396623] with label0.0
 INFO:__main__:Prediction for sample 54349:
-[0.55919915 0.44080094] with label0.0
+[0.5971895  0.40281066] with label0.0
 INFO:__main__:Prediction for sample 54474:
-[0.3723674 0.6276325] with label0.0
+[0.3893867 0.6106133] with label0.0
 INFO:__main__:Prediction for sample 54599:
-[0.62135977 0.37864026] with label0.0
+[0.64204204 0.35795793] with label0.0
 INFO:__main__:Prediction for sample 54724:
-[0.37779334 0.6222067 ] with label0.0
+[0.44155952 0.5584405 ] with label0.0
 INFO:__main__:Prediction for sample 54849:
-[0.6314081  0.36859187] with label0.0
+[0.58597744 0.41402256] with label0.0
 INFO:__main__:Prediction for sample 54974:
-[0.3976326 0.6023675] with label2.0
+[0.40815642 0.5918434 ] with label2.0
 INFO:__main__:Prediction for sample 55099:
-[0.5115462  0.48845378] with label2.0
-INFO:bdonline.trainers_replay:Trial has ended for class 2, from 19829 to 19993
-INFO:bdonline.trainers_replay:Now 33 trials (including breaks)
-INFO:bdonline.trainers_replay:Training model...
-INFO:bdonline.trainers_replay:[ 11 164 109 157  32  60 129 131  87  68 168  27  22 152  37 137 153  16
-  30 135 100   4  85  81   7   8  65  94 190 148 108 164  47 164 161  78
- 126 139  52  10 125 107  11 205 126]
-INFO:bdonline.trainers_replay:[103 197  42  95 109 139 167  49 125  75  57 159  40 216  81 106 143  40
- 181 174  99 216  60 166  15  27   4 167 182 121  30  56  19 134 186 210
-  42 109 171 109  70  91  91 213 214]
-INFO:bdonline.trainers_replay:[ 22 185 146  16  43 171  58 144  56 151  30  94  90  13 162  39  45  48
- 131  93 170 162 128 160 203 157 187  20 149  75 106 132 135  21  35 115
- 165 104 200  23  32  88 112  75 126]
-INFO:bdonline.trainers_replay:[ 33  42 160  63  21  47 125 188 195  55  46 140  68  80 154 178 215 100
- 115  36  65  81  35 215  38 149   3 144  94 183 212 135  16  13   1 179
- 169 187 158  70  11  34 185  14 143]
-INFO:bdonline.trainers_replay:[113 151 170 190  58  68  85 169   4 104  30 206 160  88 216  26 143 156
- 193 214  49  52 116   3   4 131  50 182 158 197 145 146  50  43 167 192
-  82  30  54  11 206  35   0 178 196]
-INFO:bdonline.trainers_replay:Time for training: 0.32s
+[0.6006538 0.3993461] with label2.0
+INFO:bdonline.replay.trainers_replay:Trial has ended for class 2, from 19829 to 19993
+INFO:bdonline.replay.trainers_replay:Now 15 trials (including breaks)
+INFO:bdonline.replay.trainers_replay:Training model...
+INFO:bdonline.replay.trainers_replay:[97 28 50 87 48 23  5 23 11 77 21 10 75 60 31 44 56 30 52 62  8 17 87 84
+ 71 24 10 48 58 77 37 36 59 23 58 61 54  5 28 89 53 45 40  9 36]
+INFO:bdonline.replay.trainers_replay:[50 88 20 54 80  2 52 42 30 63 47 60  6 76 38 88 17 14 36  0 88 96 36 18
+ 59 57  6 30 26 89 17 57 41 90 60 93 30 29 34 25 90 65 60 42 68]
+INFO:bdonline.replay.trainers_replay:[ 1  3 69 53 94 88 58 61 24 42 71 85 32 91 86 31 35 65 87 40 40 54 53 53
+ 88 29 45 12 64 38 19 78 60 87 60 43  1 64 68 28 78 44 19 52 28]
+INFO:bdonline.replay.trainers_replay:[29 15 88 89 70 42 19 27 16 74 28 64 65 70 92 49 89 13 37 33 36 50 77 31
+ 29 29 83 84 27 54 28 81 26 26  0  6 25 64 43 78 50 76 32 61  6]
+INFO:bdonline.replay.trainers_replay:[86 67 45 51  3 60 57  9 56 50 31  5 95 87 20 29 79 71 23 59 87 78 25 37
+ 27 16 90 42 69 71 86 50 28 90 13 86 51 30  6 32 25 65 73 73 45]
+INFO:bdonline.replay.trainers_replay:Time for training: 0.31s
 INFO:__main__:Prediction for sample 55224:
-[0.4928967 0.5071033] with label2.0
+[0.48335704 0.5166429 ] with label2.0
 INFO:__main__:Prediction for sample 55349:
-[0.5376415 0.4623585] with label2.0
+[0.5198535  0.48014653] with label2.0
 INFO:__main__:Prediction for sample 55474:
-[0.6131398  0.38686025] with label2.0
+[0.618458   0.38154206] with label2.0
 INFO:__main__:Prediction for sample 55599:
-[0.3760123  0.62398773] with label2.0
+[0.4264833 0.5735167] with label2.0
 INFO:__main__:Prediction for sample 55724:
-[0.5695194  0.43048066] with label0.0
+[0.47703886 0.52296114] with label0.0
 INFO:__main__:Prediction for sample 55849:
-[0.5834169 0.4165831] with label0.0
+[0.605495   0.39450502] with label0.0
 INFO:__main__:Prediction for sample 55974:
-[0.4737583  0.52624166] with label0.0
+[0.48272812 0.5172719 ] with label0.0
 INFO:__main__:Prediction for sample 56099:
-[0.64314234 0.35685766] with label0.0
+[0.5402235  0.45977652] with label0.0
 INFO:__main__:Prediction for sample 56224:
-[0.29238427 0.7076157 ] with label0.0
+[0.35550785 0.64449215] with label0.0
 INFO:__main__:Prediction for sample 56349:
-[0.63959354 0.36040643] with label0.0
+[0.6481325 0.3518674] with label0.0
+INFO:__main__:Prediction for sample 56474:
+[0.57507616 0.4249238 ] with label0.0
+INFO:__main__:Prediction for sample 56599:
+[0.3450964  0.65490353] with label0.0
+INFO:__main__:Prediction for sample 56724:
+[0.640121   0.35987902] with label0.0
+INFO:__main__:Prediction for sample 56849:
+[0.5382968  0.46170318] with label0.0
+INFO:__main__:Prediction for sample 56974:
+[0.528316   0.47168398] with label0.0
+INFO:__main__:Prediction for sample 57099:
+[0.5463215  0.45367858] with label0.0
+INFO:__main__:Prediction for sample 57224:
+[0.46777874 0.53222126] with label0.0
+INFO:__main__:Prediction for sample 57349:
+[0.5667126  0.43328732] with label0.0
+INFO:__main__:Prediction for sample 57474:
+[0.55097234 0.44902763] with label0.0
+INFO:__main__:Prediction for sample 57599:
+[0.4433079 0.556692 ] with label0.0
+INFO:__main__:Prediction for sample 57724:
+[0.5937675  0.40623242] with label0.0
+INFO:__main__:Prediction for sample 57849:
+[0.5152184  0.48478162] with label0.0
+INFO:__main__:Prediction for sample 57974:
+[0.4913653 0.5086346] with label0.0
+INFO:__main__:Prediction for sample 58099:
+[0.57803863 0.4219614 ] with label1.0
+INFO:__main__:Prediction for sample 58224:
+[0.48670766 0.5132924 ] with label1.0
+INFO:__main__:Prediction for sample 58349:
+[0.46535274 0.5346472 ] with label1.0
+INFO:__main__:Prediction for sample 58474:
+[0.5931549  0.40684503] with label1.0
+INFO:__main__:Prediction for sample 58599:
+[0.5392531  0.46074685] with label1.0
+INFO:__main__:Prediction for sample 58724:
+[0.4125504 0.5874496] with label1.0
+INFO:bdonline.replay.trainers_replay:Trial has ended for class 1, from 19252 to 19993
+INFO:bdonline.replay.trainers_replay:Now 16 trials (including breaks)
+INFO:bdonline.replay.trainers_replay:Training model...
+INFO:bdonline.replay.trainers_replay:[ 82   6  52  39  42  52  47  40  33  46   5  81 108  68  44  36 103  70
+  29   3  76  89  67  65  99  24  35  12  82  49  23  18  38  10  75  23
+  56  78  13  96  88 100   1  68   2]
+INFO:bdonline.replay.trainers_replay:[ 10 104  24  14 100  38  16 105   9  39  35  86  99   3 102  43 104 101
+ 108   0 106  89  91  29  80  62  38  62  44  62  58  38   5  48  31  62
+  91  86  68  30 103  95  95  93  70]
+INFO:bdonline.replay.trainers_replay:[ 81   8  33 101  22  13  90  53  42  20  16  61  89  39  20  26  76  21
+  36  37  13  85  25  37  54   3  51  26  23  69  85  76   3  89   6  28
+  32   8 102  32  38  85  94  34  58]
+INFO:bdonline.replay.trainers_replay:[ 67  83  78  11  53  39  20  89 100  89  45 107  90 100  91 102  82  56
+  77 100  49   5  41  95  31  22  13  25   3  82  90  17   0  61  35  73
+   0 101  66  34  33  44  78  12  36]
+INFO:bdonline.replay.trainers_replay:[ 17  23  47  42  62  97  81  98   0  98  15  57  46  73  84  65  50  79
+  28  17  27  33   2  45  51  79  86  62  49  70  34  34  56  23  38  52
+  18  74  17  98 106  93  48  73 105]
+INFO:bdonline.replay.trainers_replay:Time for training: 0.31s
+INFO:__main__:Prediction for sample 58849:
+[0.6425212  0.35747883] with label1.0
+INFO:__main__:Prediction for sample 58974:
+[0.55128235 0.44871762] with label1.0
+INFO:__main__:Prediction for sample 59099:
+[0.5268661  0.47313392] with label1.0
+INFO:__main__:Prediction for sample 59224:
+[0.43054488 0.5694551 ] with label1.0
+INFO:__main__:Prediction for sample 59349:
+[0.5962764  0.40372354] with label1.0
+INFO:__main__:Prediction for sample 59474:
+[0.51795375 0.48204625] with label0.0
+INFO:__main__:Prediction for sample 59599:
+[0.4734115 0.5265885] with label0.0
+INFO:__main__:Prediction for sample 59724:
+[0.6226106  0.37738934] with label0.0
+INFO:__main__:Prediction for sample 59849:
+[0.43825346 0.5617466 ] with label0.0
+INFO:__main__:Prediction for sample 59974:
+[0.52539134 0.4746087 ] with label0.0
+INFO:__main__:Prediction for sample 60099:
+[0.5585855  0.44141445] with label0.0
+INFO:__main__:Prediction for sample 60224:
+[0.42676148 0.57323843] with label0.0
+INFO:__main__:Prediction for sample 60349:
+[0.5875353  0.41246462] with label0.0
+INFO:__main__:Prediction for sample 60474:
+[0.5840389  0.41596106] with label0.0
+INFO:__main__:Prediction for sample 60599:
+[0.45286274 0.5471373 ] with label0.0
+INFO:__main__:Prediction for sample 60724:
+[0.47011426 0.5298857 ] with label2.0
+INFO:bdonline.replay.trainers_replay:Trial has ended for class 2, from 19861 to 19997
+INFO:bdonline.replay.trainers_replay:Now 17 trials (including breaks)
+INFO:bdonline.replay.trainers_replay:Training model...
+INFO:bdonline.replay.trainers_replay:[ 98  93 109  41  82  11  35  97  67   2  70  64  85  54  65  87  14  28
+  12  57  32 109 102  76  27  21  49  36  91  10  39 100  81  42  84  54
+  33  53  88  38  60  46  38  83  59]
+INFO:bdonline.replay.trainers_replay:[ 61  45 107 104  36 106  56  14  18  48  62 105 101  65  59  14  47  13
+ 104  61   1  88 110  84   4  40  97  17  31 110  67  22  87  82  14  36
+   1  91  42  34 107 106  12  97  77]
+INFO:bdonline.replay.trainers_replay:[ 39  93  74  67  79  68  33 102  75  85  43   7 106  47  41 106  22  90
+  95  36  57   1  53  11  52  13  96  45 100  51  57 103  77  46  18  85
+  38  63  82  18  34   3  58 109  29]
+INFO:bdonline.replay.trainers_replay:[ 97  55  47  67  32  29  86  97  95 104   4  32  36  87  59  41  89  11
+  15  74  61  28  41 110  89   5  18  94  83  13  99  87  32  76  33  84
+  76  71  98   5  35  51  47   1  19]
+INFO:bdonline.replay.trainers_replay:[ 28  25  88  17  35  99   8  39  70 102  37  43   8   4  23  97  46 104
+  60  86  76  75  91 107  54  48  67  54  12  26  31  99 100  57  41  74
+ 105  13   9  65  41  17 106  56  43]
+INFO:bdonline.replay.trainers_replay:Time for training: 0.31s
+INFO:__main__:Prediction for sample 60849:
+[0.5973677 0.4026323] with label2.0
+INFO:__main__:Prediction for sample 60974:
+[0.43583322 0.5641668 ] with label2.0
+INFO:__main__:Prediction for sample 61099:
+[0.5457175  0.45428255] with label2.0
+INFO:__main__:Prediction for sample 61224:
+[0.42509335 0.57490665] with label2.0
+INFO:__main__:Prediction for sample 61349:
+[0.62819165 0.37180835] with label0.0
+INFO:__main__:Prediction for sample 61474:
+[0.4578505 0.5421496] with label0.0
+INFO:__main__:Prediction for sample 61599:
+[0.5225715 0.4774285] with label0.0
+INFO:__main__:Prediction for sample 61724:
+[0.49029726 0.5097028 ] with label0.0
+INFO:__main__:Prediction for sample 61849:
+[0.47140518 0.52859485] with label0.0
+INFO:__main__:Prediction for sample 61974:
+[0.54025793 0.45974204] with label0.0
+INFO:__main__:Prediction for sample 62099:
+[0.4594057  0.54059434] with label0.0
+INFO:__main__:Prediction for sample 62224:
+[0.58002    0.41997996] with label0.0
+INFO:__main__:Prediction for sample 62349:
+[0.5218317 0.4781683] with label0.0
+INFO:__main__:Prediction for sample 62474:
+[0.48900357 0.51099646] with label0.0
+INFO:__main__:Prediction for sample 62599:
+[0.47644255 0.5235574 ] with label0.0
+INFO:__main__:Prediction for sample 62724:
+[0.5537627  0.44623724] with label0.0
+INFO:__main__:Prediction for sample 62849:
+[0.51068926 0.48931074] with label0.0
+INFO:__main__:Prediction for sample 62974:
+[0.5443161  0.45568395] with label0.0
+INFO:__main__:Prediction for sample 63099:
+[0.49988344 0.5001166 ] with label0.0
+INFO:__main__:Prediction for sample 63224:
+[0.54138154 0.45861846] with label0.0
+INFO:__main__:Prediction for sample 63349:
+[0.48494643 0.5150536 ] with label0.0
+INFO:__main__:Prediction for sample 63474:
+[0.5092864  0.49071354] with label0.0
+INFO:__main__:Prediction for sample 63599:
+[0.60184455 0.3981554 ] with label0.0
+INFO:__main__:Prediction for sample 63724:
+[0.4348884 0.5651117] with label0.0
+INFO:__main__:Prediction for sample 63849:
+[0.5854942  0.41450578] with label0.0
+INFO:__main__:Prediction for sample 63974:
+[0.37083724 0.6291628 ] with label0.0
+INFO:__main__:Prediction for sample 64099:
+[0.61108774 0.38891226] with label0.0
+INFO:__main__:Prediction for sample 64224:
+[0.4468375 0.5531625] with label0.0
+INFO:__main__:Prediction for sample 64349:
+[0.52751565 0.47248435] with label0.0
+INFO:__main__:Prediction for sample 64474:
+[0.64245886 0.35754114] with label0.0
+INFO:__main__:Prediction for sample 64599:
+[0.42535424 0.57464576] with label0.0
+INFO:__main__:Prediction for sample 64724:
+[0.5807284  0.41927165] with label0.0
+INFO:__main__:Prediction for sample 64849:
+[0.50845164 0.49154836] with label0.0
+INFO:__main__:Prediction for sample 64974:
+[0.49749446 0.5025056 ] with label0.0
+INFO:__main__:Prediction for sample 65099:
+[0.50298065 0.49701938] with label0.0
+INFO:__main__:Prediction for sample 65224:
+[0.4856713  0.51432866] with label0.0
+INFO:__main__:Prediction for sample 65349:
+[0.53826416 0.46173584] with label0.0
+INFO:__main__:Prediction for sample 65474:
+[0.3858736  0.61412644] with label0.0
+INFO:__main__:Prediction for sample 65599:
+[0.6353117 0.3646884] with label0.0
+INFO:__main__:Prediction for sample 65724:
+[0.3893397 0.6106603] with label0.0
+INFO:__main__:Prediction for sample 65849:
+[0.53281933 0.4671806 ] with label0.0
+INFO:__main__:Prediction for sample 65974:
+[0.47876975 0.5212303 ] with label0.0
+INFO:__main__:Prediction for sample 66099:
+[0.5454105  0.45458946] with label0.0
+INFO:__main__:Prediction for sample 66224:
+[0.57134145 0.4286586 ] with label0.0
+INFO:__main__:Prediction for sample 66349:
+[0.5694162  0.43058378] with label0.0
+INFO:__main__:Prediction for sample 66474:
+[0.38948825 0.6105118 ] with label0.0
+INFO:__main__:Prediction for sample 66599:
+[0.6417598 0.3582402] with label0.0
+INFO:__main__:Prediction for sample 66724:
+[0.41369528 0.58630466] with label0.0
+INFO:__main__:Prediction for sample 66849:
+[0.49611813 0.5038818 ] with label0.0
+INFO:__main__:Prediction for sample 66974:
+[0.5439489  0.45605105] with label0.0
+INFO:__main__:Prediction for sample 67099:
+[0.37139213 0.6286078 ] with label0.0
+INFO:__main__:Prediction for sample 67224:
+[0.49223587 0.5077641 ] with label0.0
+INFO:__main__:Prediction for sample 67349:
+[0.48558208 0.5144179 ] with label0.0
+INFO:__main__:Prediction for sample 67474:
+[0.6431172  0.35688278] with label0.0
+INFO:__main__:Prediction for sample 67599:
+[0.43121216 0.56878775] with label0.0
+INFO:__main__:Prediction for sample 67724:
+[0.5717379 0.4282622] with label0.0
+INFO:__main__:Prediction for sample 67849:
+[0.56713223 0.43286774] with label0.0
+INFO:__main__:Prediction for sample 67974:
+[0.46752557 0.5324744 ] with label0.0
+INFO:__main__:Prediction for sample 68099:
+[0.55993587 0.4400641 ] with label0.0
+INFO:__main__:Prediction for sample 68224:
+[0.45641637 0.5435837 ] with label0.0
+INFO:__main__:Prediction for sample 68349:
+[0.49003202 0.509968  ] with label0.0
+INFO:__main__:Prediction for sample 68474:
+[0.5379368  0.46206313] with label0.0
+INFO:__main__:Prediction for sample 68599:
+[0.5211356  0.47886434] with label0.0
+INFO:__main__:Prediction for sample 68724:
+[0.34012318 0.6598769 ] with label0.0
+INFO:__main__:Prediction for sample 68849:
+[0.6916276  0.30837235] with label0.0
+INFO:__main__:Prediction for sample 68974:
+[0.5043319  0.49566808] with label0.0
+INFO:__main__:Prediction for sample 69099:
+[0.41068742 0.5893126 ] with label0.0
+INFO:__main__:Prediction for sample 69224:
+[0.6043156  0.39568436] with label0.0
+INFO:__main__:Prediction for sample 69349:
+[0.537063   0.46293697] with label0.0
+INFO:__main__:Prediction for sample 69474:
+[0.49382165 0.5061784 ] with label0.0
+INFO:__main__:Prediction for sample 69599:
+[0.4809118 0.5190882] with label0.0
+INFO:__main__:Prediction for sample 69724:
+[0.49341375 0.50658625] with label0.0
+INFO:__main__:Prediction for sample 69849:
+[0.4619593 0.5380407] with label0.0
+INFO:__main__:Prediction for sample 69974:
+[0.4443227 0.5556773] with label0.0
+INFO:__main__:Prediction for sample 70099:
+[0.59703547 0.4029645 ] with label0.0
+INFO:__main__:Prediction for sample 70224:
+[0.4196381 0.5803619] with label0.0
+INFO:__main__:Prediction for sample 70349:
+[0.6520632 0.3479368] with label0.0
+INFO:__main__:Prediction for sample 70474:
+[0.3344864  0.66551363] with label0.0
+INFO:__main__:Prediction for sample 70599:
+[0.6713432  0.32865682] with label0.0
+INFO:__main__:Prediction for sample 70724:
+[0.4329214 0.5670786] with label0.0
+INFO:__main__:Prediction for sample 70849:
+[0.64264977 0.3573503 ] with label0.0
+INFO:__main__:Prediction for sample 70974:
+[0.46728805 0.532712  ] with label0.0
+INFO:__main__:Prediction for sample 71099:
+[0.45766097 0.542339  ] with label0.0
+INFO:__main__:Prediction for sample 71224:
+[0.47068462 0.52931535] with label0.0
+INFO:__main__:Prediction for sample 71349:
+[0.53392816 0.46607184] with label0.0
+INFO:__main__:Prediction for sample 71474:
+[0.5279161  0.47208396] with label0.0
+INFO:__main__:Prediction for sample 71599:
+[0.5301482  0.46985176] with label0.0
+INFO:__main__:Prediction for sample 71724:
+[0.4586135 0.5413865] with label0.0
+INFO:__main__:Prediction for sample 71849:
+[0.63231975 0.3676802 ] with label0.0
+INFO:__main__:Prediction for sample 71974:
+[0.4328112  0.56718886] with label0.0
+INFO:__main__:Prediction for sample 72099:
+[0.59451    0.40548995] with label0.0
+INFO:__main__:Prediction for sample 72224:
+[0.4874501  0.51254994] with label0.0
+INFO:__main__:Prediction for sample 72349:
+[0.5031007  0.49689934] with label0.0
+INFO:__main__:Prediction for sample 72474:
+[0.4232567  0.57674336] with label0.0
+INFO:__main__:Prediction for sample 72599:
+[0.64131147 0.3586885 ] with label0.0
+INFO:__main__:Prediction for sample 72724:
+[0.4570101 0.5429899] with label0.0
+INFO:__main__:Prediction for sample 72849:
+[0.5130786  0.48692143] with label0.0
+INFO:__main__:Prediction for sample 72974:
+[0.49923778 0.5007623 ] with label0.0
+INFO:__main__:Prediction for sample 73099:
+[0.46624258 0.53375745] with label0.0
+INFO:__main__:Prediction for sample 73224:
+[0.5049534  0.49504665] with label0.0
+INFO:__main__:Prediction for sample 73349:
+[0.531856 0.468144] with label0.0
+INFO:__main__:Prediction for sample 73474:
+[0.40612558 0.5938744 ] with label0.0
+INFO:__main__:Prediction for sample 73599:
+[0.62088495 0.37911505] with label0.0
+INFO:__main__:Prediction for sample 73724:
+[0.53518337 0.4648166 ] with label0.0
+INFO:__main__:Prediction for sample 73849:
+[0.604544 0.395456] with label0.0
+INFO:__main__:Prediction for sample 73974:
+[0.35338366 0.6466164 ] with label0.0
+INFO:__main__:Prediction for sample 74099:
+[0.7143164  0.28568366] with label0.0
+INFO:__main__:Prediction for sample 74224:
+[0.41127795 0.58872205] with label0.0
+INFO:__main__:Prediction for sample 74349:
+[0.5037596 0.4962404] with label0.0
+INFO:__main__:Prediction for sample 74474:
+[0.62304956 0.3769504 ] with label0.0
+INFO:__main__:Prediction for sample 74599:
+[0.3805927 0.6194073] with label0.0
+INFO:__main__:Prediction for sample 74724:
+[0.508612  0.4913881] with label0.0
+INFO:__main__:Prediction for sample 74849:
+[0.61730283 0.38269717] with label0.0
+INFO:__main__:Prediction for sample 74974:
+[0.40038306 0.59961694] with label0.0
+INFO:__main__:Prediction for sample 75099:
+[0.5380387  0.46196133] with label0.0
+INFO:__main__:Prediction for sample 75224:
+[0.5301919  0.46980813] with label0.0
+INFO:__main__:Prediction for sample 75349:
+[0.476798   0.52320206] with label0.0
+INFO:__main__:Prediction for sample 75474:
+[0.51974803 0.480252  ] with label0.0
+INFO:__main__:Prediction for sample 75599:
+[0.5549079  0.44509208] with label0.0
+INFO:__main__:Prediction for sample 75724:
+[0.5601027  0.43989736] with label0.0
+INFO:__main__:Prediction for sample 75849:
+[0.63220584 0.3677942 ] with label0.0
+INFO:__main__:Prediction for sample 75974:
+[0.3796679 0.620332 ] with label0.0
+INFO:__main__:Prediction for sample 76099:
+[0.56214994 0.43785012] with label0.0
+INFO:__main__:Prediction for sample 76224:
+[0.5488998  0.45110023] with label1.0
+INFO:__main__:Prediction for sample 76349:
+[0.5257834  0.47421664] with label1.0
+INFO:__main__:Prediction for sample 76474:
+[0.3575897 0.6424102] with label1.0
+INFO:__main__:Prediction for sample 76599:
+[0.6757675  0.32423258] with label1.0
+INFO:bdonline.replay.trainers_replay:Trial has ended for class 1, from 19516 to 19993
+INFO:bdonline.replay.trainers_replay:Now 18 trials (including breaks)
+INFO:bdonline.replay.trainers_replay:Training model...
+INFO:bdonline.replay.trainers_replay:[  5  89  59  85  17  32  70  71  47  37  92  15  11  83  20  74  83   8
+  16  73  54   2  46  44   3   4  35  51 104  81  59  89  25  89  88  42
+  68  75  28   5  68  58   5 112  68]
+INFO:bdonline.replay.trainers_replay:[ 56 107  23  51  59  75  91  26  68  41  31  86  21 117  44  58  78  21
+  99  95  53 117  32  91   8  14   2  91  99  66  16  30   9  73 102 114
+  22  59  93  60  38  49  49 116 116]
+INFO:bdonline.replay.trainers_replay:[ 11 101  80   8  23  94  31  79  30  82  16  51  49   7  88  20  24  26
+  71  50  93  88  69  87 111  85 102  10  81  41  58  72  73  11  18  63
+  90  57 109  12  17  48  61  41  68]
+INFO:bdonline.replay.trainers_replay:[ 18  22  87  34  11  25  68 103 106  30  25  76  37  43  84  97 117  54
+  63  19  35  44  18 117  20  81   2  78  51 100 115  73   8   6   0  97
+  92 102  86  38   5  18 101   7  78]
+INFO:bdonline.replay.trainers_replay:[ 61  82  93 104  31  37  46  92   2  57  16 112  87  47 117  14  78  85
+ 105 116  27  28  64   1   2  71  27  99  86 107  79  80  27  23  91 105
+  44  16  29   6 112  19   0  97 107]
+INFO:bdonline.replay.trainers_replay:Time for training: 0.31s
+INFO:__main__:Prediction for sample 76724:
+[0.5310254 0.4689746] with label1.0
+INFO:__main__:Prediction for sample 76849:
+[0.5172753  0.48272473] with label1.0
+INFO:__main__:Prediction for sample 76974:
+[0.30823573 0.69176424] with label1.0
+INFO:__main__:Prediction for sample 77099:
+[0.6210904  0.37890962] with label1.0
+INFO:__main__:Prediction for sample 77224:
+[0.45480213 0.5451979 ] with label1.0
+INFO:__main__:Prediction for sample 77349:
+[0.43220615 0.56779385] with label0.0
+INFO:__main__:Prediction for sample 77474:
+[0.67546046 0.3245395 ] with label0.0
+INFO:__main__:Prediction for sample 77599:
+[0.540884 0.459116] with label0.0
+INFO:__main__:Prediction for sample 77724:
+[0.45164022 0.5483598 ] with label0.0
+INFO:__main__:Prediction for sample 77849:
+[0.6182532 0.3817469] with label0.0
+INFO:__main__:Prediction for sample 77974:
+[0.30980685 0.69019324] with label0.0
+INFO:__main__:Prediction for sample 78099:
+[0.7031175  0.29688257] with label0.0
+INFO:__main__:Prediction for sample 78224:
+[0.32720894 0.6727912 ] with label0.0
+INFO:__main__:Prediction for sample 78349:
+[0.57346845 0.42653152] with label0.0
+INFO:__main__:Prediction for sample 78474:
+[0.61010224 0.38989764] with label0.0
+INFO:__main__:Prediction for sample 78599:
+[0.43525198 0.564748  ] with label0.0
+INFO:__main__:Prediction for sample 78724:
+[0.5193039  0.48069608] with label0.0
+INFO:__main__:Prediction for sample 78849:
+[0.4161306 0.5838694] with label0.0
+INFO:__main__:Prediction for sample 78974:
+[0.5754671 0.4245329] with label0.0
+INFO:__main__:Prediction for sample 79099:
+[0.5009308 0.4990692] with label0.0
+INFO:__main__:Prediction for sample 79224:
+[0.38871205 0.611288  ] with label0.0
+INFO:__main__:Prediction for sample 79349:
+[0.53934187 0.46065816] with label0.0
+INFO:__main__:Prediction for sample 79474:
+[0.5306749  0.46932516] with label0.0
+INFO:__main__:Prediction for sample 79599:
+[0.57018876 0.42981127] with label0.0
+INFO:__main__:Prediction for sample 79724:
+[0.490401 0.509599] with label0.0
+INFO:__main__:Prediction for sample 79849:
+[0.6393957 0.3606043] with label0.0
+INFO:__main__:Saving data to data/online/2019-09-26\2019-09-26_14-07-14.npy
+INFO:__main__:Save model params to D:\braindecode-online\bdonline\models\\best_model\2019-09-26_14-07-14.model_params.pkl
+INFO:__main__:Save trainer params to D:\braindecode-online\bdonline\models\\best_model\2019-09-26_14-07-14.trainer_params.pkl
