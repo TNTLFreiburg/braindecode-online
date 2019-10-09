@@ -463,7 +463,7 @@ class BatchCntTrainer(object):
                 # saving indices of the samples
                 if self.savegrad:
                     now = datetime.datetime.now()
-                    file_name = 'Trial-'+str(n_trials)+'_Epoch-'+ str(epoch_counter)+ '-' + str(_)
+                    file_name = 'Trial-'+str(n_trials)+'_Epoch-'+ str(epoch_counter)
 					#str(now.day) + '-' + str(now.month) + '-' + str(now.year) + '_' + \
                                 #str(now.hour) + '-' + str(now.minute) + '-' + str(now.second) + '-' + str(_)
                     torch.save(i_supercrops, self.gradfolder + 'batchInd_' + file_name)
@@ -472,7 +472,7 @@ class BatchCntTrainer(object):
                 if self.savetimestamps:
                     this_timestamp = np.asarray(all_timestamps_blocks[i_supercrops])
                     now = datetime.datetime.now()
-					file_name = 'Trial-'+str(n_trials)+'_Epoch-'+ str(epoch_counter)+ '-' + str(_)
+					file_name = 'Trial-'+str(n_trials)+'_Epoch-'+ str(epoch_counter)
                     #file_name = str(now.day) + '-' + str(now.month) + '-' + str(now.year) + '_' + \
                     #            str(now.hour) + '-' + str(now.minute) + '-' + str(now.second)
                     torch.save(this_timestamp, self.gradfolder + 'timestamps_' + file_name)
