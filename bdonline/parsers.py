@@ -46,7 +46,7 @@ def parse_command_line_arguments():
         type=int, help="How many updates to adapt the model during trial break.")
     parser.add_argument('--batchsize', action='store', default=45, type=int,
         help="Batch size for adaptation updates.")
-    parser.add_argument('--learningrate', action='store', default=1e-4,
+    parser.add_argument('--learningrate', action='store', default=1e-3,
         type=float, help="Learning rate for adaptation updates.")
     parser.add_argument('--mintrials', action='store', default=10, type=int,
         help="Number of trials before starting adaptation updates.")

@@ -454,7 +454,7 @@ class BatchCntTrainer(object):
                 schedule_weight_decay = 'weight_decay' in self.optimizer.defaults
                 self.optimizer = ScheduledOptimizer(self.scheduler, self.optimizer, schedule_weight_decay=schedule_weight_decay)
 
-			file_name = ''
+            file_name = ''
 
             for epoch_counter in range(self.n_updates_per_break):
                 i_supercrops = self.rng.choice(n_total_supercrops,
@@ -462,7 +462,7 @@ class BatchCntTrainer(object):
                                                p=block_probs)
                 # saving indices of the samples
                 if self.savegrad:
-                    now = datetime.datetime.now()
+                    #now = datetime.datetime.now()
                     file_name = 'Trial-'+str(n_trials)+'_Epoch-'+ str(epoch_counter)
 					#str(now.day) + '-' + str(now.month) + '-' + str(now.year) + '_' + \
                                 #str(now.hour) + '-' + str(now.minute) + '-' + str(now.second) + '-' + str(_)
@@ -471,8 +471,8 @@ class BatchCntTrainer(object):
                 this_y = np.asarray(all_y_blocks[i_supercrops])
                 if self.savetimestamps:
                     this_timestamp = np.asarray(all_timestamps_blocks[i_supercrops])
-                    now = datetime.datetime.now()
-					file_name = 'Trial-'+str(n_trials)+'_Epoch-'+ str(epoch_counter)
+                    #now = datetime.datetime.now()
+                    file_name = 'Trial-'+str(n_trials)+'_Epoch-'+ str(epoch_counter)
                     #file_name = str(now.day) + '-' + str(now.month) + '-' + str(now.year) + '_' + \
                     #            str(now.hour) + '-' + str(now.minute) + '-' + str(now.second)
                     torch.save(this_timestamp, self.gradfolder + 'timestamps_' + file_name)
@@ -526,7 +526,7 @@ class BatchCntTrainer(object):
                     if hasattr(layer.bias, 'grad'):
                         gradients[layer_names[l_nr] + '_bias_grad'] = layer.bias.grad
                         weights[layer_names[l_nr] + '_bias'] = layer.bias
-            now = datetime.datetime.now()
+            #now = datetime.datetime.now()
             #file_name = str(now.day) + '-' + str(now.month) + '-' + str(now.year) + '_' + \
             #            str(now.hour) + '-' + str(now.minute) + '-' + str(now.second)
             torch.save(gradients, self.gradfolder + 'grad_' + file_name)
