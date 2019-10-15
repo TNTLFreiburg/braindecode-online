@@ -517,21 +517,21 @@ class BatchCntTrainer(object):
             layer_names = list(dict(self.model.named_children()).keys())
 
             gradients = {}
-            weights = {}
+            #weights = {}
             for l_nr, layer in enumerate(self.model):
                 if hasattr(layer, 'weight'):
                     gradients[layer_names[l_nr] + '_weight_grad'] = layer.weight.grad
-                    weights[layer_names[l_nr] + '_weight'] = layer.weight
+                    #weights[layer_names[l_nr] + '_weight'] = layer.weight
                 if hasattr(layer, 'bias'):
                     if hasattr(layer.bias, 'grad'):
                         gradients[layer_names[l_nr] + '_bias_grad'] = layer.bias.grad
-                        weights[layer_names[l_nr] + '_bias'] = layer.bias
+                        #weights[layer_names[l_nr] + '_bias'] = layer.bias
             now = datetime.datetime.now()
             #file_name = str(now.day) + '-' + str(now.month) + '-' + str(now.year) + '_' + \
             #            str(now.hour) + '-' + str(now.minute) + '-' + str(now.second)
             torch.save(gradients, self.gradfolder + 'grad_' + file_name)
             torch.save(self.optimizer.state_dict(), self.gradfolder + 'optimizer_' + file_name)
-            torch.save(weights, self.gradfolder + 'weights_' + file_name)
+            #torch.save(weights, self.gradfolder + 'weights_' + file_name)
 
 
         outputs = self.model(input_vars)
@@ -542,6 +542,9 @@ class BatchCntTrainer(object):
         self.optimizer.step()
         if self.model_constraint is not None:
             self.model_constraint.apply(self.model)
+		
+		if self.savegrad:
+			torch.save(self.model.network.state_dict(), self.gradfolder + 'state_dict_' + file_name)
 
 
 def var_or_tensor_to_np(v):
