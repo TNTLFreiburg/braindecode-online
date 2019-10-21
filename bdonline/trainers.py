@@ -545,8 +545,8 @@ class BatchCntTrainer(object):
         if self.model_constraint is not None:
             self.model_constraint.apply(self.model)
 		
-		if self.savegrad:
-			torch.save(self.model.network.state_dict(), self.gradfolder + 'state_dict_' + file_name)
+        if self.savegrad:
+            torch.save(self.model.state_dict(), self.gradfolder + 'state_dict_' + file_name)
 
 
 def var_or_tensor_to_np(v):
