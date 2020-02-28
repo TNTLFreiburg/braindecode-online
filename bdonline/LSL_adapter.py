@@ -98,11 +98,11 @@ DOWNSAMPLING_COEF = int(5000 / TARGET_FS)
 PRED_WINDOW_SIZE = 6
 PRED_THRESHOLD = 0.55
 ACTION_THRESHOLD = 0.8
-# Butter filter (highpass) for 1 Hz
-B_1, A_1 = butter(5, 1, btype='high', output='ba', fs = 5000)
+# Butter filter (lowpass) for 120 Hz in case of EMG
+B_120, A_120 = butter(6, 120, btype='low', output='ba', fs = 5000)
 
-# Butter filter (lowpass) for 30 Hz
-B_40, A_40 = butter(6, 120, btype='low', output='ba', fs = 5000) #TODO: Set back to 40
+# Butter filter (lowpass) for 40 Hz
+B_40, A_40 = butter(6, 40, btype='low', output='ba', fs = 5000)
 
 # Notch filter with 50 HZ
 F0 = 50.0
@@ -119,6 +119,7 @@ def parse_command_line_arguments():
     # see http://stackoverflow.com/a/24181138/1469195
     parser.add_argument('--savetimestamps', action='store', type=bool,
                         default=False, help='Save the timestamps of every batch')
+	parser.add_argument('--emg', action = 'store', type = bool, default=False, help= 'Write EMG inputs over C3/C4 (Hands) and CP3/CP4 (Feet).')
     args = parser.parse_args()
     return args
 class PredictionReceiveServer(gevent.server.StreamServer):
@@ -240,7 +241,7 @@ def label_gatherer(eeg_samplebuffer, DOWNSAMPLING_COEF, savetimestamps):
             'float32')
     return eeg_labels
 
-def filter_and_downsample(eeg_samplebuffer, DOWNSAMPLING_COEF, savetimestamps):
+def filter_and_downsample(eeg_samplebuffer, DOWNSAMPLING_COEF, savetimestamps, emg):
 
     if savetimestamps:
         #eeg_samplebuffer_filt = exponential_running_standardize(eeg_samplebuffer[:-2, :], factor_new=0.001, init_block_size=None, eps=0.0001)
@@ -250,7 +251,10 @@ def filter_and_downsample(eeg_samplebuffer, DOWNSAMPLING_COEF, savetimestamps):
         eeg_samplebuffer_filt = eeg_samplebuffer[:-1,:]
 	
     eeg_samplebuffer_filt = filtfilt(B_50, A_50, eeg_samplebuffer_filt)
-    eeg_samplebuffer_filt = filtfilt(B_40, A_40, eeg_samplebuffer_filt)
+	if emg:
+		eeg_samplebuffer_filt = filtfilt(B_120, A_120, eeg_samplebuffer_filt)
+	else:
+		eeg_samplebuffer_filt = filtfilt(B_40, A_40, eeg_samplebuffer_filt)
     #eeg_samplebuffer_filt = filtfilt(B_1, A_1, eeg_samplebuffer_filt)
     
     # Resample
@@ -312,7 +316,7 @@ class AsyncSocketReader:
 
     
     
-def forward_forever(savetimestamps):
+def forward_forever(savetimestamps, emg):
     forwarding_loopcounter = 0
     loop_time = time.time()
     fallen_behind_labels = True
@@ -394,12 +398,13 @@ def forward_forever(savetimestamps):
             if DEBUG:
                 print('got new eeg sample. eeg_sample_counter:', eeg_sample_counter)
             
-            #Hack EMG onto C3/C4 TODO: Remove    
-            eeg_sample[14] = eeg_sample[33] #C3 = EMG_LH
-            eeg_sample[16] = eeg_sample[32] #C4 = EMG_RH
+            if emg:    
+				eeg_sample[14] = eeg_sample[33] #C3 = EMG_LH
+				eeg_sample[16] = eeg_sample[32] #C4 = EMG_RH
             
-            eeg_sample[55] = eeg_sample[35] #CP3 = EMG_LF
-            eeg_sample[57] = eeg_sample[34] #CP4 = EMG_RF
+				eeg_sample[55] = eeg_sample[35] #CP3 = EMG_LF
+				eeg_sample[57] = eeg_sample[34] #CP4 = EMG_RF
+
             
             
             #Only use EEG channels
@@ -420,7 +425,7 @@ def forward_forever(savetimestamps):
                     print('eeg_samplebuffer:', eeg_samplebuffer)
                 #filter the incoming data
                 eeg_labels = label_gatherer(eeg_samplebuffer, DOWNSAMPLING_COEF, savetimestamps)
-                eeg_time_series = filter_and_downsample(eeg_samplebuffer, DOWNSAMPLING_COEF, savetimestamps)
+                eeg_time_series = filter_and_downsample(eeg_samplebuffer, DOWNSAMPLING_COEF, savetimestamps, emg)
                 if savetimestamps:
                     eeg_timestamps = timestamp_gatherer(eeg_samplebuffer, DOWNSAMPLING_COEF)
                     eeg_samplebuffer_filt_mean = concatenate_data_labels_stamps(eeg_time_series, eeg_labels, eeg_timestamps)
@@ -545,7 +550,7 @@ if __name__ == "__main__":
         gevent.sleep(0.01)
     print("Started system successfully.")
     
-    forward_forever(args.savetimestamps)
+    forward_forever(args.savetimestamps, args.emg)
     
 
     

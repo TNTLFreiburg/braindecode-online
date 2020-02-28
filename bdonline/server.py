@@ -410,9 +410,10 @@ def main(
         model_loss_function = None
         model_constraint = MaxNormDefaultConstraint()
         #model_constraint = None
-        optimizer = AdamW(model.parameters(), lr=learning_rate, weight_decay=0.5*0.0001)
+        optimizer = AdamW(model.parameters(), lr=learning_rate, weight_decay=0.5*0.00001)
         #optimizer = Adam(model.parameters(), lr=learning_rate)
-        scheduler = CosineAnnealing(n_updates_per_break)
+        #scheduler = CosineAnnealing(n_updates_per_break)
+        scheduler = None
 
 
         n_preds_per_input = None # set later
