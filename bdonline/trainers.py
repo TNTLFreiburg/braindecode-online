@@ -86,6 +86,14 @@ class BatchCntTrainer(object):
                 "No data files found to load for adaptation in {:s}".format(
                     data_folder))
 
+        if self.savegrad:
+            saved_nets = sorted(glob(os.path.join(self.gradfolder,'state_dict_Trial*-4')))
+            latest_net = len(saved_nets) + self.n_min_trials - 1
+            latest_trial = len(self.data_batches)
+
+            if latest_trial != latest_net and latest_trial > 9:
+                raise Exception("Loaded {:d} trials but found {:d} saved networks. ".format(latest_trial, latest_net))
+
     def add_training_blocks_from_old_data(self, old_samples,
                                           old_markers, factor_new, eps):
         # first standardize data
