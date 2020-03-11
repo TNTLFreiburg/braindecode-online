@@ -119,7 +119,7 @@ def parse_command_line_arguments():
     # see http://stackoverflow.com/a/24181138/1469195
     parser.add_argument('--savetimestamps', action='store', type=bool,
                         default=False, help='Save the timestamps of every batch')
-	parser.add_argument('--emg', action = 'store', type = bool, default=False, help= 'Write EMG inputs over C3/C4 (Hands) and CP3/CP4 (Feet).')
+    parser.add_argument('--emg', action = 'store', type = bool, default=False, help= 'Write EMG inputs over C3/C4 (Hands) and CP3/CP4 (Feet).')
     args = parser.parse_args()
     return args
 class PredictionReceiveServer(gevent.server.StreamServer):
@@ -251,10 +251,10 @@ def filter_and_downsample(eeg_samplebuffer, DOWNSAMPLING_COEF, savetimestamps, e
         eeg_samplebuffer_filt = eeg_samplebuffer[:-1,:]
 	
     eeg_samplebuffer_filt = filtfilt(B_50, A_50, eeg_samplebuffer_filt)
-	if emg:
-		eeg_samplebuffer_filt = filtfilt(B_120, A_120, eeg_samplebuffer_filt)
-	else:
-		eeg_samplebuffer_filt = filtfilt(B_40, A_40, eeg_samplebuffer_filt)
+    if emg:
+        eeg_samplebuffer_filt = filtfilt(B_120, A_120, eeg_samplebuffer_filt)
+    else:
+	    eeg_samplebuffer_filt = filtfilt(B_40, A_40, eeg_samplebuffer_filt)
     #eeg_samplebuffer_filt = filtfilt(B_1, A_1, eeg_samplebuffer_filt)
     
     # Resample
@@ -399,11 +399,11 @@ def forward_forever(savetimestamps, emg):
                 print('got new eeg sample. eeg_sample_counter:', eeg_sample_counter)
             
             if emg:    
-				eeg_sample[14] = eeg_sample[33] #C3 = EMG_LH
-				eeg_sample[16] = eeg_sample[32] #C4 = EMG_RH
-            
-				eeg_sample[55] = eeg_sample[35] #CP3 = EMG_LF
-				eeg_sample[57] = eeg_sample[34] #CP4 = EMG_RF
+                eeg_sample[14] = eeg_sample[33] #C3 = EMG_LH
+                eeg_sample[16] = eeg_sample[32] #C4 = EMG_RH
+                
+                eeg_sample[55] = eeg_sample[35] #CP3 = EMG_LF
+                eeg_sample[57] = eeg_sample[34] #CP4 = EMG_RF
 
             
             
