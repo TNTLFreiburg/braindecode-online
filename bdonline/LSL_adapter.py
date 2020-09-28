@@ -484,6 +484,8 @@ def forward_forever(savetimestamps, emg):
                             action = max_class
                             print('Action', action)
                 """
+
+                '''
                 if eeg_sample_label and time.time() - sample_start > 0.5:
                     list_preds = np.array([float(splitted_predictions[0]), float(splitted_predictions[1])])
                     if np.max(list_preds) > PRED_THRESHOLD:
@@ -500,6 +502,25 @@ def forward_forever(savetimestamps, emg):
                         max_class = 1
                     prob = np.abs(prob)
                     prob = np.max((0, (0.8 - prob) / 0.8))
+                    max_class_prob = np.array([max_class, prob], dtype='float32')
+                    lsl_outlet_predictions.push_sample(max_class_prob)
+
+                    pred_counter += 1
+                '''
+
+                if eeg_sample_label and time.time() - sample_start > 0.5:
+                    list_preds = np.array([float(splitted_predictions[0]), float(splitted_predictions[1])])
+
+                    predictions[pred_counter % PRED_WINDOW_SIZE] = list_preds[0]
+                        
+                    
+                    prob = np.mean(predictions) - 0.5
+                    if prob < 0:
+                        max_class = 2
+                    else:
+                        max_class = 1
+                    prob = np.abs(prob)
+                    prob = np.max((0, (0.35 - prob) / 0.35))
                     max_class_prob = np.array([max_class, prob], dtype='float32')
                     lsl_outlet_predictions.push_sample(max_class_prob)
 
