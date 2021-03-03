@@ -490,7 +490,7 @@ def main(
     server.serve_forever()
 
 if __name__ == '__main__':
-    gevent.signal(signal.SIGINT, gevent.kill)
+    gevent.signal_handler(signal.SIGINT, gevent.kill)
     args = parse_command_line_arguments()
     if args.noprint:
         log.setLevel("WARN")

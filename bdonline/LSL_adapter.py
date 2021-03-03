@@ -41,7 +41,7 @@ tcp_send_socket_eeg = None          # TCP/IP socket to send eeg data to braindec
 tcp_recv_preds_connected = False    # indicates if the tcp receiver for predictions is connected
 
 
-DEBUG = False                                       # DEBUG=True activates extra debug messages
+DEBUG = False                                     # DEBUG=True activates extra debug messages
 
 TCP_SENDER_EEG_PORT = 7987                          # port of braindecode-online
 TCP_SENDER_EEG_HOSTNAME = '127.0.0.1'               # hostname of braindecode-online
@@ -559,7 +559,7 @@ def send_random_data(socket, no_blocks=100):
     
     
 if __name__ == "__main__":
-    gevent.signal(signal.SIGINT, gevent.kill)   # used to be signal.SIGQUIT, but didn't work
+    gevent.signal_handler(signal.SIGINT, gevent.kill)   # used to be signal.SIGQUIT, but didn't work
     args = parse_command_line_arguments()
     connect_lsl_receiver_eeg()
     connect_lsl_receiver_labels()
