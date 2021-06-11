@@ -511,10 +511,10 @@ def forward_forever(savetimestamps, emg):
                 if eeg_sample_label and time.time() - sample_start > 0.5:
                     list_preds = np.array([float(splitted_predictions[0]), float(splitted_predictions[1])])
 
-                    predictions[pred_counter % PRED_WINDOW_SIZE] = list_preds[0]
+                    predictions[pred_counter % PRED_WINDOW_SIZE] = list_preds[0] - 0.5
                         
                     
-                    prob = np.mean(predictions) - 0.5
+                    prob = np.mean(predictions)
                     if prob < 0:
                         max_class = 2
                     else:
